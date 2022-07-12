@@ -11,12 +11,11 @@ public class SliderController : MonoBehaviour
     private VideoPlayer video;
     private Slider timeSlider;
     private Text currentTime, maxTime;
-    private float staticFrameRate;
     private bool isTouching = false;
     private bool wasPlaying = false;
     [SerializeField] private float wait = 0.2f;
 
-    public void Start()
+    void Start()
     {
         //準備ができるまでUpdate()が呼ばれないようにするため無効化する
         enabled = false;
@@ -33,28 +32,26 @@ public class SliderController : MonoBehaviour
         video.prepareCompleted += OnCompletePrepare;
     }
 
-    void OnCompletePrepare(VideoPlayer source)
+    private void OnCompletePrepare(VideoPlayer source)
     {
-        Debug.Log("準備できた");
-        staticFrameRate = video.frameRate;
-        Debug.Log("frameRate: " + staticFrameRate);
+        Debug.Log("再生準備完了");
         timeSlider.maxValue = video.frameCount;
 
-        //PointerDownの追加
+        //[イベントトリガー] PointerDownの追加
         EventTrigger.Entry entryDown = new EventTrigger.Entry();
         entryDown.eventID = EventTriggerType.PointerDown;
         entryDown.callback.AddListener(PointerDown);
         eventTrigger.triggers.Add(entryDown);
 
-        //PointerUpの追加
+        //[イベントトリガー] PointerUpの追加
         EventTrigger.Entry entryUp = new EventTrigger.Entry();
         entryUp.eventID = EventTriggerType.PointerUp;
         entryUp.callback.AddListener(PointerUp);
         eventTrigger.triggers.Add(entryUp);
 
+        //時刻の表示を初期化
         maxTime = GameObject.Find("MaxTime").GetComponent<Text>();
         maxTime.text = secondsToMMSS(video.length);
-
         currentTime = GameObject.Find("CurrentTime").GetComponent<Text>();
         currentTime.text = secondsToMMSS(video.clockTime);
 
@@ -77,12 +74,11 @@ public class SliderController : MonoBehaviour
     /// 再生中であれば、それのことを記録して一時停止する。
     /// ShowPreview関数をコルーチンで呼び出す。
     /// </summary>
-    public void PointerDown(BaseEventData data)
+    private void PointerDown(BaseEventData data)
     {
         isTouching = true;
         if (video.isPlaying)
         {
-            Debug.Log("再生中だったので止めました");
             wasPlaying = true;
             video.Pause();
         }
@@ -92,9 +88,34 @@ public class SliderController : MonoBehaviour
     /// <summary>
     /// スライダーの操作をやめたときの動作。
     /// </summary>
-    public void PointerUp(BaseEventData data)
+    private void PointerUp(BaseEventData data)
     {
-        isTouching = false;  
+        isTouching = false;
+    }
+
+    /// <summary>
+    /// スライダーを操作している間のコルーチン。
+    /// wait秒おきにプレビューを更新。
+    /// スライダー操作前に再生中だった場合は再生する。
+    /// </summary>
+    private IEnumerator ShowPreview()
+    {
+        Debug.Log("コルーチン開始");
+        while (isTouching)
+        {
+            video.frame = (long)timeSlider.value;
+            video.Play();
+            video.Pause();
+            yield return new WaitForSeconds(wait);
+        }
+
+        // スライダー操作前に再生中だった場合は再生する。
+        if (wasPlaying)
+        {
+            video.Play();
+            wasPlaying = false;
+        }
+        Debug.Log("コルーチン終了");
     }
 
     /// <summary>
@@ -106,30 +127,5 @@ public class SliderController : MonoBehaviour
     {
         var t = System.TimeSpan.FromSeconds(second);
         return string.Format("{0:0}:{1:00}", (int)t.TotalMinutes, t.Seconds);
-    }
-
-    /// <summary>
-    /// スライダーを操作している間のコルーチン。
-    /// wait秒おきにプレビューを更新。
-    /// スライダー操作前に再生中だった場合は再生する。
-    /// </summary>
-    private IEnumerator ShowPreview()
-    {
-        while (isTouching)
-        {
-            video.frame = (long)timeSlider.value;
-            Debug.Log("コルーチン");
-            video.Play();
-            video.Pause();
-            yield return new WaitForSeconds(wait);
-        }
-
-        Debug.Log("コルーチン終了");
-        if (wasPlaying)
-        {
-            video.Play();
-            Debug.Log("restart frame: " + video.frame);
-            wasPlaying = false;
-        }
     }
 }
