@@ -12,13 +12,10 @@ public class VideoController : MonoBehaviour
     public int skipSeconds = 5;
     private float currentSpeed = 1.0f;
     public float speedChange = 0.05f;
-    public bool useURL = true;
 
     void Start()
     {
         video = GetComponent<VideoPlayer>();
-        if (useURL) setVideoClip();
-        else video.source = VideoSource.VideoClip;
         video.frame = 500;
         video.Play();
         video.Pause();
@@ -93,16 +90,5 @@ public class VideoController : MonoBehaviour
         button = GameObject.Find(name).GetComponent<Button>();
         button.onClick.AddListener(call);
         button.transform.Find("Text").GetComponent<Text>().text = text;
-    }
-
-    /// <summary>
-    /// StreamingAssetsフォルダ上にあるファイルをファイルパスから動的にVideo Clipを割り当てる。
-    /// </summary>
-    void setVideoClip()
-    {
-        // 指定ディレクトリ配下の Unlimited(Hard).MP4 を再生する
-        string filename = string.Format(@"Unlimited(Hard).MP4");
-        string filePath = System.IO.Path.Combine(Application.streamingAssetsPath, filename);
-        video.url = filePath;
     }
 }

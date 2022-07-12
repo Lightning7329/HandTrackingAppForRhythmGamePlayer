@@ -2222,4 +2222,3 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skipSeconds: 5
   speedChange: 0.05
-  useURL: 0
