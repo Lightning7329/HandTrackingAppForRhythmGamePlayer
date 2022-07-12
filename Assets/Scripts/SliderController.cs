@@ -14,6 +14,7 @@ public class SliderController : MonoBehaviour
     private float staticFrameRate;
     private bool isTouching = false;
     private bool wasPlaying = false;
+    [SerializeField] private float wait = 0.2f;
 
     public void Start()
     {
@@ -65,20 +66,17 @@ public class SliderController : MonoBehaviour
     {
         //現時刻の表示を更新
         currentTime.text = secondsToMMSS(video.clockTime);
-        Debug.Log("frame: " + video.frame + "   sliderValue: " + (long)timeSlider.value);
 
         //スライダーを触っていないときのみ毎フレームスライダーを進める
         if (!isTouching)
             timeSlider.value = video.frame;
-        else
-        {
-            video.frame = (long)timeSlider.value;
-            Debug.Log("変更中");
-            video.Play();
-            video.Pause();
-        }
     }
 
+    /// <summary>
+    /// スライダーを操作しているときの動作。
+    /// 再生中であれば、それのことを記録して一時停止する。
+    /// ShowPreview関数をコルーチンで呼び出す。
+    /// </summary>
     public void PointerDown(BaseEventData data)
     {
         isTouching = true;
@@ -88,19 +86,15 @@ public class SliderController : MonoBehaviour
             wasPlaying = true;
             video.Pause();
         }
+        StartCoroutine("ShowPreview");
     }
 
+    /// <summary>
+    /// スライダーの操作をやめたときの動作。
+    /// </summary>
     public void PointerUp(BaseEventData data)
     {
-        video.frame = (long)timeSlider.value;
-        Debug.Log("frame: " + video.frame + "   sliderValue: " + (long)timeSlider.value);
-        isTouching = false;
-        if (wasPlaying)
-        {
-            video.Play();
-            Debug.Log("frame: " + video.frame);
-            wasPlaying = false;
-        }
+        isTouching = false;  
     }
 
     /// <summary>
@@ -112,5 +106,30 @@ public class SliderController : MonoBehaviour
     {
         var t = System.TimeSpan.FromSeconds(second);
         return string.Format("{0:0}:{1:00}", (int)t.TotalMinutes, t.Seconds);
+    }
+
+    /// <summary>
+    /// スライダーを操作している間のコルーチン。
+    /// wait秒おきにプレビューを更新。
+    /// スライダー操作前に再生中だった場合は再生する。
+    /// </summary>
+    private IEnumerator ShowPreview()
+    {
+        while (isTouching)
+        {
+            video.frame = (long)timeSlider.value;
+            Debug.Log("コルーチン");
+            video.Play();
+            video.Pause();
+            yield return new WaitForSeconds(wait);
+        }
+
+        Debug.Log("コルーチン終了");
+        if (wasPlaying)
+        {
+            video.Play();
+            Debug.Log("restart frame: " + video.frame);
+            wasPlaying = false;
+        }
     }
 }
