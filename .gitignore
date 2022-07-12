@@ -38,3 +38,10 @@ sysinfo.txt
  
 # Crashlytics generated file
 Assets/StreamingAssets/crashlytics-build.properties
+
+# VideoClips
+*.mov
+*.MP4
+.mov.meta
+*.mov.meta
+*.MP4.meta
