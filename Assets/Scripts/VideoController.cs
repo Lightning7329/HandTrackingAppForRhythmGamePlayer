@@ -9,9 +9,9 @@ public class VideoController : MonoBehaviour
     private VideoPlayer video;
     private Button playButton, forwardButton, backwardButton, addSpeedButton, subSpeedButton;
     private bool isPlaying = false;
-    public int skipSeconds = 5;
+    [SerializeField] private int skipSeconds = 5;
     private float currentSpeed = 1.0f;
-    public float speedChange = 0.05f;
+    [SerializeField] private float speedChange = 0.05f;
 
     void Start()
     {
