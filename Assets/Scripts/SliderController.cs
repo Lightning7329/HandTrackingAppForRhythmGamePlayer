@@ -72,9 +72,9 @@ public class SliderController : MonoBehaviour
             timeSlider.value = video.frame;
         else
         {
+            video.frame = (long)timeSlider.value;
             Debug.Log("変更中");
             video.Play();
-            video.frame = (long)timeSlider.value;
             video.Pause();
         }
     }
@@ -92,15 +92,15 @@ public class SliderController : MonoBehaviour
 
     public void PointerUp(BaseEventData data)
     {
+        video.frame = (long)timeSlider.value;
+        Debug.Log("frame: " + video.frame + "   sliderValue: " + (long)timeSlider.value);
+        isTouching = false;
         if (wasPlaying)
         {
             video.Play();
             Debug.Log("frame: " + video.frame);
             wasPlaying = false;
         }
-        video.frame = (long)timeSlider.value;
-        Debug.Log("frame: " + video.frame + "   sliderValue: " + (long)timeSlider.value);
-        isTouching = false;
     }
 
     /// <summary>
