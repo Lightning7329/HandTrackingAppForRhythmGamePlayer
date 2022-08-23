@@ -4,18 +4,28 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    //Transform cameraTransform;
+    Transform cameraTransform;
     //public GameObject cameraPivot;
-    public GameObject display;
-    // Start is called before the first frame update
+    [SerializeField] private GameObject display;
+    [SerializeField] private float cameraPos_yz;
+    [SerializeField] private float center;
+
     void Start()
     {
-        //cameraTransform = GetComponent<Transform>();
+        cameraTransform = GetComponent<Transform>();
     }
 
-    // Update is called once per frame
     void Update()
     {
         Camera.main.transform.LookAt(display.GetComponent<Transform>().transform);
+        cameraTransform.position = position();
+    }
+
+    Vector3 position()
+    {
+        float r = center - cameraTransform.position.z;
+        float x = r * Mathf.Sin(cameraPos_yz);
+        float z = center - r * Mathf.Cos(cameraPos_yz);
+        return new Vector3(x, cameraTransform.position.y, z);
     }
 }
