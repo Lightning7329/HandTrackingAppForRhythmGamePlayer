@@ -5,10 +5,9 @@ using UnityEngine;
 public class CameraController : MonoBehaviour
 {
     Transform cameraTransform;
-    //public GameObject cameraPivot;
-    [SerializeField] private GameObject display;
-    [SerializeField] private float cameraPos_yz;
-    [SerializeField] private float center;
+    [SerializeField] private float moveSpead = 0.02f;
+    [SerializeField] private float rotateSpead = 0.07f;
+    [SerializeField] private float zoomSpead = 0.03f;
 
     void Start()
     {
@@ -17,15 +16,32 @@ public class CameraController : MonoBehaviour
 
     void Update()
     {
-        Camera.main.transform.LookAt(display.GetComponent<Transform>().transform);
-        cameraTransform.position = position();
+        TransformPos();
+        TransformRot();
+        Zoom();
     }
 
-    Vector3 position()
+    private void TransformPos()
     {
-        float r = center - cameraTransform.position.z;
-        float x = r * Mathf.Sin(cameraPos_yz);
-        float z = center - r * Mathf.Cos(cameraPos_yz);
-        return new Vector3(x, cameraTransform.position.y, z);
+        if (Input.GetKey(KeyCode.W)) cameraTransform.position += new Vector3(0.0f, 0.0f, moveSpead);
+        if (Input.GetKey(KeyCode.A)) cameraTransform.position += new Vector3(-moveSpead, 0.0f, 0.0f);
+        if (Input.GetKey(KeyCode.S)) cameraTransform.position += new Vector3(0.0f, 0.0f, -moveSpead);
+        if (Input.GetKey(KeyCode.D)) cameraTransform.position += new Vector3(moveSpead, 0.0f, 0.0f);
+    }
+
+    private void TransformRot()
+    {
+        Vector3 ang = Vector3.zero;
+        if (Input.GetKey(KeyCode.LeftArrow)) ang.y += rotateSpead;
+        else if (Input.GetKey(KeyCode.RightArrow)) ang.y -= rotateSpead;
+        if (Input.GetKey(KeyCode.UpArrow)) ang.x -= rotateSpead;
+        else if (Input.GetKey(KeyCode.DownArrow)) ang.x += rotateSpead;
+        cameraTransform.Rotate(ang, Space.Self);
+    }
+
+    private void Zoom()
+    {
+        if (Input.GetKey(KeyCode.F)) cameraTransform.position -= transform.forward * zoomSpead;
+        else if (Input.GetKey(KeyCode.N)) cameraTransform.position += transform.forward * zoomSpead;
     }
 }
