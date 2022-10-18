@@ -63,7 +63,7 @@ public class CameraController : MonoBehaviour
     /// </summary>
     private void OnBtn_Camera1()
     {
-        cameraTransform.position = new Vector3(0.0f, 13.51f, -7.34f);
+        cameraTransform.position = new Vector3(0.0f, 19.95238f, -11.01941f);
         cameraTransform.rotation = Quaternion.Euler(new Vector3(60.27f, 0.0f, 0.0f));
     }
 }
