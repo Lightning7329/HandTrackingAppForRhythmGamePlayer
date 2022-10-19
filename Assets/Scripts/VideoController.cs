@@ -76,13 +76,13 @@ public class VideoController : MonoBehaviour
     void OnBtn_AddSpeed()
     {
         video.playbackSpeed = currentSpeed += speedChange;
-        txt_speed.text = $"×{currentSpeed:F2}";
+        txt_speed.text = $"x{currentSpeed:F2}";
     }
 
     void OnBtn_SubSpeed()
     {
         video.playbackSpeed = currentSpeed -= speedChange;
-        txt_speed.text = $"×{currentSpeed:F2}";
+        txt_speed.text = $"x{currentSpeed:F2}";
     }
 
     private void SetButton(ref Button button, string name, UnityEngine.Events.UnityAction call, string text)
