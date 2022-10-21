@@ -6,7 +6,7 @@ public class	SS_LEAP : HandModelBase
 {
 	[SerializeField] private Chirality	LR;
 	[SerializeField][RangeAttribute(0.1f,100.0f)] private float	scl ;
-	private Hand	lmHand;
+	public Hand	lmHand;
 //..............................................................
 	public override ModelType	HandModelType
 	{
