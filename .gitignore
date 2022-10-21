@@ -64,3 +64,6 @@ Assets/StreamingAssets/crashlytics-build.properties
 .mov.meta
 *.mov.meta
 *.MP4.meta
+
+# VersionSetting
+ProjectSettings/ProjectVersion.txt
