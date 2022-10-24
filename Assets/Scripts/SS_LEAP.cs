@@ -25,8 +25,9 @@ public class	SS_LEAP : HandModelBase
 //..............................................................
 	public override void	UpdateHand()
 	{
-		Vector3	Pc = lmHand.PalmPosition;
-		gameObject.transform.localPosition = scl * Pc;
+		var palmPose = lmHand.GetPalmPose();
+		gameObject.transform.localPosition = scl * palmPose.position;
+		gameObject.transform.localRotation = palmPose.rotation;
 	}
 };
 //--------------------------------------------------------------
