@@ -2330,19 +2330,13 @@ MonoBehaviour:
   - Index
   - Middle
   - Ring
-  mat_F: {fileID: 2100000, guid: bb3324742fc04479a8af92143005a46c, type: 2}
-  mat_J: {fileID: 2100000, guid: 808f8f67dee4d4c4f9f619a87687ae86, type: 2}
+  materials:
+    Palm: {fileID: 2100000, guid: bb3324742fc04479a8af92143005a46c, type: 2}
+    Finger: {fileID: 2100000, guid: bb3324742fc04479a8af92143005a46c, type: 2}
+    Joint: {fileID: 2100000, guid: 808f8f67dee4d4c4f9f619a87687ae86, type: 2}
+    Top: {fileID: 2100000, guid: 808f8f67dee4d4c4f9f619a87687ae86, type: 2}
   now_go: 0
-  Go:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  gameObjects: []
 --- !u!114 &577297394
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8385,19 +8379,13 @@ MonoBehaviour:
   - Index
   - Middle
   - Ring
-  mat_F: {fileID: 2100000, guid: bb3324742fc04479a8af92143005a46c, type: 2}
-  mat_J: {fileID: 2100000, guid: 808f8f67dee4d4c4f9f619a87687ae86, type: 2}
+  materials:
+    Palm: {fileID: 2100000, guid: bb3324742fc04479a8af92143005a46c, type: 2}
+    Finger: {fileID: 2100000, guid: bb3324742fc04479a8af92143005a46c, type: 2}
+    Joint: {fileID: 2100000, guid: 808f8f67dee4d4c4f9f619a87687ae86, type: 2}
+    Top: {fileID: 2100000, guid: 808f8f67dee4d4c4f9f619a87687ae86, type: 2}
   now_go: 0
-  Go:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  gameObjects: []
 --- !u!114 &1813169054
 MonoBehaviour:
   m_ObjectHideFlags: 0
