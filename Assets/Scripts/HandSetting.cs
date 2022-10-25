@@ -6,7 +6,7 @@ using UnityEngine;
 public class HandSetting : MonoBehaviour
 {
 	[SerializeField] private string[] fingerNames = {"Index", "Middle", "Ring"};
-	[SerializeField] private Material	mat_B , mat_J ;
+	[SerializeField] private Material	mat_F , mat_J ;
 	[HideInInspector] public int		now_go ;
     private const int sensorNum = 9;
     public GameObject[] Go;
@@ -29,8 +29,8 @@ public class HandSetting : MonoBehaviour
 
 	private void	SetMaterial(GameObject Go)
 	{
-		if (Go.name == "B")		Go.GetComponent<MeshRenderer>().material = mat_B;
-		else if (Go.name == "F")	Go.GetComponent<MeshRenderer>().material = mat_B;
+		if (Go.name == "P")		Go.GetComponent<MeshRenderer>().material = mat_F;
+		else if (Go.name == "F")	Go.GetComponent<MeshRenderer>().material = mat_F;
 		else if (Go.name == "J")	Go.GetComponent<MeshRenderer>().material = mat_J;
 		else if (Go.name == "Top")	Go.GetComponent<MeshRenderer>().material = mat_J;
 		

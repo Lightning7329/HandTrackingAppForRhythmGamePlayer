@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44608766, g: 0.49585128, b: 0.5745041, a: 1}
+  m_IndirectSpecularColor: {r: 0.44608718, g: 0.49585086, b: 0.5745036, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2243,7 +2243,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 568567836}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 025cc0fa7b46aa541aba29d28d35ac09, type: 3}
   m_Name: 
@@ -2330,7 +2330,7 @@ MonoBehaviour:
   - Index
   - Middle
   - Ring
-  mat_B: {fileID: 2100000, guid: bb3324742fc04479a8af92143005a46c, type: 2}
+  mat_F: {fileID: 2100000, guid: bb3324742fc04479a8af92143005a46c, type: 2}
   mat_J: {fileID: 2100000, guid: 808f8f67dee4d4c4f9f619a87687ae86, type: 2}
   now_go: 0
   Go:
@@ -7628,7 +7628,7 @@ GameObject:
   - component: {fileID: 1715585333}
   - component: {fileID: 1715585332}
   m_Layer: 0
-  m_Name: B
+  m_Name: P
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8385,7 +8385,7 @@ MonoBehaviour:
   - Index
   - Middle
   - Ring
-  mat_B: {fileID: 2100000, guid: bb3324742fc04479a8af92143005a46c, type: 2}
+  mat_F: {fileID: 2100000, guid: bb3324742fc04479a8af92143005a46c, type: 2}
   mat_J: {fileID: 2100000, guid: 808f8f67dee4d4c4f9f619a87687ae86, type: 2}
   now_go: 0
   Go:
@@ -8405,7 +8405,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1813169051}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7314f1194333786409674f2e380c3432, type: 3}
   m_Name: 
@@ -10030,7 +10030,7 @@ GameObject:
   - component: {fileID: 2108072821}
   - component: {fileID: 2108072820}
   m_Layer: 0
-  m_Name: B
+  m_Name: P
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
