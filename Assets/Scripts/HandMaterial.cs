@@ -12,5 +12,6 @@ namespace KW_Mocap
         public Material Finger;
         public Material Joint;
         public Material Top;
+        public Material Error;
     }
 }
