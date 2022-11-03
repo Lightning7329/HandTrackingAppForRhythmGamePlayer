@@ -15,6 +15,7 @@ namespace KW_Mocap
         private Text currentTime, maxTime;
         private bool isTouching = false;
         private bool wasPlaying = false;
+        [SerializeField] private GameObject display;
         [SerializeField] private float wait = 0.2f;
 
         void Start()
@@ -26,11 +27,11 @@ namespace KW_Mocap
             eventTrigger = this.gameObject.AddComponent<EventTrigger>();
 
             //Sliderの取得、設定
-            timeSlider = GameObject.Find("TimeSlider").GetComponent<Slider>();
+            timeSlider = GetComponent<Slider>();
             timeSlider.wholeNumbers = true;
 
             //VideoPlayerの取得、設定
-            video = GameObject.Find("Display").GetComponent<VideoPlayer>();
+            video = display.GetComponent<VideoPlayer>();
             video.prepareCompleted += OnCompletePrepare;
         }
 
