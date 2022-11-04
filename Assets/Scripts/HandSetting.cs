@@ -1,8 +1,40 @@
-// OBJECT(= HUMAN's HAND) ASSIGN to BORN STRUCTUREusing System.Linq;using UnityEngine;namespace KW_Mocap {	public class HandSetting : MonoBehaviour	{		[SerializeField] private string[] fingerNames = { "Index", "Middle", "Ring" };		[SerializeField] private HandMaterial materials;		[HideInInspector] public int now_go;		public GameObject[] gameObjects;		private const int SENSOR_NUM = 9;		private void Start()		{			gameObjects = new GameObject[SENSOR_NUM];			GameObject[] children = GetComponentsInChildren<Transform>().Where<Transform>(t => t.name != "J" && t.name != "F" && t.name != "Top").Select(t => t.gameObject).ToArray();			now_go = 0;			foreach (string fingerName in fingerNames)			{				foreach (GameObject Gc in children)				{					if (Gc.name == fingerName + (now_go % 3).ToString())						gameObjects[now_go++] = Gc;				}			}		}		/// <summary>
-		/// Ä‹A“I‚Éè‚ğ\¬‚·‚éƒIƒuƒWƒFƒNƒg‚ÌMaterial‚ğ•ÏX‚·‚éB
+ï»¿// OBJECT(= HUMAN's HAND) ASSIGN to BORN STRUCTURE
+
+using System.Linq;
+using UnityEngine;
+
+namespace KW_Mocap {
+	public class HandSetting : MonoBehaviour
+	{
+		[SerializeField] private string[] fingerNames = { "Index", "Middle", "Ring" };
+		[SerializeField] private HandMaterial materials;
+		[HideInInspector] public int now_go;
+		public GameObject[] gameObjects;
+		private const int SENSOR_NUM = 9;
+
+		private void Start()
+		{
+			gameObjects = new GameObject[SENSOR_NUM];
+			GameObject[] children = GetComponentsInChildren<Transform>().Where<Transform>(t => t.name != "J" && t.name != "F" && t.name != "Top").Select(t => t.gameObject).ToArray();
+			now_go = 0;
+			foreach (string fingerName in fingerNames)
+			{
+				foreach (GameObject Gc in children)
+				{
+					if (Gc.name == fingerName + (now_go % 3).ToString())
+						gameObjects[now_go++] = Gc;
+				}
+			}
+		}
+
+		/// <summary>
+		/// å†å¸°çš„ã«æ‰‹ã‚’æ§‹æˆã™ã‚‹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®Materialã‚’å¤‰æ›´ã™ã‚‹ã€‚
 		/// </summary>
-		/// <param name="Go">•ÏX‚µ‚½‚¢ˆê”Ôã‚ÌŠK‘w‚ÌGame Object</param>
-		/// <param name="flg">true‚Ì‚Æ‚«’Êí‚ÌMaterialAfalse‚Ì‚Æ‚«ƒGƒ‰[—p‚ÌMaterial</param>		public void SetMaterial(GameObject Go, bool flg)		{			switch (Go.name)
+		/// <param name="Go">å¤‰æ›´ã—ãŸã„ä¸€ç•ªä¸Šã®éšå±¤ã®Game Object</param>
+		/// <param name="flg">trueã®ã¨ãé€šå¸¸ã®Materialã€falseã®ã¨ãã‚¨ãƒ©ãƒ¼ç”¨ã®Material</param>
+		public void SetMaterial(GameObject Go, bool flg)
+		{
+			switch (Go.name)
 			{
 				case "P":
 					Go.GetComponent<MeshRenderer>().material = flg ? materials.Palm : materials.Error;
@@ -18,4 +50,19 @@
 					break;
 				default:
 					break;
-			}			int n = Go.transform.childCount;			if (n < 1) return;			for (int i = 0; i < n; i++)			{				GameObject Gc = Go.transform.GetChild(i).gameObject;				SetMaterial(Gc, flg);			}		}	}}//------------------------------------------------------------------------------// EOF//------------------------------------------------------------------------------
+			}
+
+			int n = Go.transform.childCount;
+			if (n < 1) return;
+
+			for (int i = 0; i < n; i++)
+			{
+				GameObject Gc = Go.transform.GetChild(i).gameObject;
+				SetMaterial(Gc, flg);
+			}
+		}
+	}
+}
+//------------------------------------------------------------------------------
+// EOF
+//------------------------------------------------------------------------------

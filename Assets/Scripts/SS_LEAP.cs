@@ -1,4 +1,4 @@
-
+ï»¿
 using UnityEngine;
 using Leap ;
 using Leap.Unity;
@@ -29,7 +29,7 @@ namespace KW_Mocap
 		}
 
 		/// <summary>
-		/// LeapMotion‚ªè‚ğŒŸ’m‚µn‚ß‚½‚çMaterial‚ğ’Êíƒ‚[ƒh‚É•ÏX‚·‚éB
+		/// LeapMotionãŒæ‰‹ã‚’æ¤œçŸ¥ã—å§‹ã‚ãŸã‚‰Materialã‚’é€šå¸¸ãƒ¢ãƒ¼ãƒ‰ã«å¤‰æ›´ã™ã‚‹ã€‚
 		/// </summary>
 		private void changeMaterial_OnBegin()
         {
@@ -38,7 +38,7 @@ namespace KW_Mocap
 		}
 
 		/// <summary>
-		/// LeapMotion‚ªè‚ğŒŸ’m‚Å‚«‚È‚­‚È‚Á‚½‚çMaterial‚ğƒGƒ‰[ƒ‚[ƒh‚É•ÏX‚·‚éB
+		/// LeapMotionãŒæ‰‹ã‚’æ¤œçŸ¥ã§ããªããªã£ãŸã‚‰Materialã‚’ã‚¨ãƒ©ãƒ¼ãƒ¢ãƒ¼ãƒ‰ã«å¤‰æ›´ã™ã‚‹ã€‚
 		/// </summary>
         private void changeMaterial_OnFinish()
         {
