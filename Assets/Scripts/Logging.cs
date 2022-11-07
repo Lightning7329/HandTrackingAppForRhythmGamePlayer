@@ -7,11 +7,11 @@ using KW_Mocap;
 
 public class Logging : MonoBehaviour
 {
-    SS_LEAP leap = null;
+    LeapHandModel leap = null;
 
     void Start()
     {
-        leap = GameObject.Find("Hand-L").GetComponent<SS_LEAP>();
+        leap = GameObject.Find("Hand-L").GetComponent<LeapHandModel>();
     }
 
     void Update()

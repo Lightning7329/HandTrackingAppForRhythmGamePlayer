@@ -5,7 +5,7 @@ using Leap.Unity;
 
 namespace KW_Mocap
 {
-	public class SS_LEAP : HandModelBase
+	public class LeapHandModel : HandModelBase
 	{
 		[SerializeField] private Chirality LR;
 		[SerializeField] [RangeAttribute(0.1f, 100.0f)] private float scl;

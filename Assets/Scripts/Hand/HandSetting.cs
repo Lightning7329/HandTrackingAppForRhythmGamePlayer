@@ -10,7 +10,7 @@ namespace KW_Mocap {
 		[SerializeField] private HandMaterial materials;
 		[HideInInspector] public int now_go;
 		public GameObject[] gameObjects;
-		private const int SENSOR_NUM = 9;
+		private const int SENSOR_NUM = 10;
 
 		private void Start()
 		{
