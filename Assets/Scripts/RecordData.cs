@@ -63,6 +63,7 @@ namespace KW_Mocap
             catch (IOException e)
             {
                 Debug.Log(e);
+                throw new DuplicateFileNameException("This file name is already exists.", e);
             }
         }
 
