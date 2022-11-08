@@ -9,6 +9,12 @@ namespace KW_Mocap
     {
         public HandData left, right;
 
+        public MotionData(HandData left, HandData right)
+        {
+            this.left = left;
+            this.right = right;
+        }
+
         /// <summary>
         /// byte配列からモーションデータを復元するコンストラクタ
         /// </summary>
@@ -52,6 +58,22 @@ namespace KW_Mocap
         /// 指の関節の回転のクォータニオンの配列。Tranform.Rotationに入れる。
         /// </summary>
         public Quaternion[] jointRot = new Quaternion[10];
+
+        /// <summary>
+        /// 手のひらの位置と回転のみから片手分のモーションデータを作成するコンストラクタ。
+        /// 関節の回転は何もしない。
+        /// </summary>
+        /// <param name="palmPos">手のひらの位置</param>
+        /// <param name="palmRot">手のひらの回転</param>
+        public HandData(Vector3 palmPos, Quaternion palmRot)
+        {
+            this.palmPos = palmPos;
+            this.palmRot = palmRot;
+            for (int i = 0; i < jointRot.Length; i++)
+            {
+                this.jointRot[i] = Quaternion.identity;
+            }
+        }
 
         /// <summary>
         /// byte配列から片手分のモーションデータを復元するコンストラクタ

@@ -3,16 +3,24 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using Leap.Unity;
 
 namespace KW_Mocap
 {
-    public class RecordData : MonoBehaviour
+    public class DataRecorder : MonoBehaviour
     {
         const int MaxDataCount = 10000;   //fps30で5分ちょっと
 
         int recordDataCount;
         MotionData[] motionData = new MotionData[MaxDataCount];
         bool isRecording = false;
+        LeapHandModel leftHand, rightHand;
+
+        void Start()
+        {
+            leftHand = transform.GetChild(0).GetComponent<LeapHandModel>();
+            rightHand = transform.GetChild(1).GetComponent<LeapHandModel>();
+        }
 
         void Update()
         {
@@ -21,7 +29,13 @@ namespace KW_Mocap
 
         void Record()
         {
-            // motionData[recordDataCount]にデータを入れていく
+            var leftPose = leftHand.GetLeapHand().GetPalmPose();
+            var rightPose = leftHand.GetLeapHand().GetPalmPose();
+            HandData left = new HandData(leftPose.position, leftPose.rotation);
+            HandData right = new HandData(rightPose.position, rightPose.rotation);
+
+            motionData[recordDataCount] = new MotionData(left, right);
+
             recordDataCount++;
         }
 
@@ -67,9 +81,9 @@ namespace KW_Mocap
             }
         }
 
-        public void Load(String fileName)
+        public MotionData[] Load(String fileName)
         {
-            if (isRecording) return;
+            if (isRecording) return null;
 
             byte[] buf = new byte[144];
             try
@@ -91,6 +105,8 @@ namespace KW_Mocap
             {
                 Debug.Log(e);
             }
+
+            return motionData;
         }
     }
 }
