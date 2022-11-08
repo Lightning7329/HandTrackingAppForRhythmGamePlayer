@@ -38,7 +38,7 @@ namespace KW_Mocap
             timer = null;
         }
 
-        public static void PlyCountReset()
+        public static void FrameCountReset()
         {
             frameCount = 0;
         }

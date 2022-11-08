@@ -25,7 +25,7 @@ namespace KW_Mocap
             }
         }
 
-        private void Start()
+        void Start()
         {
             //WorldTimer.DisplayFrameCount();
             //WorldTimer.Run();
