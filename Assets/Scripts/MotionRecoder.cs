@@ -7,7 +7,7 @@ using Leap.Unity;
 
 namespace KW_Mocap
 {
-    public class DataRecorder : MonoBehaviour
+    public class MotionRecoder : MonoBehaviour
     {
         const int MaxDataCount = 10000;   //fps30で5分ちょっと
 
@@ -44,12 +44,19 @@ namespace KW_Mocap
             if (isRecording) return;
             isRecording = true;
             recordDataCount = 0;
+            WorldTimer.CountUp += RecordDataCountUp;
         }
 
         public void StopRecording()
         {
             if (!isRecording) return;
             isRecording = false;
+            WorldTimer.CountUp -= RecordDataCountUp;
+        }
+
+        void RecordDataCountUp()
+        {
+            recordDataCount++;
         }
 
         public void Save(String fileName)
