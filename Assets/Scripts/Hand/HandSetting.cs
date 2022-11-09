@@ -9,12 +9,12 @@ namespace KW_Mocap {
 		[SerializeField] private string[] fingerNames = { "Index", "Middle", "Ring" };
 		[SerializeField] private HandMaterial materials;
 		[HideInInspector] public int now_go;
-		public GameObject[] gameObjects;
+		public GameObject[] joints;
 		private const int SENSOR_NUM = 10;
 
 		private void Start()
 		{
-			gameObjects = new GameObject[SENSOR_NUM];
+			joints = new GameObject[SENSOR_NUM];
 			GameObject[] children = GetComponentsInChildren<Transform>().Where<Transform>(t => t.name != "J" && t.name != "F" && t.name != "Top").Select(t => t.gameObject).ToArray();
 			now_go = 0;
 			foreach (string fingerName in fingerNames)
@@ -22,10 +22,12 @@ namespace KW_Mocap {
 				foreach (GameObject Gc in children)
 				{
 					if (Gc.name == fingerName + (2 - now_go % 3).ToString())
-						gameObjects[now_go++] = Gc;
+						joints[now_go++] = Gc;
 				}
 			}
-			gameObjects[now_go] = this.gameObject;
+
+			// 手のひら
+			joints[now_go] = this.gameObject;
 		}
 
 		/// <summary>

@@ -8,6 +8,7 @@ namespace KW_Mocap
 {
     public static class WorldTimer
     {
+        public static Action CountUp;
         private static Timer timer = null;
 
         public static int frameCount { get; private set; } = 0;
@@ -19,7 +20,6 @@ namespace KW_Mocap
             set => _frameRate = value > 0 ? value : 30;
         }
 
-        public static Action CountUp;
 
         public static void Run()
         {
