@@ -5,17 +5,14 @@ using UnityEngine.UI;
 
 namespace KW_Mocap
 {
-    public class GeneralManager : MonoBehaviour
+    public class PlayModeManager : MonoBehaviour
     {
-        public static GeneralManager I = null;
-
         bool isPlaying = false;
         private float currentSpeed = 1.0f;
         [SerializeField] private float speedChange = 0.05f;
         [SerializeField] private int skipSeconds = 5;
 
         MotionPlayer motionPlayer = null;
-        MotionRecoder motionRecoder = null;
 
         VideoController videoController = null;
 
@@ -23,18 +20,6 @@ namespace KW_Mocap
         private Text txt_speed;
         private Button playButton, forwardButton, backwardButton, addSpeedButton, subSpeedButton;
 
-        void Awake()
-        {
-            if (I == null)
-            {
-                I = this;
-                DontDestroyOnLoad(this.gameObject); //シーンの移動で破棄されない
-            }
-            else
-            {
-                Destroy(this.gameObject);
-            }
-        }
 
         void Start()
         {

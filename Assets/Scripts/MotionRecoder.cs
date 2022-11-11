@@ -11,7 +11,7 @@ namespace KW_Mocap
     {
         const int MaxDataCount = 10000;   //fps30で5分ちょっと
 
-        int recordDataCount;
+        public int recordDataCount { get; private set; } = 0;
         MotionData[] motionData = new MotionData[MaxDataCount];
         bool isRecording = false;
         LeapHandModel leftHand, rightHand;
@@ -29,14 +29,21 @@ namespace KW_Mocap
 
         void Record()
         {
+            // TODO
+            /*
+             * 例外処理せよ
+             * LeapMotionからの認識が外れた瞬間
+             * NullReferenceException: Object reference not set to an instance of an object
+             * KW_Mocap.MotionRecoder.Record () (at Assets/Scripts/MotionRecoder.cs:33)
+             * KW_Mocap.MotionRecoder.Update () (at Assets/Scripts/MotionRecoder.cs:27)
+             * が発生する。
+             */
             var leftPose = leftHand.GetLeapHand().GetPalmPose();
-            var rightPose = leftHand.GetLeapHand().GetPalmPose();
+            var rightPose = rightHand.GetLeapHand().GetPalmPose();
             HandData left = new HandData(leftPose.position, leftPose.rotation);
             HandData right = new HandData(rightPose.position, rightPose.rotation);
 
-            motionData[recordDataCount] = new MotionData(left, right);
-
-            recordDataCount++;
+            motionData[recordDataCount] = new MotionData(left, right);            
         }
 
         public void StartRecording()
@@ -45,6 +52,7 @@ namespace KW_Mocap
             isRecording = true;
             recordDataCount = 0;
             WorldTimer.CountUp += RecordDataCountUp;
+            Debug.Log("Start Recording");
         }
 
         public void StopRecording()
@@ -52,21 +60,22 @@ namespace KW_Mocap
             if (!isRecording) return;
             isRecording = false;
             WorldTimer.CountUp -= RecordDataCountUp;
+            Debug.Log("Stop Recording");
         }
 
         void RecordDataCountUp()
         {
-            recordDataCount++;
+            recordDataCount = (recordDataCount + 1) % MaxDataCount;
         }
 
-        public void Save(String fileName)
+        public void Save(string fileName)
         {
             if (isRecording) return;
 
             byte[] buf = new byte[144];
             try
             {
-                using (FileStream fs = new FileStream($"SavedMotionData/{fileName}.bin", FileMode.CreateNew, FileAccess.Write))
+                using (FileStream fs = new FileStream($"SavedMotionData/{fileName}.bin", FileMode.Create, FileAccess.Write))
                 {
                     // 記録するデータ点数
                     int savingDataCount = recordDataCount < MaxDataCount ? recordDataCount : MaxDataCount;
@@ -80,6 +89,7 @@ namespace KW_Mocap
                         fs.Write(buf, 0, 144);
                     }
                 }
+                Debug.Log($"Saved as SavedMotionData/{fileName}.bin");
             }
             catch (IOException e)
             {
@@ -88,7 +98,7 @@ namespace KW_Mocap
             }
         }
 
-        public MotionData[] Load(String fileName)
+        public MotionData[] Load(string fileName)
         {
             if (isRecording) return null;
 
