@@ -1,15 +1,8 @@
-/************************************************************
-************************************************************/
 using UnityEngine;
-
-/************************************************************
-************************************************************/
 
 [RequireComponent(typeof(Camera))]
 public class SceneViewCamera : MonoBehaviour
 {
-	/****************************************
-	****************************************/
 	private string label = "";
 	
 	Vector3 rot_center = new Vector3(0, 0, 0);
@@ -35,19 +28,11 @@ public class SceneViewCamera : MonoBehaviour
 	bool b_option = false;
 	bool b_command = false;
 	
-	
-	/****************************************
-	****************************************/
-	
-	/******************************
-	******************************/
 	void Awake() { 
 		rot_org = transform.rotation;
 		pos_org = transform.position;
 	}
 	
-	/******************************
-	******************************/
 	private void Update()
 	{
 		/********************
@@ -71,9 +56,6 @@ public class SceneViewCamera : MonoBehaviour
 			transform.Rotate(new Vector3(0, 0, 30), Space.Self); 
 		}
 		
-		
-		/********************
-		********************/
 		if(Input.GetMouseButtonDown(0)){
 			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 			
@@ -87,15 +69,11 @@ public class SceneViewCamera : MonoBehaviour
 		
 		label = string.Format("( {0:0.00}, {1:0.00}, {2:0.00} )", rot_center.x, rot_center.y, rot_center.z);
 		
-		/********************
-		********************/
 		MouseUpdate();
 		
 		return;
 	}
 	
-	/******************************
-	******************************/
 	private void ResetTransform(){
 		transform.position = pos_org;
 		transform.rotation = rot_org;
