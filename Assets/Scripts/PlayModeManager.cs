@@ -24,8 +24,8 @@ namespace KW_Mocap
         void Start()
         {
             //WorldTimer.DisplayFrameCount();
-            //WorldTimer.Run();
-            //motionPlayer = GameObject.Find("Hands").GetComponent<MotionPlayer>();
+            WorldTimer.Run();
+            motionPlayer = GameObject.Find("Hands").GetComponent<MotionPlayer>();
 
             // video側
             videoController = GameObject.Find("Display for Play").GetComponent<VideoController>();
@@ -40,17 +40,27 @@ namespace KW_Mocap
             txt_speed.text = "x1.00";
         }
 
+        void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.L))
+            {
+                if (motionPlayer != null)
+                {
+                    string fileName = "TestMotion";
+                    // TODO: 便宜的にstaticにしたLoadメソッドを修正
+                    //MotionRecoder motionRecorder = new MotionRecoder();
+                    MotionData[] motionData = MotionRecoder.Load(fileName);
+
+                    motionPlayer.SetMotionData(motionData);
+                }
+            }
+
+        }
+
         void OnBtn_Play()
         {
             // motion側
-            if (motionPlayer != null)
-            {
-                string fileName = "Sample";
-                MotionRecoder motionRecorder = new MotionRecoder();
-                MotionData[] motionData = motionRecorder.Load(fileName);
-
-                motionPlayer.SetMotionData(motionData);
-            }
+            motionPlayer.StartPlaying();
 
             // video側
             videoController.TogglePlayAndPause();

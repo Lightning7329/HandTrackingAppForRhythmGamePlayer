@@ -30,7 +30,7 @@ namespace KW_Mocap
 
             if (Input.GetKeyDown(KeyCode.S))
             {
-                motionRecoder.Save("TestMotion");
+                motionRecoder.Save("TestMotion2");
             }
         }
     }

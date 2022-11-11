@@ -32,8 +32,25 @@ namespace KW_Mocap
 
         void Play()
         {
+            if (motionData[playDataCount] == null)
+            {
+                Debug.Log($"motionData[{playDataCount}] == null");
+                return;
+            }
+            else if (motionData[playDataCount].left == null)
+            {
+                Debug.Log($"motionData[{playDataCount}].left == null");
+                return;
+            }
+            else if (motionData[playDataCount].right == null)
+            {
+                Debug.Log($"motionData[{playDataCount}].right == null");
+                return;
+            }
             // TODO: leftJoint[0]~leftKJoint[8]のモーションデータも再生する。rightも然り。
 
+            // TODO: NullReferenceException: Object reference not set to an instance of an object
+            // 上のif文をどれも通らない当たり参照は入ってるけど、その参照先が怪しい
             leftJoints[9].transform.position = motionData[playDataCount].left.palmPos;
             rightJoints[9].transform.position = motionData[playDataCount].right.palmPos;
         }
@@ -45,6 +62,7 @@ namespace KW_Mocap
 
             isPlaying = true;
             WorldTimer.CountUp += PlayDataCountUp;
+            Debug.Log("Start Playing");
         }
 
         public void StopPlaying()
@@ -53,10 +71,13 @@ namespace KW_Mocap
 
             isPlaying = false;
             WorldTimer.CountUp -= PlayDataCountUp;
+            Debug.Log("Stop Playing");
         }
 
         void PlayDataCountUp()
         {
+            if (playDataCount >= motionData.Length) return;
+
             playDataCount++;
         }
 
