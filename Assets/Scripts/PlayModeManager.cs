@@ -31,11 +31,11 @@ namespace KW_Mocap
             videoController = GameObject.Find("Display for Play").GetComponent<VideoController>();
 
             // uGUI側
-            SetButton(ref playButton, "PlayButton", OnBtn_Play, "Play");
-            SetButton(ref forwardButton, "ForwardButton", OnBtn_Forward, $"{skipSeconds}s");
-            SetButton(ref backwardButton, "BackwardButton", OnBtn_Backward, $"{skipSeconds}s");
-            SetButton(ref addSpeedButton, "AddSpeedButton", OnBtn_AddSpeed, "+0.05");
-            SetButton(ref subSpeedButton, "SubSpeedButton", OnBtn_SubSpeed, "-0.05");
+            UISetting.SetButton(ref playButton, "PlayButton", OnBtn_Play, "Play");
+            UISetting.SetButton(ref forwardButton, "ForwardButton", OnBtn_Forward, $"{skipSeconds}s");
+            UISetting.SetButton(ref backwardButton, "BackwardButton", OnBtn_Backward, $"{skipSeconds}s");
+            UISetting.SetButton(ref addSpeedButton, "AddSpeedButton", OnBtn_AddSpeed, "+0.05");
+            UISetting.SetButton(ref subSpeedButton, "SubSpeedButton", OnBtn_SubSpeed, "-0.05");
             txt_speed = GameObject.Find("Speed").transform.Find("Text").gameObject.GetComponent<Text>();
             txt_speed.text = "x1.00";
         }
@@ -114,13 +114,6 @@ namespace KW_Mocap
 
             // uGUI側
             txt_speed.text = $"x{currentSpeed:F2}";
-        }
-
-        private void SetButton(ref Button button, string name, UnityEngine.Events.UnityAction call, string text)
-        {
-            button = GameObject.Find(name).GetComponent<Button>();
-            button.onClick.AddListener(call);
-            button.transform.Find("Text").GetComponent<Text>().text = text;
         }
     }
 }
