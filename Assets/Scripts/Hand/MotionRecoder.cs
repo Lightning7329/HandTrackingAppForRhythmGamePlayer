@@ -65,7 +65,9 @@ namespace KW_Mocap
 
         void RecordDataCountUp()
         {
-            recordDataCount = (recordDataCount + 1) % MaxDataCount;
+            if (recordDataCount >= MaxDataCount) StopRecording();
+
+            recordDataCount++;
         }
 
         public void Save(string fileName)
@@ -96,35 +98,6 @@ namespace KW_Mocap
                 Debug.Log(e);
                 throw new DuplicateFileNameException("This file name is already exists.", e);
             }
-        }
-
-        public static MotionData[] Load(string fileName)
-        {
-            //if (isRecording) return null;
-            MotionData[] motionData_ = new MotionData[MaxDataCount];
-            byte[] buf = new byte[144];
-            try
-            {
-                using (FileStream fs = new FileStream($"SavedMotionData/{fileName}.bin", FileMode.Open, FileAccess.Read))
-                {
-                    // 読み込むデータ点数
-                    fs.Read(buf, 0, 4);
-                    int DataCount = BitConverter.ToInt32(buf, 0);
-
-                    for (int i = 0; i < DataCount; i++)
-                    {
-                        fs.Read(buf, 0, 144);
-                        motionData_[i] = new MotionData(buf);
-                    }
-                }
-            }
-            catch (IOException e)
-            {
-                Debug.Log(e);
-            }
-
-            Debug.Log($"Loaded SavedMotionData/{fileName}.bin");
-            return motionData_;
         }
     }
 }

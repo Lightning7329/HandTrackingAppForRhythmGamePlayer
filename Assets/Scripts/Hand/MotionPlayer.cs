@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 namespace KW_Mocap
@@ -7,7 +9,7 @@ namespace KW_Mocap
     public class MotionPlayer : MonoBehaviour
     {
         MotionData[] motionData = null;
-        bool isSet = false;
+        bool isLoaded = false;
         bool isPlaying = false;
         int playDataCount = 0;
         [SerializeField] GameObject left, right;
@@ -57,7 +59,7 @@ namespace KW_Mocap
 
         public void StartPlaying()
         {
-            if (!isSet) return;
+            if (!isLoaded) throw new MotionDataNotLoadedException();
             if (isPlaying) return;
 
             isPlaying = true;
@@ -76,15 +78,36 @@ namespace KW_Mocap
 
         void PlayDataCountUp()
         {
-            if (playDataCount >= motionData.Length) return;
+            if (playDataCount >= motionData.Length) StopPlaying();
 
             playDataCount++;
         }
 
-        public void SetMotionData(MotionData[] motionData)
+        public void Load(string fileName)
         {
-            this.motionData = motionData;
-            isSet = true;
+            string pass = $"SavedMotionData/{fileName}.bin";
+            byte[] buf = new byte[144];
+            try
+            {
+                using (FileStream fs = new FileStream(pass, FileMode.Open, FileAccess.Read))
+                {
+                    // 読み込むデータ点数
+                    fs.Read(buf, 0, 4);
+                    int DataCount = BitConverter.ToInt32(buf, 0);
+
+                    for (int i = 0; i < DataCount; i++)
+                    {
+                        fs.Read(buf, 0, 144);
+                        motionData[i] = new MotionData(buf);
+                    }
+                }
+                isLoaded = true;
+                Debug.Log($"Loaded" + pass);
+            }
+            catch (IOException e)
+            {
+                Debug.Log(e);
+            }            
         }
     }
 }

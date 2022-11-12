@@ -47,14 +47,9 @@ namespace KW_Mocap
                 if (motionPlayer != null)
                 {
                     string fileName = "TestMotion";
-                    // TODO: 便宜的にstaticにしたLoadメソッドを修正
-                    //MotionRecoder motionRecorder = new MotionRecoder();
-                    MotionData[] motionData = MotionRecoder.Load(fileName);
-
-                    motionPlayer.SetMotionData(motionData);
+                    motionPlayer.Load(fileName);
                 }
             }
-
         }
 
         void OnBtn_Play()
