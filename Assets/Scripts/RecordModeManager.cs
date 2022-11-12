@@ -12,7 +12,6 @@ namespace KW_Mocap
 
         private Button recordButton;
 
-        // Start is called before the first frame update
         void Start()
         {
             WorldTimer.Run();
@@ -20,7 +19,6 @@ namespace KW_Mocap
             UISetting.SetButton(ref recordButton, "RecordButton", OnBtn_Record, "Rec");
         }
 
-        // Update is called once per frame
         void Update()
         {
             if (Input.GetKeyDown(KeyCode.S))
@@ -31,13 +29,18 @@ namespace KW_Mocap
 
         void OnBtn_Record()
         {
+            Text t = recordButton.transform.Find("Text").GetComponent<Text>();
             if (isRecording)
             {
+                t.text = "Rec";
                 motionRecoder.StopRecording();
+                isRecording = false;
             }
             else
             {
+                t.text = "Stop";
                 motionRecoder.StartRecording();
+                isRecording = true;
             }
         }
     }

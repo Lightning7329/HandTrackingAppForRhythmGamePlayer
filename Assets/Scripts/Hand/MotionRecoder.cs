@@ -9,8 +9,11 @@ namespace KW_Mocap
 {
     public class MotionRecoder : MonoBehaviour
     {
-        const int MaxDataCount = 10000;   //fps30で5分ちょっと
-
+        /// <summary>
+        /// 記録できるデータ点数の最大値。
+        /// 30FPSだと5分ちょっと相当。
+        /// </summary>
+        const int MaxDataCount = 10000;
         public int recordDataCount { get; private set; } = 0;
         MotionData[] motionData = new MotionData[MaxDataCount];
         bool isRecording = false;
