@@ -7,7 +7,7 @@ namespace KW_Mocap
 {
     public class PlayModeManager : MonoBehaviour
     {
-        bool isPlaying = false;
+        [SerializeField] bool isPlaying = false;
         private float currentSpeed = 1.0f;
         [SerializeField] private float speedChange = 0.05f;
         [SerializeField] private int skipSeconds = 5;
@@ -25,7 +25,7 @@ namespace KW_Mocap
         {
             //WorldTimer.DisplayFrameCount();
             WorldTimer.Run();
-            motionPlayer = GameObject.Find("Hands").GetComponent<MotionPlayer>();
+            //motionPlayer = GameObject.Find("Hands").GetComponent<MotionPlayer>();
 
             // video側
             videoController = GameObject.Find("Display for Play").GetComponent<VideoController>();
@@ -54,23 +54,22 @@ namespace KW_Mocap
 
         void OnBtn_Play()
         {
-            // motion側
-            motionPlayer.StartPlaying();
-
             // video側
             videoController.TogglePlayAndPause();
 
-            // uGUI側
+            // Motion側 / uGUI側
             Text t = playButton.transform.Find("Text").GetComponent<Text>();
             if (isPlaying)
             {
                 t.text = "Play";
+                motionPlayer.StopPlaying();
                 isPlaying = false;
             }
             else
             {
                 t.text = "Pause";
-                isPlaying = false;
+                motionPlayer.StartPlaying();
+                isPlaying = true;
             }
         }
 

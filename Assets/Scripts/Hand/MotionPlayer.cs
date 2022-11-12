@@ -9,9 +9,9 @@ namespace KW_Mocap
     public class MotionPlayer : MonoBehaviour
     {
         MotionData[] motionData = null;
+        int playDataCount = 0;
         bool isLoaded = false;
         bool isPlaying = false;
-        int playDataCount = 0;
         [SerializeField] GameObject left, right;
         GameObject[] leftJoints, rightJoints;
 
@@ -34,6 +34,7 @@ namespace KW_Mocap
 
         void Play()
         {
+            /*
             if (motionData[playDataCount] == null)
             {
                 Debug.Log($"motionData[{playDataCount}] == null");
@@ -48,11 +49,12 @@ namespace KW_Mocap
             {
                 Debug.Log($"motionData[{playDataCount}].right == null");
                 return;
-            }
+            }*/
             // TODO: leftJoint[0]~leftKJoint[8]のモーションデータも再生する。rightも然り。
 
             // TODO: NullReferenceException: Object reference not set to an instance of an object
             // 上のif文をどれも通らない当たり参照は入ってるけど、その参照先が怪しい
+            // TODO: 多分直ったと思うから研究室で要検証
             leftJoints[9].transform.position = motionData[playDataCount].left.palmPos;
             rightJoints[9].transform.position = motionData[playDataCount].right.palmPos;
         }
@@ -76,6 +78,11 @@ namespace KW_Mocap
             Debug.Log("Stop Playing");
         }
 
+
+        /// <summary>
+        /// StartPlaying()でWorldTimerクラスのCountUpにデリゲートとして渡される。
+        /// motionデータ点数を超えると自動的に再生が止まる。
+        /// </summary>
         void PlayDataCountUp()
         {
             if (playDataCount >= motionData.Length) StopPlaying();
