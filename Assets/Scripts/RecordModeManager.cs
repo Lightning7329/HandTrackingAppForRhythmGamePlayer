@@ -33,12 +33,16 @@ namespace KW_Mocap
             if (isRecording)
             {
                 t.text = "Rec";
+                t.color = Color.black;
+                recordButton.GetComponent<Image>().color = Color.white;
                 motionRecoder.StopRecording();
                 isRecording = false;
             }
             else
             {
                 t.text = "Stop";
+                t.color = Color.white;
+                recordButton.GetComponent<Image>().color = Color.red;
                 motionRecoder.StartRecording();
                 isRecording = true;
             }
