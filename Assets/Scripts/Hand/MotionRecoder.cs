@@ -80,12 +80,10 @@ namespace KW_Mocap
             {
                 using (FileStream fs = new FileStream($"SavedMotionData/{fileName}.bin", FileMode.Create, FileAccess.Write))
                 {
-                    // 記録するデータ点数
-                    int savingDataCount = recordDataCount < MaxDataCount ? recordDataCount : MaxDataCount;
-                    byte[] byte_DataCount = BitConverter.GetBytes(savingDataCount);
+                    byte[] byte_DataCount = BitConverter.GetBytes(recordDataCount);
                     fs.Write(byte_DataCount, 0, byte_DataCount.Length);
 
-                    for (int i = 0; i < savingDataCount; i++)
+                    for (int i = 0; i < recordDataCount; i++)
                     {
                         //データをシリアル化してFileStreamに書き込み
                         motionData[i].SetBytes(buf);
