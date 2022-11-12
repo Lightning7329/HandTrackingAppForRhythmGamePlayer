@@ -40,9 +40,14 @@ namespace KW_Mocap
     public class HandData
     {
         /// <summary>
+        /// byte配列を作成するために渡す配列bufの大きさの最小値
+        /// </summary>
+        public const int MinimumBufferSize = 188;
+
+        /// <summary>
         /// 手のモーションデータのうち左か右かでバッファ読み取り時のオフセットが変わる
         /// </summary>
-        public enum Offset { Left = 0, Right = 192 };
+        public enum Offset { Left = 0, Right = MinimumBufferSize };
 
         /// <summary>
         /// 手のひらの位置の座標。Transform.Positionに入れる。
@@ -125,7 +130,7 @@ namespace KW_Mocap
             // ここまでで配列bufのbuf[0 + offset]からbuf[27 + offset]まで使用
 
             // 関節の回転
-            // ここで配列bufのbuf[28 + offset]からbuf[188 + offset]まで使用（40+16*9+4=188）
+            // ここで配列bufのbuf[28 + offset]からbuf[187 + offset]まで使用（40+16*9+3=187）
             for (int i = 0; i < jointRot.Length; i++)
             {
                 int shift = 16 * i + (int)offset;

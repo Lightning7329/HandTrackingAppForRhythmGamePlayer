@@ -86,7 +86,8 @@ namespace KW_Mocap
         public void Load(string fileName)
         {
             string pass = $"SavedMotionData/{fileName}.bin";
-            byte[] buf = new byte[144];
+            int bufSize = HandData.MinimumBufferSize * 2;
+            byte[] buf = new byte[bufSize];
             try
             {
                 using (FileStream fs = new FileStream(pass, FileMode.Open, FileAccess.Read))
@@ -97,7 +98,7 @@ namespace KW_Mocap
 
                     for (int i = 0; i < DataCount; i++)
                     {
-                        fs.Read(buf, 0, 144);
+                        fs.Read(buf, 0, bufSize);
                         motionData[i] = new MotionData(buf);
                     }
                 }

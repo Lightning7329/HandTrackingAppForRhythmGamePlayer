@@ -74,7 +74,8 @@ namespace KW_Mocap
         {
             if (isRecording) return;
 
-            byte[] buf = new byte[144];
+            int bufSize = HandData.MinimumBufferSize * 2;
+            byte[] buf = new byte[bufSize];
             try
             {
                 using (FileStream fs = new FileStream($"SavedMotionData/{fileName}.bin", FileMode.Create, FileAccess.Write))
@@ -88,7 +89,7 @@ namespace KW_Mocap
                     {
                         //データをシリアル化してFileStreamに書き込み
                         motionData[i].SetBytes(buf);
-                        fs.Write(buf, 0, 144);
+                        fs.Write(buf, 0, bufSize);
                     }
                 }
                 Debug.Log($"Saved as SavedMotionData/{fileName}.bin");
