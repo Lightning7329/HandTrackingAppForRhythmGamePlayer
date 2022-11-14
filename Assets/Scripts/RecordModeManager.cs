@@ -10,13 +10,14 @@ namespace KW_Mocap
         bool isRecording = false;
         MotionRecoder motionRecoder = null;
 
-        private Button recordButton;
+        private Button recordButton, sceneChangeButton;
 
         void Start()
         {
             WorldTimer.Run();
             motionRecoder = GameObject.Find("Hands").GetComponent<MotionRecoder>();
             UISetting.SetButton(ref recordButton, "RecordButton", OnBtn_Record, "Rec");
+            UISetting.SetButton(ref sceneChangeButton, "SceneChangeButton", OnBtn_SceneChange, "PlayMode");
         }
 
         void Update()
@@ -46,6 +47,11 @@ namespace KW_Mocap
                 motionRecoder.StartRecording();
                 isRecording = true;
             }
+        }
+
+        void OnBtn_SceneChange()
+        {
+            UnityEngine.SceneManagement.SceneManager.LoadScene("VideoPlay");
         }
     }
 }

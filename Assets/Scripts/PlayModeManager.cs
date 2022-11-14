@@ -18,7 +18,7 @@ namespace KW_Mocap
 
         // uGUI側
         private Text txt_speed;
-        private Button playButton, forwardButton, backwardButton, addSpeedButton, subSpeedButton;
+        private Button playButton, forwardButton, backwardButton, addSpeedButton, subSpeedButton, sceneChangeButton;
 
 
         void Start()
@@ -36,6 +36,7 @@ namespace KW_Mocap
             UISetting.SetButton(ref backwardButton, "BackwardButton", OnBtn_Backward, $"{skipSeconds}s");
             UISetting.SetButton(ref addSpeedButton, "AddSpeedButton", OnBtn_AddSpeed, "+0.05");
             UISetting.SetButton(ref subSpeedButton, "SubSpeedButton", OnBtn_SubSpeed, "-0.05");
+            UISetting.SetButton(ref sceneChangeButton, "SceneChangeButton", OnBtn_SceneChange, "RecordMode");
             txt_speed = GameObject.Find("Speed").transform.Find("Text").gameObject.GetComponent<Text>();
             txt_speed.text = "x1.00";
         }
@@ -113,6 +114,11 @@ namespace KW_Mocap
 
             // uGUI側
             txt_speed.text = $"x{currentSpeed:F2}";
+        }
+
+        void OnBtn_SceneChange()
+        {
+            UnityEngine.SceneManagement.SceneManager.LoadScene("VideoRecord");
         }
     }
 }
