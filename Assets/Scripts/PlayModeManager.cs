@@ -17,7 +17,7 @@ namespace KW_Mocap
         VideoController videoController = null;
 
         // uGUI側
-        private Text txt_speed;
+        private Text txt_speed, txt_playButton;
         private Button playButton, forwardButton, backwardButton, addSpeedButton, subSpeedButton, sceneChangeButton;
 
 
@@ -39,6 +39,7 @@ namespace KW_Mocap
             UISetting.SetButton(ref sceneChangeButton, "SceneChangeButton", OnBtn_SceneChange, "RecordMode");
             txt_speed = GameObject.Find("Speed").transform.Find("Text").gameObject.GetComponent<Text>();
             txt_speed.text = "x1.00";
+            txt_playButton = playButton.transform.Find("Text").GetComponent<Text>();
         }
 
         void Update()
@@ -55,21 +56,18 @@ namespace KW_Mocap
 
         void OnBtn_Play()
         {
-            // video側
-            videoController.TogglePlayAndPause();
-
-            // Motion側 / uGUI側
-            Text t = playButton.transform.Find("Text").GetComponent<Text>();
             if (isPlaying)
             {
-                t.text = "Play";
-                motionPlayer.StopPlaying();
+                txt_playButton.text = "Play";
+                videoController.PausePlaying();
+                motionPlayer?.PausePlaying();
                 isPlaying = false;
             }
             else
             {
-                t.text = "Pause";
-                motionPlayer.StartPlaying();
+                txt_playButton.text = "Pause";
+                videoController.StartPlaying();
+                motionPlayer?.StartPlaying();
                 isPlaying = true;
             }
         }

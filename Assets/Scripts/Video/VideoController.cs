@@ -6,7 +6,7 @@ using UnityEngine.Video;
 
 namespace KW_Mocap
 {
-    public class VideoController : MonoBehaviour
+    public class VideoController : MonoBehaviour, Player
     {
         private VideoPlayer video;
         public bool isPlaying { get; private set; } = false;
@@ -39,14 +39,30 @@ namespace KW_Mocap
             }
         }
 
-        public void Skip(int seconds)
+        public void StartPlaying()
         {
-            video.frame += seconds * (long)video.frameRate;
+            if (isPlaying) return;
+
+            video.Play();
+            isPlaying = true;
         }
 
-        public void ChangeSpeed(float speed)
+        public void PausePlaying()
         {
-            video.playbackSpeed = speed;
+            if (!isPlaying) return;
+
+            video.Pause();
+            isPlaying = false;
+        }
+
+        public void Skip(float seconds)
+        {
+            video.frame += (long)(seconds * video.frameRate);
+        }
+
+        public void ChangeSpeed(float speedRatio)
+        {
+            video.playbackSpeed = speedRatio;
         }
     }
 }
