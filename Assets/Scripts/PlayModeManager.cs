@@ -10,7 +10,7 @@ namespace KW_Mocap
         [SerializeField] bool isPlaying = false;
         private float currentSpeed = 1.0f;
         [SerializeField] private float speedChange = 0.05f;
-        [SerializeField] private int skipSeconds = 5;
+        [SerializeField] private float skipSeconds = 5.0f;
 
         MotionPlayer motionPlayer = null;
 
@@ -75,7 +75,7 @@ namespace KW_Mocap
         void OnBtn_Forward()
         {
             // motion側
-            // TODO
+            motionPlayer?.Skip(skipSeconds);
 
             // video側
             videoController.Skip(skipSeconds);
@@ -84,7 +84,7 @@ namespace KW_Mocap
         void OnBtn_Backward()
         {
             // motion側
-            // TODO
+            motionPlayer?.Skip(-skipSeconds);
 
             // video側
             videoController.Skip(-skipSeconds);
@@ -92,26 +92,24 @@ namespace KW_Mocap
 
         void OnBtn_AddSpeed()
         {
-            // motion側
-            // TODO
-
-            // video側
-            videoController.ChangeSpeed(currentSpeed += speedChange);
-
-            // uGUI側
-            txt_speed.text = $"x{currentSpeed:F2}";
+            ChangeSpeed(currentSpeed += speedChange);
         }
 
         void OnBtn_SubSpeed()
         {
+            ChangeSpeed(currentSpeed -= speedChange);
+        }
+
+        void ChangeSpeed(float newSpeed)
+        {
             // motion側
-            // TODO
+            motionPlayer?.ChangeSpeed(newSpeed);
 
             // video側
-            videoController.ChangeSpeed(currentSpeed -= speedChange);
+            videoController.ChangeSpeed(newSpeed);
 
             // uGUI側
-            txt_speed.text = $"x{currentSpeed:F2}";
+            txt_speed.text = $"x{newSpeed:F2}";
         }
 
         void OnBtn_SceneChange()

@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace KW_Mocap
 {
-    public class MotionPlayer : MonoBehaviour
+    public class MotionPlayer : MonoBehaviour, Player
     {
         MotionData[] motionData = null;
         int playDataCount = 0;
@@ -18,7 +18,15 @@ namespace KW_Mocap
         public int PlayDataCount
         {
             get => playDataCount;
-            set => playDataCount = value > 0 ? value : 0;
+            set
+            {
+                if (value < 0)
+                    playDataCount = 0;
+                else if (motionData != null && value >= motionData.Length)
+                    playDataCount = motionData.Length - 1;
+                else
+                    playDataCount = value;
+            }
         }
 
         void Start()
@@ -69,7 +77,7 @@ namespace KW_Mocap
             Debug.Log("Start Playing");
         }
 
-        public void StopPlaying()
+        public void PausePlaying()
         {
             if (!isPlaying) return;
 
@@ -78,6 +86,15 @@ namespace KW_Mocap
             Debug.Log("Stop Playing");
         }
 
+        public void Skip(float seconds)
+        {
+            this.PlayDataCount += (int)(WorldTimer.frameRate * seconds);
+        }
+
+        public void ChangeSpeed(float speedRatio)
+        {
+            WorldTimer.ChangeSpeed(speedRatio);
+        }
 
         /// <summary>
         /// StartPlaying()でWorldTimerクラスのCountUpにデリゲートとして渡される。
@@ -85,7 +102,7 @@ namespace KW_Mocap
         /// </summary>
         void PlayDataCountUp()
         {
-            if (playDataCount >= motionData.Length) StopPlaying();
+            if (playDataCount >= motionData.Length) PausePlaying();
 
             playDataCount++;
         }

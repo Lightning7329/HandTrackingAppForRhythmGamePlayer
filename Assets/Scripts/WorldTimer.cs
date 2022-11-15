@@ -19,23 +19,28 @@ namespace KW_Mocap
             get => _frameRate;
             set => _frameRate = value > 0 ? value : 30;
         }
-
+        private static int period = (int)(1000f / _frameRate);
 
         public static void Run()
         {
             if (timer != null) return;
-
-            int dT = (int)(1000f / _frameRate);
-            timer = new Timer(state => { frameCount++; CountUp(); }, null, 0, dT);
+            period = (int)(1000f / _frameRate);
+            timer = new Timer(state => { frameCount++; CountUp(); }, null, 0, period);
         }
 
         public static void Stop()
         {
             if (timer == null) return;
-            
             timer.Change(Timeout.Infinite, Timeout.Infinite);
             timer.Dispose();
             timer = null;
+        }
+
+        public static void ChangeSpeed(float speedRatio)
+        {
+            if (timer != null) return;
+            period = (int)(period / speedRatio);
+            timer.Change(0, period);
         }
 
         public static void FrameCountReset()
