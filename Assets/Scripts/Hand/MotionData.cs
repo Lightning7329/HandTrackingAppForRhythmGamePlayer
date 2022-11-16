@@ -22,8 +22,8 @@ namespace KW_Mocap
         /// <param name="offset">左手か右手かでbyte配列の読み取り位置が異なる</param>
         public MotionData(byte[] buf)
         {
-            left = new HandData(buf, HandData.Offset.Left);
-            right = new HandData(buf, HandData.Offset.Right);
+            this.left = new HandData(buf, HandData.Offset.Left);
+            this.right = new HandData(buf, HandData.Offset.Right);
         }
 
         /// <summary>
@@ -40,9 +40,14 @@ namespace KW_Mocap
     public class HandData
     {
         /// <summary>
+        /// byte配列を作成するために渡す配列bufの大きさの最小値
+        /// </summary>
+        public const int MinimumBufferSize = 188;
+
+        /// <summary>
         /// 手のモーションデータのうち左か右かでバッファ読み取り時のオフセットが変わる
         /// </summary>
-        public enum Offset { Left = 0, Right = 72 };
+        public enum Offset { Left = 0, Right = MinimumBufferSize };
 
         /// <summary>
         /// 手のひらの位置の座標。Transform.Positionに入れる。
@@ -99,11 +104,11 @@ namespace KW_Mocap
             {
                 jointRot[i] = Quaternion.identity;
 
-                int shift = 4 * i + (int)offset;
+                int shift = 16 * i + (int)offset;
                 jointRot[i].w = BitConverter.ToSingle(buf, 28 + shift);
-                jointRot[i].x = BitConverter.ToSingle(buf, 29 + shift);
-                jointRot[i].y = BitConverter.ToSingle(buf, 30 + shift);
-                jointRot[i].z = BitConverter.ToSingle(buf, 31 + shift);
+                jointRot[i].x = BitConverter.ToSingle(buf, 32 + shift);
+                jointRot[i].y = BitConverter.ToSingle(buf, 36 + shift);
+                jointRot[i].z = BitConverter.ToSingle(buf, 40 + shift);
             }
         }
 
@@ -125,14 +130,14 @@ namespace KW_Mocap
             // ここまでで配列bufのbuf[0 + offset]からbuf[27 + offset]まで使用
 
             // 関節の回転
-            // ここで配列bufのbuf[28 + offset]からbuf[71 + offset]まで使用（31+4*9+4=71）
+            // ここで配列bufのbuf[28 + offset]からbuf[187 + offset]まで使用（40+16*9+3=187）
             for (int i = 0; i < jointRot.Length; i++)
             {
-                int shift = 4 * i + (int)offset;
+                int shift = 16 * i + (int)offset;
                 SetByteBuf(BitConverter.GetBytes(jointRot[i].w), buf, 28 + shift, 4);
-                SetByteBuf(BitConverter.GetBytes(jointRot[i].x), buf, 29 + shift, 4);
-                SetByteBuf(BitConverter.GetBytes(jointRot[i].y), buf, 30 + shift, 4);
-                SetByteBuf(BitConverter.GetBytes(jointRot[i].z), buf, 31 + shift, 4);
+                SetByteBuf(BitConverter.GetBytes(jointRot[i].x), buf, 32 + shift, 4);
+                SetByteBuf(BitConverter.GetBytes(jointRot[i].y), buf, 36 + shift, 4);
+                SetByteBuf(BitConverter.GetBytes(jointRot[i].z), buf, 40 + shift, 4);
             }
         }
 

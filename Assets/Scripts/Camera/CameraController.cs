@@ -8,7 +8,7 @@ namespace KW_Mocap
     public class CameraController : MonoBehaviour
     {
         Transform cameraTransform;
-        Button camera1;
+        Button camera1, camera2;
         [SerializeField] private float moveSpead = 0.02f;
         [SerializeField] private float rotateSpead = 0.07f;
         [SerializeField] private float zoomSpead = 0.03f;
@@ -16,8 +16,8 @@ namespace KW_Mocap
         void Start()
         {
             cameraTransform = GetComponent<Transform>();
-            camera1 = GameObject.Find("Camera1").GetComponent<Button>();
-            camera1.onClick.AddListener(OnBtn_Camera1);
+            UISetting.SetButton(ref camera1, "Camera1", OnBtn_Camera1, "Camera1");
+            UISetting.SetButton(ref camera2, "Camera2", OnBtn_Camera2, "Camera2");
         }
 
         void Update()
@@ -67,6 +67,12 @@ namespace KW_Mocap
         {
             cameraTransform.position = new Vector3(0.0f, 19.95238f, -11.01941f);
             cameraTransform.rotation = Quaternion.Euler(new Vector3(60.27f, 0.0f, 0.0f));
+        }
+
+        private void OnBtn_Camera2()
+        {
+            cameraTransform.position = new Vector3(0.0f, 18.2f, 0.0f);
+            cameraTransform.rotation = Quaternion.Euler(new Vector3(90.0f, 0.0f, 0.0f));
         }
     }
 }

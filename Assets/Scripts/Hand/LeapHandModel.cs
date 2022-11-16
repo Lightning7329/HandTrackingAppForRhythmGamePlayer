@@ -1,5 +1,4 @@
-﻿
-using UnityEngine;
+﻿using UnityEngine;
 using Leap;
 using Leap.Unity;
 
@@ -8,7 +7,7 @@ namespace KW_Mocap
 	public class LeapHandModel : HandModelBase
 	{
 		[SerializeField] private Chirality LR;
-		[SerializeField] [RangeAttribute(0.1f, 100.0f)] private float scl;
+        [SerializeField][Range(0.1f, 100.0f)] private float scl;
 		private Hand lmHand;
 
 		public override Chirality Handedness
@@ -56,6 +55,3 @@ namespace KW_Mocap
 		}
 	}
 }
-//--------------------------------------------------------------
-// EOF
-//--------------------------------------------------------------
