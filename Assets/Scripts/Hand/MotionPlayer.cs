@@ -38,7 +38,6 @@ namespace KW_Mocap
         void Update()
         {
             if (isPlaying) Play();
-            WorldTimer.DisplayFrameCount();
         }
 
         void Play()

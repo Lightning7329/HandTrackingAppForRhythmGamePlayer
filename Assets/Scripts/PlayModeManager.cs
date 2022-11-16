@@ -60,14 +60,14 @@ namespace KW_Mocap
             {
                 txt_playButton.text = "Play";
                 videoController.PausePlaying();
-                motionPlayer?.PausePlaying();
+                motionPlayer.PausePlaying();
                 isPlaying = false;
             }
             else
             {
                 txt_playButton.text = "Pause";
                 videoController.StartPlaying();
-                motionPlayer?.StartPlaying();
+                motionPlayer.StartPlaying();
                 isPlaying = true;
             }
         }
@@ -75,7 +75,7 @@ namespace KW_Mocap
         void OnBtn_Forward()
         {
             // motion側
-            motionPlayer?.Skip(skipSeconds);
+            motionPlayer.Skip(skipSeconds);
 
             // video側
             videoController.Skip(skipSeconds);
@@ -84,7 +84,7 @@ namespace KW_Mocap
         void OnBtn_Backward()
         {
             // motion側
-            motionPlayer?.Skip(-skipSeconds);
+            motionPlayer.Skip(-skipSeconds);
 
             // video側
             videoController.Skip(-skipSeconds);
@@ -103,7 +103,7 @@ namespace KW_Mocap
         void ChangeSpeed(float newSpeed)
         {
             // motion側
-            motionPlayer?.ChangeSpeed(newSpeed);
+            motionPlayer.ChangeSpeed(newSpeed);
 
             // video側
             videoController.ChangeSpeed(newSpeed);
