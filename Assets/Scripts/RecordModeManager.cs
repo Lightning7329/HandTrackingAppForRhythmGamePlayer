@@ -24,7 +24,7 @@ namespace KW_Mocap
         {
             if (Input.GetKeyDown(KeyCode.S))
             {
-                motionRecoder.Save("TestMotion2");
+                motionRecoder.Save("TestMotion");
             }
         }
 

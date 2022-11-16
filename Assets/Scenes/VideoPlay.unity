@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44608718, g: 0.49585086, b: 0.5745036, a: 1}
+  m_IndirectSpecularColor: {r: 0.44608766, g: 0.49585128, b: 0.5745041, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2150,6 +2150,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74375aaea50e2470b83bd3cf52144835, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playDataCount: 0
   left: {fileID: 577297391}
   right: {fileID: 1813169051}
 --- !u!1 &1462079310
@@ -3093,6 +3094,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1417507091}
     m_Modifications:
+    - target: {fileID: 587304207411822606, guid: 0c0d4ae0c95984a54820c2a3f9195715, type: 3}
+      propertyPath: m_Name
+      value: Index0
+      objectReference: {fileID: 0}
     - target: {fileID: 587304208828858058, guid: 0c0d4ae0c95984a54820c2a3f9195715, type: 3}
       propertyPath: m_RootOrder
       value: 1
@@ -3141,7 +3146,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: Hand-R
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 2069520361, guid: 0c0d4ae0c95984a54820c2a3f9195715, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 0c0d4ae0c95984a54820c2a3f9195715, type: 3}
 --- !u!1001 &1565083571167205221
 PrefabInstance:

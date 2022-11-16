@@ -17,12 +17,12 @@ namespace KW_Mocap
         public int recordDataCount { get; private set; } = 0;
         MotionData[] motionData = new MotionData[MaxDataCount];
         bool isRecording = false;
-        LeapHandModel leftHand, rightHand;
+        Transform leftHand, rightHand;
 
         void Start()
         {
-            leftHand = transform.GetChild(0).GetComponent<LeapHandModel>();
-            rightHand = transform.GetChild(1).GetComponent<LeapHandModel>();
+            leftHand = transform.GetChild(0);
+            rightHand = transform.GetChild(1);
         }
 
         void Update()
@@ -32,20 +32,8 @@ namespace KW_Mocap
 
         void Record()
         {
-            // TODO
-            /*
-             * 例外処理せよ
-             * LeapMotionからの認識が外れた瞬間
-             * NullReferenceException: Object reference not set to an instance of an object
-             * KW_Mocap.MotionRecoder.Record () (at Assets/Scripts/MotionRecoder.cs:33)
-             * KW_Mocap.MotionRecoder.Update () (at Assets/Scripts/MotionRecoder.cs:27)
-             * が発生する。
-             */
-            var leftPose = leftHand.GetLeapHand().GetPalmPose();
-            var rightPose = rightHand.GetLeapHand().GetPalmPose();
-            HandData left = new HandData(leftPose.position, leftPose.rotation);
-            HandData right = new HandData(rightPose.position, rightPose.rotation);
-
+            HandData left = new HandData(leftHand.position, leftHand.rotation);
+            HandData right = new HandData(rightHand.position, rightHand.rotation);
             motionData[recordDataCount] = new MotionData(left, right);            
         }
 

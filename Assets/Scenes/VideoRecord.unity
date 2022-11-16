@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44608718, g: 0.49585086, b: 0.5745036, a: 1}
+  m_IndirectSpecularColor: {r: 0.44608766, g: 0.49585128, b: 0.5745041, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -534,7 +534,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 568567836}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 025cc0fa7b46aa541aba29d28d35ac09, type: 3}
   m_Name: 
@@ -1432,13 +1432,17 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1417507091}
     m_Modifications:
+    - target: {fileID: 1572573402, guid: 7f0823eef42154078947c92a84b440db, type: 3}
+      propertyPath: _leapProvider
+      value: 
+      objectReference: {fileID: 568567837}
     - target: {fileID: 1565083570598333578, guid: 7f0823eef42154078947c92a84b440db, type: 3}
       propertyPath: m_Name
       value: Hand-L
       objectReference: {fileID: 0}
     - target: {fileID: 1565083570598333589, guid: 7f0823eef42154078947c92a84b440db, type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1565083570598333589, guid: 7f0823eef42154078947c92a84b440db, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1487,26 +1491,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1565083570598333589, guid: 7f0823eef42154078947c92a84b440db, type: 3}
   m_PrefabInstance: {fileID: 1572573399}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1572573401 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1565083570598333578, guid: 7f0823eef42154078947c92a84b440db, type: 3}
-  m_PrefabInstance: {fileID: 1572573399}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1572573402
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1572573401}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7314f1194333786409674f2e380c3432, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _leapProvider: {fileID: 568567837}
-  LR: 0
-  scl: 70
 --- !u!1 &1649370223
 GameObject:
   m_ObjectHideFlags: 0
@@ -1696,9 +1680,13 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1417507091}
     m_Modifications:
+    - target: {fileID: 2069520361, guid: 0c0d4ae0c95984a54820c2a3f9195715, type: 3}
+      propertyPath: _leapProvider
+      value: 
+      objectReference: {fileID: 568567837}
     - target: {fileID: 587304208828858058, guid: 0c0d4ae0c95984a54820c2a3f9195715, type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 587304208828858058, guid: 0c0d4ae0c95984a54820c2a3f9195715, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1751,26 +1739,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 587304208828858058, guid: 0c0d4ae0c95984a54820c2a3f9195715, type: 3}
   m_PrefabInstance: {fileID: 2069520358}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &2069520360 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 587304208828858061, guid: 0c0d4ae0c95984a54820c2a3f9195715, type: 3}
-  m_PrefabInstance: {fileID: 2069520358}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &2069520361
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2069520360}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7314f1194333786409674f2e380c3432, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _leapProvider: {fileID: 568567837}
-  LR: 1
-  scl: 70
 --- !u!1 &8890665529666899122
 GameObject:
   m_ObjectHideFlags: 0

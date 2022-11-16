@@ -9,7 +9,7 @@ namespace KW_Mocap
     public class MotionPlayer : MonoBehaviour, Player
     {
         MotionData[] motionData = null;
-        int playDataCount = 0;
+        [SerializeField] int playDataCount = 0;
         bool isLoaded = false;
         bool isPlaying = false;
         [SerializeField] GameObject left, right;
@@ -42,29 +42,12 @@ namespace KW_Mocap
 
         void Play()
         {
-            /*
-            if (motionData[playDataCount] == null)
-            {
-                Debug.Log($"motionData[{playDataCount}] == null");
-                return;
-            }
-            else if (motionData[playDataCount].left == null)
-            {
-                Debug.Log($"motionData[{playDataCount}].left == null");
-                return;
-            }
-            else if (motionData[playDataCount].right == null)
-            {
-                Debug.Log($"motionData[{playDataCount}].right == null");
-                return;
-            }*/
             // TODO: leftJoint[0]~leftKJoint[8]のモーションデータも再生する。rightも然り。
 
-            // TODO: NullReferenceException: Object reference not set to an instance of an object
-            // 上のif文をどれも通らない当たり参照は入ってるけど、その参照先が怪しい
-            // TODO: 多分直ったと思うから研究室で要検証
-            leftJoints[9].transform.position = motionData[playDataCount].left.palmPos;
-            rightJoints[9].transform.position = motionData[playDataCount].right.palmPos;
+            left.transform.localPosition = motionData[playDataCount].left.palmPos;
+            left.transform.rotation = motionData[playDataCount].left.palmRot;
+            right.transform.position = motionData[playDataCount].right.palmPos;
+            right.transform.rotation = motionData[playDataCount].right.palmRot;
         }
 
         public void StartPlaying()
@@ -102,7 +85,7 @@ namespace KW_Mocap
         /// </summary>
         void PlayDataCountUp()
         {
-            if (playDataCount >= motionData.Length) PausePlaying();
+            if (playDataCount >= motionData.Length - 1) PausePlaying();
 
             playDataCount++;
         }
@@ -119,6 +102,7 @@ namespace KW_Mocap
                     // 読み込むデータ点数
                     fs.Read(buf, 0, 4);
                     int DataCount = BitConverter.ToInt32(buf, 0);
+                    motionData = new MotionData[DataCount];
 
                     for (int i = 0; i < DataCount; i++)
                     {

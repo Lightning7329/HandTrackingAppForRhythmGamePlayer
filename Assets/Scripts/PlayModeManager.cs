@@ -25,7 +25,7 @@ namespace KW_Mocap
         {
             //WorldTimer.DisplayFrameCount();
             WorldTimer.Run();
-            //motionPlayer = GameObject.Find("Hands").GetComponent<MotionPlayer>();
+            motionPlayer = GameObject.Find("Hands").GetComponent<MotionPlayer>();
 
             // video側
             videoController = GameObject.Find("Display for Play").GetComponent<VideoController>();
