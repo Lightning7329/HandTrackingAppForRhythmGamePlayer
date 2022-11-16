@@ -38,6 +38,7 @@ namespace KW_Mocap
         void Update()
         {
             if (isPlaying) Play();
+            WorldTimer.DisplayFrameCount();
         }
 
         void Play()
@@ -72,6 +73,7 @@ namespace KW_Mocap
         public void Skip(float seconds)
         {
             this.PlayDataCount += (int)(WorldTimer.frameRate * seconds);
+            StartPlaying();
         }
 
         public void ChangeSpeed(float speedRatio)
