@@ -72,7 +72,7 @@ namespace KW_Mocap
         public void Skip(float seconds)
         {
             this.PlayDataCount += (int)(WorldTimer.frameRate * seconds);
-            StartPlaying();
+            if(isPlaying) StartPlaying();
         }
 
         public void ChangeSpeed(float speedRatio)
@@ -86,9 +86,10 @@ namespace KW_Mocap
         /// </summary>
         void PlayDataCountUp()
         {
-            if (playDataCount >= motionData.Length - 1) PausePlaying();
+            if (this.PlayDataCount >= motionData.Length - 1)
+                PausePlaying();
 
-            playDataCount++;
+            this.PlayDataCount++;
         }
 
         public void Load(string fileName)
