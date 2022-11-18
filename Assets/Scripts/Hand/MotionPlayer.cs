@@ -31,7 +31,9 @@ namespace KW_Mocap
 
         void Start()
         {
+            left.GetComponent<HandSetting>().SetMaterial(left, true);
             leftJoints = left.GetComponent<HandSetting>().joints;
+            right.GetComponent<HandSetting>().SetMaterial(right, true);
             rightJoints = right.GetComponent<HandSetting>().joints;
         }
 
@@ -113,7 +115,7 @@ namespace KW_Mocap
                     }
                 }
                 isLoaded = true;
-                Debug.Log($"Loaded" + pass);
+                Debug.Log($"Loaded " + fileName);
             }
             catch (IOException e)
             {
