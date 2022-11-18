@@ -18,8 +18,9 @@ namespace KW_Mocap
 
         // uGUI側
         private Text txt_speed, txt_playButton;
-        private Button playButton, forwardButton, backwardButton, addSpeedButton, subSpeedButton, sceneChangeButton;
-
+        private Button playButton, forwardButton, backwardButton, addSpeedButton, subSpeedButton, sceneChangeButton, fileSelectButton;
+        private FileSelector fileSelector = null;
+        public GameObject obj_fileSelector;
 
         void Start()
         {
@@ -31,6 +32,9 @@ namespace KW_Mocap
             videoController = GameObject.Find("Display for Play").GetComponent<VideoController>();
 
             // uGUI側
+            //fileSelector = GameObject.Find("File Selection Panel").GetComponent<FileSelector>();
+            fileSelector = obj_fileSelector.GetComponent<FileSelector>();
+            UISetting.SetButton(ref fileSelectButton, "FileSelectButton", OnBtn_FileSelect, "Load");
             UISetting.SetButton(ref playButton, "PlayButton", OnBtn_Play, "Play");
             UISetting.SetButton(ref forwardButton, "ForwardButton", OnBtn_Forward, $"{skipSeconds}s");
             UISetting.SetButton(ref backwardButton, "BackwardButton", OnBtn_Backward, $"{skipSeconds}s");
@@ -44,11 +48,27 @@ namespace KW_Mocap
 
         void Update()
         {
-            if (Input.GetKeyDown(KeyCode.L))
+
+        }
+
+        void OnBtn_FileSelect()
+        {
+            fileSelector.List();
+            StartCoroutine("LoadFile");
+        }
+
+        IEnumerator LoadFile()
+        {
+            while (fileSelector.selectState == FileSelector.SelectState.NotSelected || fileSelector.selectState == FileSelector.SelectState.Selecting)
             {
+                yield return null;
+            }
+
+            if (fileSelector.selectState == FileSelector.SelectState.Selected)
+            {
+                string fileName = fileSelector.fileNameToLoad;
                 if (motionPlayer != null)
                 {
-                    string fileName = "TestMotion";
                     motionPlayer.Load(fileName);
                 }
             }

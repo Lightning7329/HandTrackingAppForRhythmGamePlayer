@@ -11,7 +11,13 @@ namespace KW_Mocap
         {
             button = GameObject.Find(name).GetComponent<Button>();
             button.onClick.AddListener(call);
-            button.transform.Find("Text").GetComponent<Text>().text = text;
+            button.GetComponentInChildren<Text>().text = text;
+        }
+
+        public static void SetButton(GameObject buttonObject, UnityEngine.Events.UnityAction call, string text)
+        {
+            buttonObject.GetComponent<Button>().onClick.AddListener(call);
+            buttonObject.GetComponentInChildren<Text>().text = text;
         }
     }
 }
