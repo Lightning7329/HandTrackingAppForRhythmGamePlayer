@@ -76,6 +76,12 @@ namespace KW_Mocap
 
         void OnBtn_Play()
         {
+            if (!motionPlayer.isLoaded)
+            {
+                Debug.Log("モーションデータがロードされていません");
+                return;
+            }
+
             if (isPlaying)
             {
                 txt_playButton.text = "Play";

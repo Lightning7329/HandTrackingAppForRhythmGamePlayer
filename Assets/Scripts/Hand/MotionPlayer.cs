@@ -10,7 +10,7 @@ namespace KW_Mocap
     {
         MotionData[] motionData = null;
         [SerializeField] int playDataCount = 0;
-        bool isLoaded = false;
+        public bool isLoaded { get; private set; } = false;
         bool isPlaying = false;
         [SerializeField] GameObject left, right;
         GameObject[] leftJoints, rightJoints;
