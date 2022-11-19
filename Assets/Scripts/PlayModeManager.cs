@@ -43,7 +43,7 @@ namespace KW_Mocap
             UISetting.SetButton(ref sceneChangeButton, "SceneChangeButton", OnBtn_SceneChange, "RecordMode");
             txt_speed = GameObject.Find("Speed").transform.Find("Text").gameObject.GetComponent<Text>();
             txt_speed.text = "x1.00";
-            txt_playButton = playButton.transform.Find("Text").GetComponent<Text>();
+            txt_playButton = playButton.GetComponentInChildren<Text>();
         }
 
         void Update()
@@ -53,8 +53,11 @@ namespace KW_Mocap
 
         void OnBtn_FileSelect()
         {
+            // 再生中だったら再生を止める
+            if (isPlaying) OnBtn_Play();
+
             fileSelector.List();
-            StartCoroutine("LoadFile");
+            StartCoroutine(LoadFile());
         }
 
         IEnumerator LoadFile()
@@ -80,7 +83,7 @@ namespace KW_Mocap
         {
             if (!motionPlayer.isLoaded)
             {
-                Debug.Log("モーションデータがロードされていません");
+                Debug.LogError("モーションデータがロードされていません");
                 return;
             }
 
@@ -142,6 +145,7 @@ namespace KW_Mocap
 
         void OnBtn_SceneChange()
         {
+            WorldTimer.Stop();
             UnityEngine.SceneManagement.SceneManager.LoadScene("VideoRecord");
         }
     }
