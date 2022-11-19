@@ -94,6 +94,11 @@ namespace KW_Mocap
             this.PlayDataCount++;
         }
 
+        public void ResetFrameCount()
+        {
+            PlayDataCount = 0;
+        }
+
         public void Load(string fileName)
         {
             string pass = $"SavedMotionData/{fileName}.bin";

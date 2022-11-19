@@ -71,6 +71,8 @@ namespace KW_Mocap
                 {
                     motionPlayer.Load(fileName);
                 }
+                videoController.ResetFrameCount();
+                motionPlayer.ResetFrameCount();
             }
         }
 
