@@ -7,6 +7,12 @@ namespace KW_Mocap
 {
     public class UISetting
     {
+        public static void SetButton(ref Button button, string name, UnityEngine.Events.UnityAction call)
+        {
+            button = GameObject.Find(name).GetComponent<Button>();
+            button.onClick.AddListener(call);
+        }
+
         public static void SetButton(ref Button button, string name, UnityEngine.Events.UnityAction call, string text)
         {
             button = GameObject.Find(name).GetComponent<Button>();
