@@ -7,6 +7,7 @@ namespace KW_Mocap
 {
     public class CameraController : MonoBehaviour
     {
+        private bool isActive = true;
         Transform cameraTransform;
         Button camera1, camera2;
         [SerializeField] private float moveSpead = 0.02f;
@@ -16,16 +17,19 @@ namespace KW_Mocap
         void Start()
         {
             cameraTransform = GetComponent<Transform>();
-            UISetting.SetButton(ref camera1, "Camera1", OnBtn_Camera1, "Camera1");
-            UISetting.SetButton(ref camera2, "Camera2", OnBtn_Camera2, "Camera2");
+            UISetting.SetButton(ref camera1, "Camera1", OnBtn_Camera1);
+            UISetting.SetButton(ref camera2, "Camera2", OnBtn_Camera2);
         }
 
         void Update()
         {
+            if (!isActive) return;
             TransformPos();
             TransformRot();
             Zoom();
         }
+
+        public void SetActive(bool flg) => isActive = flg;
 
         /// <summary>
         /// カメラの平行移動
@@ -69,6 +73,9 @@ namespace KW_Mocap
             cameraTransform.rotation = Quaternion.Euler(new Vector3(60.27f, 0.0f, 0.0f));
         }
 
+        /// <summary>
+        /// Camera2ボタンが押されたときに実行。カメラ位置を俯瞰視点にする。
+        /// </summary>
         private void OnBtn_Camera2()
         {
             cameraTransform.position = new Vector3(0.0f, 18.2f, 0.0f);
