@@ -69,7 +69,7 @@ namespace KW_Mocap
             byte[] buf = new byte[bufSize];
             try
             {
-                using (FileStream fs = new FileStream($"SavedMotionData/{fileName}.bin", FileMode.Create, FileAccess.Write))
+                using (FileStream fs = new FileStream($"SavedMotionData/{fileName}.bin", FileMode.CreateNew, FileAccess.Write))
                 {
                     byte[] byte_DataCount = BitConverter.GetBytes(recordDataCount);
                     fs.Write(byte_DataCount, 0, byte_DataCount.Length);
@@ -85,7 +85,6 @@ namespace KW_Mocap
             }
             catch (IOException e)
             {
-                Debug.Log(e);
                 throw new DuplicateFileNameException("This file name is already exists.", e);
             }
         }
