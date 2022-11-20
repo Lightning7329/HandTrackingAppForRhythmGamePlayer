@@ -20,6 +20,11 @@ namespace KW_Mocap
         static readonly string originalFileButtonName = "file";
 
         /// <summary>
+        /// モーションデータファイルが保存されているディレクトリパス
+        /// </summary>
+        static readonly string savedMotionDataDirectory = "./SavedMotionData";
+
+        /// <summary>
         /// ファイル選択中のボタンの色
         /// </summary>
         static readonly Color32 highlighted = new Color32(89, 89, 89, 255);    //グレー
@@ -37,18 +42,20 @@ namespace KW_Mocap
         public string fileNameToLoad { get; private set; } = null;
 
         /// <summary>
-        /// 選択中のファイル。Selectボタンを押したときにfileNameToLoadがこれで上書きされる。
+        /// 選択中のファイルのインデックス。
+        /// Selectボタンを押したときにfileNameToLoadがこのインデックスのボタンの名前で上書きされる。
         /// </summary>
-        private string SelectingfileName = null;
+        private int selectingFileIndex = -1;
 
         /// <summary>
-        /// ./SavedMotionDataディレクトリ配下の全binファイルのインスタンス
+        /// savedMotionDataDirectory配下の全binファイルのインスタンス
         /// </summary>
         FileInfo[] files;
 
-        Button cancelButton, selectButton;
+        Button cancelButton, selectButton, deleteButton;
         Transform Content;
-        GameObject[] fileButtons;
+        GameObject originalFileButton;
+        (string name, GameObject gameObject)[] fileButtons;
 
         /// <summary>
         /// ファイル選択状態
@@ -76,9 +83,14 @@ namespace KW_Mocap
 
         void Start()
         {
-            UISetting.SetButton(ref cancelButton, "CancelButton", OnBtn_Cancel, "Cancel");
-            UISetting.SetButton(ref selectButton, "SelectButton", OnBtn_Select, "Select");
+            selectState = SelectState.NotSelected;
+            UISetting.SetButton(ref cancelButton, "CancelButton", OnBtn_Cancel);
+            UISetting.SetButton(ref selectButton, "SelectButton", OnBtn_Select);
+            UISetting.SetButton(ref deleteButton, "DeleteButton", OnBtn_Delete);
+            selectButton.interactable = false;
+            deleteButton.interactable = false;
             Content = transform.Find("Scroll View/Viewport/Content");
+            originalFileButton = Content.transform.Find(originalFileButtonName).gameObject;
             this.gameObject.SetActive(false);
         }
 
@@ -88,7 +100,7 @@ namespace KW_Mocap
         /// </summary>
         public void List()
         {
-            selectState = SelectState.NotSelected;
+            if (selectingFileIndex != -1) selectState = SelectState.Selecting;
 
             int fileCount = GetFileInfos();
             if (fileCount == 0)
@@ -98,17 +110,18 @@ namespace KW_Mocap
                 return;
             }
 
-            fileButtons = new GameObject[fileCount];
-            fileButtons[0] = Content.transform.Find(originalFileButtonName).gameObject;
-            // originalFileButtonを1つ目のファイル名に書き換えて表示する
-            SetContent(fileButtons[0], 0);          
-
-            // 2つ目以降のファイル
-            for (int i = 1; i < files.Length; i++)
+            fileButtons = new (string, GameObject)[fileCount];
+            for (int i = 0; i < files.Length; i++)
             {
                 fileButtons[i] = CreateContent(i);
             }
 
+            if (selectState == SelectState.Selecting)
+            {
+                selectButton.interactable = true;
+                deleteButton.interactable = true;
+            }
+            originalFileButton.SetActive(false);
             this.gameObject.SetActive(true);
         }
 
@@ -117,9 +130,11 @@ namespace KW_Mocap
             for (int i = 0; i < fileButtons.Length; i++)
             {
                 //選択されたファイルボタンはグレーにする。それ以外は元の色に戻す。
-                fileButtons[i].GetComponent<Image>().color = i == fileIndex ? highlighted : normal;
+                fileButtons[i].gameObject.GetComponent<Image>().color = i == fileIndex ? highlighted : normal;
             }
-            SelectingfileName = Path.GetFileNameWithoutExtension(files[fileIndex].Name);
+            selectingFileIndex = fileIndex;
+            selectButton.interactable = true;
+            deleteButton.interactable = true;
             selectState = SelectState.Selecting;
         }
 
@@ -128,7 +143,7 @@ namespace KW_Mocap
             //いずれかのファイルを選択中でない場合は押せない
             if (selectState != SelectState.Selecting) return;
 
-            fileNameToLoad = SelectingfileName;
+            fileNameToLoad = fileButtons[selectingFileIndex].name;
             DeleteContentsAll();
             this.gameObject.SetActive(false);
             selectState = SelectState.Selected;
@@ -141,31 +156,34 @@ namespace KW_Mocap
             selectState = SelectState.Canceled;
         }
 
-        /// <summary>
-        /// Scroll ViewのContentの子オブジェクトとして2つ目以降のファイルボタンを作成・追加する。
-        /// </summary>
-        /// <param name="index">ファイルのインデックス</param>
-        /// <returns>作成したGameObject</returns>
-        GameObject CreateContent(int index)
+        void OnBtn_Delete()
         {
-            GameObject fileButtonClone = GameObject.Instantiate(fileButtons[0]);
-            fileButtonClone.transform.SetParent(Content.transform);
-            fileButtonClone.transform.localScale = Vector3.one;
-            SetContent(fileButtonClone, index);
-            return fileButtonClone;
+            fileButtons[selectingFileIndex].gameObject.SetActive(false);
+            files[selectingFileIndex].Delete();
+            selectButton.interactable = false;
+            deleteButton.interactable = false;
+            selectState = SelectState.NotSelected;
+            Debug.Log(fileButtons[selectingFileIndex].name + " was deleted.");
         }
 
         /// <summary>
-        /// 選択状況に応じてボタンの色を決定し、ボタンの名前とハンドラを割り当てる。
+        /// Scroll ViewのContentの子オブジェクトとしてoriginalFileButtonを元にファイルボタンを作成・追加する。
         /// </summary>
-        /// <param name="fileButton">ファイルボタン</param>
         /// <param name="index">ファイルのインデックス</param>
-        private void SetContent(GameObject fileButton, int index)
+        /// <returns>作成したボタンの名前とGameObject</returns>
+        (string name, GameObject gameObject) CreateContent(int index)
         {
+            /* ボタンのGameObjectの作成と配置 */
+            GameObject fileButtonClone = GameObject.Instantiate(originalFileButton);
+            fileButtonClone.transform.SetParent(Content.transform);
+            fileButtonClone.transform.localScale = Vector3.one;
+
+            /* ボタンの見た目の設定 */
             string fileName = Path.GetFileNameWithoutExtension(files[index].Name);
-            fileButton.GetComponent<Image>().color = fileName == fileNameToLoad ? highlighted : normal;
-            UISetting.SetButton(fileButton, () => { OnBtn_File(index); }, fileName);
-            fileButton.SetActive(true);
+            fileButtonClone.GetComponent<Image>().color = fileName == fileNameToLoad ? highlighted : normal;
+            UISetting.SetButton(fileButtonClone, () => { OnBtn_File(index); }, fileName);
+            fileButtonClone.SetActive(true);
+            return (fileName, fileButtonClone);
         }
 
         /// <summary>
@@ -190,14 +208,14 @@ namespace KW_Mocap
         private int GetFileInfos()
         {
             // 保存データディレクトリがあるか確認
-            if (!Directory.Exists("./SavedMotionData"))
+            if (!Directory.Exists(savedMotionDataDirectory))
             {
-                Debug.LogError("./SavedMotionDataが存在しません。");
+                Debug.LogError(savedMotionDataDirectory + "が存在しません。");
                 return 0;
             }
 
             // 保存データディレクトリ内のモーションデータファイルを取得
-            var Dir = new DirectoryInfo("./SavedMotionData/");
+            var Dir = new DirectoryInfo(savedMotionDataDirectory + "/");
             files = Dir.GetFiles("*.bin");
             return files.Length;
         }
