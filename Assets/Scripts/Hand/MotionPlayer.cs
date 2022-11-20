@@ -55,6 +55,7 @@ namespace KW_Mocap
         public void StartPlaying()
         {
             if (!isLoaded) throw new MotionDataNotLoadedException();
+            if (motionData.Length == 0) return;
             if (isPlaying) return;
 
             isPlaying = true;
