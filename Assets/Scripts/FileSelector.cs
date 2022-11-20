@@ -47,6 +47,11 @@ namespace KW_Mocap
         /// </summary>
         private int selectingFileIndex = -1;
 
+        /// <summary>
+        /// savedMotionDataDirectory配下のbinファイルの数。
+        /// filesの各要素の中身は削除されてもfiles.Lengthは変わらないため
+        /// 削除するときにデクリメントする。
+        /// </summary>
         private int fileCount = 0;
 
         /// <summary>
@@ -111,14 +116,14 @@ namespace KW_Mocap
             if (fileCount == 0)
             {
                 noFiles.gameObject.SetActive(true);
-                Debug.LogWarning("no files");
-                return;
             }
-
-            fileButtons = new (string, GameObject)[fileCount];
-            for (int i = 0; i < files.Length; i++)
+            else
             {
-                fileButtons[i] = CreateContent(i);
+                fileButtons = new (string, GameObject)[fileCount];
+                for (int i = 0; i < fileButtons.Length; i++)
+                {
+                    fileButtons[i] = CreateContent(i);
+                }
             }
 
             if (selectState == SelectState.Selecting)
@@ -163,14 +168,10 @@ namespace KW_Mocap
 
         void OnBtn_Delete()
         {
-            Debug.Log(fileButtons[selectingFileIndex].name + " was deleted.");
             fileButtons[selectingFileIndex].gameObject.SetActive(false);
             files[selectingFileIndex].Delete();
             selectingFileIndex = -1;
-            if (--fileCount == 0)
-            {
-                noFiles.gameObject.SetActive(true);
-            }
+            if (--fileCount == 0) noFiles.gameObject.SetActive(true);
             selectButton.interactable = false;
             deleteButton.interactable = false;
             selectState = SelectState.NotSelected;
