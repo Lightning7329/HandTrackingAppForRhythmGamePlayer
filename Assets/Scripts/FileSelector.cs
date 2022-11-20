@@ -47,11 +47,14 @@ namespace KW_Mocap
         /// </summary>
         private int selectingFileIndex = -1;
 
+        private int fileCount = 0;
+
         /// <summary>
         /// savedMotionDataDirectory配下の全binファイルのインスタンス
         /// </summary>
         FileInfo[] files;
 
+        Text noFiles;
         Button cancelButton, selectButton, deleteButton;
         Transform Content;
         GameObject originalFileButton;
@@ -84,6 +87,8 @@ namespace KW_Mocap
         void Start()
         {
             selectState = SelectState.NotSelected;
+            noFiles = transform.Find("NoFiles").GetComponent<Text>();
+            noFiles.gameObject.SetActive(false);
             UISetting.SetButton(ref cancelButton, "CancelButton", OnBtn_Cancel);
             UISetting.SetButton(ref selectButton, "SelectButton", OnBtn_Select);
             UISetting.SetButton(ref deleteButton, "DeleteButton", OnBtn_Delete);
@@ -102,10 +107,10 @@ namespace KW_Mocap
         {
             if (selectingFileIndex != -1) selectState = SelectState.Selecting;
 
-            int fileCount = GetFileInfos();
+            fileCount = GetFileInfos();
             if (fileCount == 0)
             {
-                // TODO: セーブファイルが存在しないことを表示
+                noFiles.gameObject.SetActive(true);
                 Debug.LogWarning("no files");
                 return;
             }
@@ -158,12 +163,17 @@ namespace KW_Mocap
 
         void OnBtn_Delete()
         {
+            Debug.Log(fileButtons[selectingFileIndex].name + " was deleted.");
             fileButtons[selectingFileIndex].gameObject.SetActive(false);
             files[selectingFileIndex].Delete();
+            selectingFileIndex = -1;
+            if (--fileCount == 0)
+            {
+                noFiles.gameObject.SetActive(true);
+            }
             selectButton.interactable = false;
             deleteButton.interactable = false;
             selectState = SelectState.NotSelected;
-            Debug.Log(fileButtons[selectingFileIndex].name + " was deleted.");
         }
 
         /// <summary>
