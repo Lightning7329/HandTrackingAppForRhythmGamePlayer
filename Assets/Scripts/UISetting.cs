@@ -1,29 +1,37 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace KW_Mocap
 {
     public class UISetting
     {
-        public static void SetButton(ref Button button, string name, UnityEngine.Events.UnityAction call)
+        public static void SetButton(ref Button button, string name, UnityAction call)
         {
             button = GameObject.Find(name).GetComponent<Button>();
             button.onClick.AddListener(call);
         }
 
-        public static void SetButton(ref Button button, string name, UnityEngine.Events.UnityAction call, string text)
+        public static void SetButton(ref Button button, string name, UnityAction call, string text)
         {
             button = GameObject.Find(name).GetComponent<Button>();
             button.onClick.AddListener(call);
             button.GetComponentInChildren<Text>().text = text;
         }
 
-        public static void SetButton(GameObject buttonObject, UnityEngine.Events.UnityAction call, string text)
+        public static void SetButton(GameObject buttonObject, UnityAction call, string text)
         {
             buttonObject.GetComponent<Button>().onClick.AddListener(call);
             buttonObject.GetComponentInChildren<Text>().text = text;
+        }
+
+        public static void AddEventTrigger(EventTrigger eventTrigger, EventTriggerType triggerType, UnityAction<BaseEventData> call)
+        {
+            EventTrigger.Entry entry = new EventTrigger.Entry();
+            entry.eventID = triggerType;
+            entry.callback.AddListener(call);
+            eventTrigger.triggers.Add(entry);
         }
     }
 }
