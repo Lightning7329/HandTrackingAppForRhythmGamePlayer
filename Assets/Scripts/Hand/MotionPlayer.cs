@@ -122,7 +122,7 @@ namespace KW_Mocap
                     }
                 }
                 isLoaded = true;
-                Debug.Log($"Loaded " + fileName);
+                Debug.Log($"Motion Loaded " + fileName);
             }
             catch (IOException e)
             {

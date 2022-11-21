@@ -9,19 +9,14 @@ namespace KW_Mocap
     public class VideoController : MonoBehaviour, Player
     {
         private VideoPlayer video;
+        private SliderController sliderController;
         [SerializeField] private int startFrame = 500;
         public bool isPlaying { get; private set; } = false;
 
         void Start()
         {
             video = GetComponent<VideoPlayer>();
-            SetVideoClip("drop pop candy(EXPERT)");
-            video.frame = startFrame;
-            video.Play();
-            video.Pause();
-            //Debug.Log("lengh: " + video.length + "s");
-            //Debug.Log("frame rate: " + video.frameRate);
-            //Debug.Log("frame count: " + video.frameCount);
+            sliderController = GameObject.Find("TimeSlider").GetComponent<SliderController>();
         }
 
         /// <summary>
@@ -70,18 +65,42 @@ namespace KW_Mocap
         }
 
         /// <summary>
+        /// 全体時間の秒、フレームレート、フレーム数をコンソールに表示
+        /// </summary>
+        public void DisplayState()
+        {
+            Debug.Log("lengh: " + video.length + "s");
+            Debug.Log("frame rate: " + video.frameRate);
+            Debug.Log("frame count: " + video.frameCount);
+        }
+
+        /// <summary>
         /// Resources/Videosディレクトリ配下の指定されたファイル名のVideoClipをVideoPlayerに割り当てる。
         /// </summary>
-        /// <param name="name">動画ファイル名</param>
+        /// <param name="name">拡張子なしの動画ファイル名</param>
         public void SetVideoClip(string name)
         {
+            // 前に割り当てていたvideo clipをアンロードする
+            if (video.clip != null) {
+                Resources.UnloadAsset(video.clip);
+                Debug.Log("VideoClip Unloaded " + video.clip.name);
+            }
+
+            // 新しくvideo clipをロードする（拡張子はなしでいいらしい）
             VideoClip videoClip = Resources.Load("Videos/" + name) as VideoClip;
+
             if (videoClip == null)
             {
                 Debug.LogError($"VideoClip {name} could not be found.");
                 return;
             }
+
+            // VideoPlayerコンポーネントに割り当てて再生準備をする
+            sliderController.enabled = false;   // VideoPlayer側のPrepareが終わったらtrueに戻る
             video.clip = videoClip;
+            video.frame = startFrame;
+            video.Play();
+            video.Pause();
         }
     }
 }
