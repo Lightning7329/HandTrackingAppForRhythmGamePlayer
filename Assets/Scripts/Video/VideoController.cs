@@ -15,6 +15,7 @@ namespace KW_Mocap
         void Start()
         {
             video = GetComponent<VideoPlayer>();
+            SetVideoClip("drop pop candy(EXPERT)");
             video.frame = startFrame;
             video.Play();
             video.Pause();
@@ -66,6 +67,21 @@ namespace KW_Mocap
         public void ResetFrameCount()
         {
             video.frame = startFrame;
+        }
+
+        /// <summary>
+        /// Resources/Videosディレクトリ配下の指定されたファイル名のVideoClipをVideoPlayerに割り当てる。
+        /// </summary>
+        /// <param name="name">動画ファイル名</param>
+        public void SetVideoClip(string name)
+        {
+            VideoClip videoClip = Resources.Load("Videos/" + name) as VideoClip;
+            if (videoClip == null)
+            {
+                Debug.LogError($"VideoClip {name} could not be found.");
+                return;
+            }
+            video.clip = videoClip;
         }
     }
 }
