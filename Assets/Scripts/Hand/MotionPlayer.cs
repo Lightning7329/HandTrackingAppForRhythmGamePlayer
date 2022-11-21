@@ -9,23 +9,24 @@ namespace KW_Mocap
     public class MotionPlayer : MonoBehaviour, Player
     {
         MotionData[] motionData = null;
-        [SerializeField] int playDataCount = 0;
-        public bool isLoaded { get; private set; } = false;
-        bool isPlaying = false;
         [SerializeField] GameObject left, right;
         GameObject[] leftJoints, rightJoints;
+        private bool isPlaying = false;
+        public bool isLoaded { get; private set; } = false;
+        public int frameCount { get; private set; } = 0;
 
-        public int PlayDataCount
+        private int _frame = 0;
+        public int frame
         {
-            get => playDataCount;
+            get => _frame;
             set
             {
                 if (value < 0)
-                    playDataCount = 0;
-                else if (motionData != null && value >= motionData.Length)
-                    playDataCount = motionData.Length - 1;
+                    _frame = 0;
+                else if (value >= frameCount)
+                    _frame = frameCount - 1;
                 else
-                    playDataCount = value;
+                    _frame = value;
             }
         }
 
@@ -42,17 +43,20 @@ namespace KW_Mocap
             if (isPlaying) Play();
         }
 
+        /// <summary>
+        /// 各フレームの動き（位置と回転）を記述
+        /// </summary>
         void Play()
         {
             // TODO: leftJoint[0]~leftKJoint[8]のモーションデータも再生する。rightも然り。
-            left.transform.SetPositionAndRotation(motionData[playDataCount].left.palmPos, motionData[playDataCount].left.palmRot);
-            right.transform.SetPositionAndRotation(motionData[playDataCount].right.palmPos, motionData[playDataCount].right.palmRot);
+            left.transform.SetPositionAndRotation(motionData[_frame].left.palmPos, motionData[_frame].left.palmRot);
+            right.transform.SetPositionAndRotation(motionData[_frame].right.palmPos, motionData[_frame].right.palmRot);
         }
 
         public void StartPlaying()
         {
             if (!isLoaded) throw new MotionDataNotLoadedException();
-            if (motionData.Length == 0) return;
+            if (frameCount == 0) return;
             if (isPlaying) return;
 
             isPlaying = true;
@@ -71,7 +75,7 @@ namespace KW_Mocap
 
         public void Skip(float seconds)
         {
-            this.PlayDataCount += (int)(WorldTimer.frameRate * seconds);
+            this.frame += (int)(WorldTimer.frameRate * seconds);
             if(isPlaying) StartPlaying();
         }
 
@@ -86,15 +90,15 @@ namespace KW_Mocap
         /// </summary>
         void PlayDataCountUp()
         {
-            if (this.PlayDataCount >= motionData.Length - 1)
+            if (this._frame >= frameCount - 1)
                 PausePlaying();
 
-            this.PlayDataCount++;
+            this.frame++;
         }
 
         public void ResetFrameCount()
         {
-            PlayDataCount = 0;
+            frame = 0;
         }
 
         public void Load(string fileName)
@@ -108,10 +112,10 @@ namespace KW_Mocap
                 {
                     // 読み込むデータ点数
                     fs.Read(buf, 0, 4);
-                    int DataCount = BitConverter.ToInt32(buf, 0);
-                    motionData = new MotionData[DataCount];
+                    frameCount = BitConverter.ToInt32(buf, 0);
+                    motionData = new MotionData[frameCount];
 
-                    for (int i = 0; i < DataCount; i++)
+                    for (int i = 0; i < motionData.Length; i++)
                     {
                         fs.Read(buf, 0, bufSize);
                         motionData[i] = new MotionData(buf);
