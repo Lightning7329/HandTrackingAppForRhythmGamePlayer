@@ -6,5 +6,6 @@ namespace KW_Mocap
         public void PausePlaying();
         public void Skip(float seconds);
         public void ChangeSpeed(float speedRatio);
+        public void ResetFrameCount();
     }
 }

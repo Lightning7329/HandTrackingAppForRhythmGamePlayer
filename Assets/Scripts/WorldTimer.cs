@@ -19,7 +19,7 @@ namespace KW_Mocap
             get => _frameRate;
             set => _frameRate = value > 0 ? value : 30;
         }
-        private static int period = (int)(1000f / _frameRate);
+        private static int period;
 
         public static void Run()
         {
@@ -38,9 +38,9 @@ namespace KW_Mocap
 
         public static void ChangeSpeed(float speedRatio)
         {
-            if (timer != null) return;
-            period = (int)(period / speedRatio);
-            timer.Change(0, period);
+            if (timer == null) return;
+            int newPeriod = (int)(period / speedRatio);
+            timer.Change(0, newPeriod);
         }
 
         public static void FrameCountReset()

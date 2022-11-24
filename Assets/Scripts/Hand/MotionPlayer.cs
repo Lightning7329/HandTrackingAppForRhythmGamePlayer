@@ -9,67 +9,56 @@ namespace KW_Mocap
     public class MotionPlayer : MonoBehaviour, Player
     {
         MotionData[] motionData = null;
-        int playDataCount = 0;
-        bool isLoaded = false;
-        bool isPlaying = false;
         [SerializeField] GameObject left, right;
         GameObject[] leftJoints, rightJoints;
+        private bool isPlaying = false;
+        public bool isLoaded { get; private set; } = false;
+        public int frameCount { get; private set; } = 0;
+        public int playbackOffset = 0;  // Echo over you_Normal: -94
 
-        public int PlayDataCount
+        [SerializeField] private int _frame = 0;
+        public int frame
         {
-            get => playDataCount;
+            get => _frame;
             set
             {
                 if (value < 0)
-                    playDataCount = 0;
-                else if (motionData != null && value >= motionData.Length)
-                    playDataCount = motionData.Length - 1;
+                    _frame = 0;
+                else if (value >= frameCount)
+                    _frame = frameCount - 1;
                 else
-                    playDataCount = value;
+                    _frame = value;
             }
         }
 
         void Start()
         {
+            left.GetComponent<HandSetting>().SetMaterial(left, true);
             leftJoints = left.GetComponent<HandSetting>().joints;
+            right.GetComponent<HandSetting>().SetMaterial(right, true);
             rightJoints = right.GetComponent<HandSetting>().joints;
         }
 
         void Update()
         {
-            if (isPlaying) Play();
+            if (isPlaying) Play(frame + playbackOffset);
         }
 
-        void Play()
+        /// <summary>
+        /// 各フレームの動き（位置と回転）を記述
+        /// </summary>
+        void Play(int n)
         {
-            /*
-            if (motionData[playDataCount] == null)
-            {
-                Debug.Log($"motionData[{playDataCount}] == null");
-                return;
-            }
-            else if (motionData[playDataCount].left == null)
-            {
-                Debug.Log($"motionData[{playDataCount}].left == null");
-                return;
-            }
-            else if (motionData[playDataCount].right == null)
-            {
-                Debug.Log($"motionData[{playDataCount}].right == null");
-                return;
-            }*/
+            if (n < 0 || frameCount <= n) return;
             // TODO: leftJoint[0]~leftKJoint[8]のモーションデータも再生する。rightも然り。
-
-            // TODO: NullReferenceException: Object reference not set to an instance of an object
-            // 上のif文をどれも通らない当たり参照は入ってるけど、その参照先が怪しい
-            // TODO: 多分直ったと思うから研究室で要検証
-            leftJoints[9].transform.position = motionData[playDataCount].left.palmPos;
-            rightJoints[9].transform.position = motionData[playDataCount].right.palmPos;
+            left.transform.SetPositionAndRotation(motionData[n].left.palmPos, motionData[n].left.palmRot);
+            right.transform.SetPositionAndRotation(motionData[n].right.palmPos, motionData[n].right.palmRot);
         }
 
         public void StartPlaying()
         {
             if (!isLoaded) throw new MotionDataNotLoadedException();
+            if (frameCount == 0) return;
             if (isPlaying) return;
 
             isPlaying = true;
@@ -88,7 +77,9 @@ namespace KW_Mocap
 
         public void Skip(float seconds)
         {
-            this.PlayDataCount += (int)(WorldTimer.frameRate * seconds);
+            //this.frame += (int)(WorldTimer.frameRate * seconds);
+            this.frame += (this.frame & 1) == 0 ? 152 : 151;
+            Play(this.frame);
         }
 
         public void ChangeSpeed(float speedRatio)
@@ -102,9 +93,15 @@ namespace KW_Mocap
         /// </summary>
         void PlayDataCountUp()
         {
-            if (playDataCount >= motionData.Length) PausePlaying();
+            if (this._frame >= frameCount - 1)
+                PausePlaying();
 
-            playDataCount++;
+            this.frame++;
+        }
+
+        public void ResetFrameCount()
+        {
+            frame = 0;
         }
 
         public void Load(string fileName)
@@ -118,16 +115,17 @@ namespace KW_Mocap
                 {
                     // 読み込むデータ点数
                     fs.Read(buf, 0, 4);
-                    int DataCount = BitConverter.ToInt32(buf, 0);
+                    frameCount = BitConverter.ToInt32(buf, 0);
+                    motionData = new MotionData[frameCount];
 
-                    for (int i = 0; i < DataCount; i++)
+                    for (int i = 0; i < motionData.Length; i++)
                     {
                         fs.Read(buf, 0, bufSize);
                         motionData[i] = new MotionData(buf);
                     }
                 }
                 isLoaded = true;
-                Debug.Log($"Loaded" + pass);
+                Debug.Log($"Motion Loaded " + fileName);
             }
             catch (IOException e)
             {

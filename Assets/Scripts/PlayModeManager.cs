@@ -18,19 +18,23 @@ namespace KW_Mocap
 
         // uGUI側
         private Text txt_speed, txt_playButton;
-        private Button playButton, forwardButton, backwardButton, addSpeedButton, subSpeedButton, sceneChangeButton;
-
+        private Button playButton, forwardButton, backwardButton, addSpeedButton, subSpeedButton, sceneChangeButton, fileSelectButton;
+        private FileSelector fileSelector = null;
+        public GameObject obj_fileSelector;
 
         void Start()
         {
             //WorldTimer.DisplayFrameCount();
             WorldTimer.Run();
-            //motionPlayer = GameObject.Find("Hands").GetComponent<MotionPlayer>();
+            motionPlayer = GameObject.Find("Hands").GetComponent<MotionPlayer>();
 
             // video側
             videoController = GameObject.Find("Display for Play").GetComponent<VideoController>();
 
             // uGUI側
+            //fileSelector = GameObject.Find("File Selection Panel").GetComponent<FileSelector>();
+            fileSelector = obj_fileSelector.GetComponent<FileSelector>();
+            UISetting.SetButton(ref fileSelectButton, "FileSelectButton", OnBtn_FileSelect, "Load");
             UISetting.SetButton(ref playButton, "PlayButton", OnBtn_Play, "Play");
             UISetting.SetButton(ref forwardButton, "ForwardButton", OnBtn_Forward, $"{skipSeconds}s");
             UISetting.SetButton(ref backwardButton, "BackwardButton", OnBtn_Backward, $"{skipSeconds}s");
@@ -39,35 +43,62 @@ namespace KW_Mocap
             UISetting.SetButton(ref sceneChangeButton, "SceneChangeButton", OnBtn_SceneChange, "RecordMode");
             txt_speed = GameObject.Find("Speed").transform.Find("Text").gameObject.GetComponent<Text>();
             txt_speed.text = "x1.00";
-            txt_playButton = playButton.transform.Find("Text").GetComponent<Text>();
+            txt_playButton = playButton.GetComponentInChildren<Text>();
         }
 
         void Update()
         {
-            if (Input.GetKeyDown(KeyCode.L))
+
+        }
+
+        void OnBtn_FileSelect()
+        {
+            // 再生中だったら再生を止める
+            if (isPlaying) OnBtn_Play();
+
+            fileSelector.List();
+            StartCoroutine(LoadFile());
+        }
+
+        IEnumerator LoadFile()
+        {
+            while (fileSelector.selectState == FileSelector.SelectState.NotSelected || fileSelector.selectState == FileSelector.SelectState.Selecting)
             {
+                yield return null;
+            }
+
+            if (fileSelector.selectState == FileSelector.SelectState.Selected)
+            {
+                string fileName = fileSelector.fileNameToLoad;
                 if (motionPlayer != null)
                 {
-                    string fileName = "TestMotion";
                     motionPlayer.Load(fileName);
                 }
+                motionPlayer.ResetFrameCount();
+                videoController.SetVideoClip(fileName);
             }
         }
 
         void OnBtn_Play()
         {
+            if (!motionPlayer.isLoaded)
+            {
+                Debug.LogError("モーションデータがロードされていません");
+                return;
+            }
+
             if (isPlaying)
             {
                 txt_playButton.text = "Play";
                 videoController.PausePlaying();
-                motionPlayer?.PausePlaying();
+                motionPlayer.PausePlaying();
                 isPlaying = false;
             }
             else
             {
                 txt_playButton.text = "Pause";
                 videoController.StartPlaying();
-                motionPlayer?.StartPlaying();
+                motionPlayer.StartPlaying();
                 isPlaying = true;
             }
         }
@@ -75,7 +106,7 @@ namespace KW_Mocap
         void OnBtn_Forward()
         {
             // motion側
-            motionPlayer?.Skip(skipSeconds);
+            motionPlayer.Skip(skipSeconds);
 
             // video側
             videoController.Skip(skipSeconds);
@@ -84,7 +115,7 @@ namespace KW_Mocap
         void OnBtn_Backward()
         {
             // motion側
-            motionPlayer?.Skip(-skipSeconds);
+            motionPlayer.Skip(-skipSeconds);
 
             // video側
             videoController.Skip(-skipSeconds);
@@ -103,7 +134,7 @@ namespace KW_Mocap
         void ChangeSpeed(float newSpeed)
         {
             // motion側
-            motionPlayer?.ChangeSpeed(newSpeed);
+            motionPlayer.ChangeSpeed(newSpeed);
 
             // video側
             videoController.ChangeSpeed(newSpeed);
@@ -114,6 +145,7 @@ namespace KW_Mocap
 
         void OnBtn_SceneChange()
         {
+            WorldTimer.Stop();
             UnityEngine.SceneManagement.SceneManager.LoadScene("VideoRecord");
         }
     }

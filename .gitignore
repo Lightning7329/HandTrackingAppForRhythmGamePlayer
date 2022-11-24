@@ -59,6 +59,7 @@ crashlytics-build.properties
 Assets/StreamingAssets/crashlytics-build.properties
 
 # VideoClips
+Assets/Resources/Videos/
 *.mov
 *.MP4
 .mov.meta
