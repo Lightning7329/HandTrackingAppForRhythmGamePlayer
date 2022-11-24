@@ -2518,7 +2518,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1304d3dcda7444265b9ba68c35a925fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startFrame: 500
+  startFrame: 0
 --- !u!328 &1134015639
 VideoPlayer:
   m_ObjectHideFlags: 0
@@ -3108,6 +3108,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   left: {fileID: 577297391}
   right: {fileID: 1813169051}
+  playbackOffset: -94
+  _frame: 0
 --- !u!1 &1462079310
 GameObject:
   m_ObjectHideFlags: 0
