@@ -13,11 +13,22 @@ namespace KW_Mocap
     {
         private bool isActive = true;
         Button camera1, camera2;
-        [SerializeField] private Vector3 rotCenter = Vector3.zero;
-        [SerializeField] private float moveSpead = 10f;
-        [SerializeField] private float rotateSpead = 30f;
-        [SerializeField] private float zoomSpead = 10f;
         [SerializeField] private bool forceLocalYAxisUp = true;
+
+        [SerializeField]
+        private Vector3 rotCenter = Vector3.zero;
+
+        [SerializeField, Range(0.1f, 30.0f)]
+        private float moveSpead = 10f;
+
+        [SerializeField, Range(0.01f, 5.0f)]
+        private float horizontalRotateSpead = 30f;
+
+        [SerializeField, Range(0.1f, 70.0f)]
+        private float verticalRotateSpead = 30f;
+
+        [SerializeField, Range(0.1f, 30.0f)]
+        private float zoomSpead = 10f;
 
         void Start()
         {
@@ -67,6 +78,16 @@ namespace KW_Mocap
         }
 
         /// <summary>
+        /// 回転中心を通る上向きの軸からカメラまでの距離
+        /// </summary>
+        /// <returns></returns>
+        private float GetDistanceFromYAxis()
+        {
+            var projectionVector = Vector3.Project(transform.position - rotCenter, Vector3.up);
+            return Vector3.Distance(rotCenter + projectionVector, transform.position);
+        }
+
+        /// <summary>
         /// カメラのディスプレイを中心とした回転
         /// </summary>
         private void RotateAround()
@@ -76,8 +97,8 @@ namespace KW_Mocap
              * 点rotCenterを通る方向ベクトルtranform.upを軸とするyAngle度の回転。
              */
             float yAngle = 0.0f;
-            if (Input.GetKey(KeyCode.LeftArrow)) yAngle = rotateSpead * Time.deltaTime;
-            if (Input.GetKey(KeyCode.RightArrow)) yAngle = -rotateSpead * Time.deltaTime;
+            if (Input.GetKey(KeyCode.LeftArrow)) yAngle = horizontalRotateSpead * Time.deltaTime * GetDistanceFromYAxis();
+            if (Input.GetKey(KeyCode.RightArrow)) yAngle = -horizontalRotateSpead * Time.deltaTime * GetDistanceFromYAxis();
             transform.RotateAround(rotCenter, transform.up, yAngle);
 
             /* 
@@ -90,7 +111,7 @@ namespace KW_Mocap
                 /* ディスプレイの裏側にカメラが回り込まないように俯角を制限 */
                 if (Vector3.Angle(transform.up, Vector3.up) > 5.0f)
                 {
-                    xAngle = rotateSpead * Time.deltaTime;
+                    xAngle = verticalRotateSpead * Time.deltaTime;
                 }
             }
             if (Input.GetKey(KeyCode.DownArrow))
@@ -98,7 +119,7 @@ namespace KW_Mocap
                 /* カメラが上から回り込まないように俯角を制限 */
                 if (Vector3.Angle(transform.up, Vector3.up) < 85.0f)
                 {
-                    xAngle = -rotateSpead * Time.deltaTime;
+                    xAngle = -verticalRotateSpead * Time.deltaTime;
                 }
             }
             transform.RotateAround(rotCenter, transform.right, -xAngle);

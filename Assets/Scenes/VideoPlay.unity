@@ -1930,7 +1930,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rotCenter: {x: 0, y: 0, z: 0}
   moveSpead: 10
-  rotateSpead: 30
+  horizontalRotateSpead: 2.5
+  verticalRotateSpead: 30
   zoomSpead: 10
   forceLocalYAxisUp: 1
 --- !u!1 &971580823
