@@ -21,7 +21,7 @@ namespace KW_Mocap
         private float moveSpead = 10f;
 
         [SerializeField, Range(0.01f, 5.0f)]
-        private float horizontalRotateSpead = 30f;
+        private float horizontalRotateSpead = 2.5f;
 
         [SerializeField, Range(0.1f, 70.0f)]
         private float verticalRotateSpead = 30f;
@@ -39,8 +39,14 @@ namespace KW_Mocap
         {
             None,
             ForceLocalYAxisUp,
-            QuaternionLookRotation
+            transformLookAt
         }
+
+        /// <summary>
+        /// ファイル名入力画面などでは有効になってほしくないので、他のクラスに無効にしてもらうためのメソッド。
+        /// </summary>
+        /// <param name="flg">有効か無効か</param>
+        public void SetActive(bool flg) => isActive = flg;
 
         void Start()
         {
@@ -53,26 +59,26 @@ namespace KW_Mocap
             if (!isActive) return;
 
             Move();
-            Zoom();
-            RotateAround();
+            if (Input.GetKey(KeyCode.E)) Zoom(1.0f);
+            if (Input.GetKey(KeyCode.C)) Zoom(-1.0f);
+            if (Input.GetKey(KeyCode.LeftArrow)) HorizontalRotateAround(1.0f);
+            if (Input.GetKey(KeyCode.RightArrow)) HorizontalRotateAround(-1.0f);
+            if (Input.GetKey(KeyCode.UpArrow)) VerticalRotateAround(1.0f);
+            if (Input.GetKey(KeyCode.DownArrow)) VerticalRotateAround(-1.0f);
             switch (forceLocalYAxisUp)
             {
                 case LocalYAsisStabilization.ForceLocalYAxisUp:
                     ForceLocalYAxisUp();
                     break;
-                case LocalYAsisStabilization.QuaternionLookRotation:
-                    transform.rotation = Quaternion.LookRotation(rotCenter - transform.position);
+                case LocalYAsisStabilization.transformLookAt:
+                    transform.LookAt(rotCenter);
+                    //↓でも同じ
+                    //transform.rotation = Quaternion.LookRotation(rotCenter - transform.position);
                     break;
                 case LocalYAsisStabilization.None:
                     break;
             }
         }
-
-        /// <summary>
-        /// ファイル名入力画面などでは有効になってほしくないので、他のクラスに無効にしてもらうためのメソッド。
-        /// </summary>
-        /// <param name="flg">有効か無効か</param>
-        public void SetActive(bool flg) => isActive = flg;
 
         /// <summary>
         /// カメラの平行移動
@@ -93,10 +99,11 @@ namespace KW_Mocap
         /// <summary>
         /// カメラのズームイン/アウト
         /// </summary>
-        private void Zoom()
+        /// /// <param name="amount">正だと近く。負だと引く。</param>
+        private void Zoom(float amount)
         {
-            if (Input.GetKey(KeyCode.E)) transform.Translate(zoomSpead * Time.deltaTime * transform.forward, Space.World);
-            if (Input.GetKey(KeyCode.C)) transform.Translate(zoomSpead * Time.deltaTime * -transform.forward, Space.World);
+            //TODO: ディプレイにめり込まないようにする
+            transform.Translate(amount * zoomSpead * Time.deltaTime * transform.forward, Space.World);
         }
 
         /// <summary>
@@ -110,41 +117,32 @@ namespace KW_Mocap
         }
 
         /// <summary>
-        /// カメラのディスプレイを中心とした回転
+        /// カメラのディスプレイを中心とした横方向の回転。
+        /// 点rotCenterを通る方向ベクトルtranform.rightを軸とするyAngle度の回転。
         /// </summary>
-        private void RotateAround()
+        /// <param name="amount">正だと左回り。負だと右回り。</param>
+        private void HorizontalRotateAround(float amount)
         {
-            /* 
-             * 横方向の回転。
-             * 点rotCenterを通る方向ベクトルtranform.upを軸とするyAngle度の回転。
-             */
-            float yAngle = 0.0f;
-            if (Input.GetKey(KeyCode.LeftArrow)) yAngle = horizontalRotateSpead * Time.deltaTime * GetDistanceFromYAxis();
-            if (Input.GetKey(KeyCode.RightArrow)) yAngle = -horizontalRotateSpead * Time.deltaTime * GetDistanceFromYAxis();
+            float yAngle = GetDistanceFromYAxis() * amount * horizontalRotateSpead * Time.deltaTime;
             transform.RotateAround(rotCenter, transform.up, yAngle);
+        }
 
-            /* 
-             * 縦方向の回転。
-             * 点rotCenterを通る方向ベクトルtranform.rightを軸とするyAngle度の回転。
-             */
-            float xAngle = 0.0f;
-            if (Input.GetKey(KeyCode.UpArrow))
+        /// <summary>
+        /// カメラのディスプレイを中心とした縦方向の回転。
+        /// 点rotCenterを通る方向ベクトルtranform.rightを軸とするyAngle度の回転。
+        /// </summary>
+        /// <param name="amount">正だと上回り。負だと下回り。</param>
+        private void VerticalRotateAround(float amount)
+        {
+            /* カメラが上から回り込まないように俯角を制限 */
+            float depression = Vector3.Angle(transform.up, Vector3.up);
+            bool canGoDown = amount < 0 && depression > 5.0f;   // 下に回り込みたい && まだそんなに横向きじゃない -> まだ下行ける
+            bool canGoUp = amount > 0 && depression < 85.0f;    // 上に回り込みたい && まだそんなに下向きじゃない -> まだ上行ける
+            if (canGoDown || canGoUp)
             {
-                /* ディスプレイの裏側にカメラが回り込まないように俯角を制限 */
-                if (Vector3.Angle(transform.up, Vector3.up) > 5.0f)
-                {
-                    xAngle = verticalRotateSpead * Time.deltaTime;
-                }
+                float xAngle = amount * verticalRotateSpead * Time.deltaTime;
+                transform.RotateAround(rotCenter, transform.right, xAngle);
             }
-            if (Input.GetKey(KeyCode.DownArrow))
-            {
-                /* カメラが上から回り込まないように俯角を制限 */
-                if (Vector3.Angle(transform.up, Vector3.up) < 85.0f)
-                {
-                    xAngle = -verticalRotateSpead * Time.deltaTime;
-                }
-            }
-            transform.RotateAround(rotCenter, transform.right, -xAngle);
         }
 
         /// <summary>
