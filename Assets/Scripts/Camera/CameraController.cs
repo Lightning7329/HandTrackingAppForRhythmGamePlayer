@@ -73,7 +73,7 @@ namespace KW_Mocap
         {
             /* 
              * 横方向の回転。
-             * 点rotCenterを通る方向ベクトルtranform.upを軸とするyAngleラジアンの回転。
+             * 点rotCenterを通る方向ベクトルtranform.upを軸とするyAngle度の回転。
              */
             float yAngle = 0.0f;
             if (Input.GetKey(KeyCode.LeftArrow)) yAngle = rotateSpead * Time.deltaTime;
@@ -82,12 +82,12 @@ namespace KW_Mocap
 
             /* 
              * 縦方向の回転。
-             * 点rotCenterを通る方向ベクトルtranform.rightを軸とするyAngleラジアンの回転。
+             * 点rotCenterを通る方向ベクトルtranform.rightを軸とするyAngle度の回転。
              */
             float xAngle = 0.0f;
             if (Input.GetKey(KeyCode.UpArrow))
             {
-                /* ディスプレイの裏側にカメラが回り込まないように制限 */
+                /* ディスプレイの裏側にカメラが回り込まないように俯角を制限 */
                 if (Vector3.Angle(transform.up, Vector3.up) > 5.0f)
                 {
                     xAngle = rotateSpead * Time.deltaTime;
@@ -95,9 +95,8 @@ namespace KW_Mocap
             }
             if (Input.GetKey(KeyCode.DownArrow))
             {
-                /* カメラが上から回り込まないように制限 */
-                var depression = 90.0f - Vector3.Angle(transform.forward, Vector3.down);
-                if (depression < 85.0f)
+                /* カメラが上から回り込まないように俯角を制限 */
+                if (Vector3.Angle(transform.up, Vector3.up) < 85.0f)
                 {
                     xAngle = -rotateSpead * Time.deltaTime;
                 }
