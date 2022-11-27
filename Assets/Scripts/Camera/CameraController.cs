@@ -13,7 +13,6 @@ namespace KW_Mocap
     {
         private bool isActive = true;
         Button camera1, camera2;
-        [SerializeField] private bool forceLocalYAxisUp = true;
 
         [SerializeField]
         private Vector3 rotCenter = Vector3.zero;
@@ -30,6 +29,19 @@ namespace KW_Mocap
         [SerializeField, Range(0.1f, 30.0f)]
         private float zoomSpead = 10f;
 
+        [SerializeField]
+        private LocalYAsisStabilization forceLocalYAxisUp = LocalYAsisStabilization.ForceLocalYAxisUp;
+
+        /// <summary>
+        /// 上向き補正の手法
+        /// </summary>
+        public enum LocalYAsisStabilization
+        {
+            None,
+            ForceLocalYAxisUp,
+            QuaternionLookRotation
+        }
+
         void Start()
         {
             UISetting.SetButton(ref camera1, "Camera1", OnBtn_Camera1);
@@ -43,7 +55,17 @@ namespace KW_Mocap
             Move();
             Zoom();
             RotateAround();
-            if (forceLocalYAxisUp) ForceLocalYAxisUp();
+            switch (forceLocalYAxisUp)
+            {
+                case LocalYAsisStabilization.ForceLocalYAxisUp:
+                    ForceLocalYAxisUp();
+                    break;
+                case LocalYAsisStabilization.QuaternionLookRotation:
+                    transform.rotation = Quaternion.LookRotation(rotCenter - transform.position);
+                    break;
+                case LocalYAsisStabilization.None:
+                    break;
+            }
         }
 
         /// <summary>
