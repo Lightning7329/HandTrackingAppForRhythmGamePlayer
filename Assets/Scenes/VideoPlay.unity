@@ -1928,9 +1928,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe458eca83153471b85172e008dcf84f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpead: 0.02
-  rotateSpead: 0.07
-  zoomSpead: 0.03
+  rotCenter: {x: 0, y: 0, z: 0}
+  moveSpead: 10
+  rotateSpead: 30
+  zoomSpead: 10
+  forceLocalYAxisUp: 1
 --- !u!1 &971580823
 GameObject:
   m_ObjectHideFlags: 0

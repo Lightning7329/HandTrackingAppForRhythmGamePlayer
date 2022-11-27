@@ -5,18 +5,19 @@ using UnityEngine.UI;
 
 namespace KW_Mocap
 {
+    [RequireComponent(typeof(Camera))]
     public class CameraController : MonoBehaviour
     {
         private bool isActive = true;
-        Transform cameraTransform;
         Button camera1, camera2;
-        [SerializeField] private float moveSpead = 0.02f;
-        [SerializeField] private float rotateSpead = 0.07f;
-        [SerializeField] private float zoomSpead = 0.03f;
+        [SerializeField] private Vector3 rotCenter = Vector3.zero;
+        [SerializeField] private float moveSpead = 10f;
+        [SerializeField] private float rotateSpead = 30f;
+        [SerializeField] private float zoomSpead = 10f;
+        [SerializeField] private bool forceLocalYAxisUp = true;
 
         void Start()
         {
-            cameraTransform = GetComponent<Transform>();
             UISetting.SetButton(ref camera1, "Camera1", OnBtn_Camera1);
             UISetting.SetButton(ref camera2, "Camera2", OnBtn_Camera2);
         }
@@ -24,35 +25,33 @@ namespace KW_Mocap
         void Update()
         {
             if (!isActive) return;
-            TransformPos();
-            TransformRot();
+
+            Move();
             Zoom();
+            RotateAround();
+            if (forceLocalYAxisUp) ForceLocalYAxisUp();
         }
 
+        /// <summary>
+        /// ファイル名入力画面などでは有効になってほしくないので、他のクラスに無効にしてもらうためのメソッド。
+        /// </summary>
+        /// <param name="flg">有効か無効か</param>
         public void SetActive(bool flg) => isActive = flg;
 
         /// <summary>
         /// カメラの平行移動
         /// </summary>
-        private void TransformPos()
+        private void Move()
         {
-            if (Input.GetKey(KeyCode.W)) cameraTransform.position += new Vector3(0.0f, 0.0f, moveSpead);
-            if (Input.GetKey(KeyCode.A)) cameraTransform.position += new Vector3(-moveSpead, 0.0f, 0.0f);
-            if (Input.GetKey(KeyCode.S)) cameraTransform.position += new Vector3(0.0f, 0.0f, -moveSpead);
-            if (Input.GetKey(KeyCode.D)) cameraTransform.position += new Vector3(moveSpead, 0.0f, 0.0f);
-        }
+            // カメラの向いてる方向のワールドxy平面に沿った方向ベクトル。言い換えるとローカルzの正射影ベクトルを正規化したもの。
+            var forward = Vector3.ProjectOnPlane(transform.forward, Vector3.up).normalized;
+            if (Input.GetKey(KeyCode.W)) transform.Translate(moveSpead * Time.deltaTime * forward, Space.World);
+            if (Input.GetKey(KeyCode.S)) transform.Translate(moveSpead * Time.deltaTime * -forward, Space.World);
 
-        /// <summary>
-        /// カメラのローカル座標周りの回転
-        /// </summary>
-        private void TransformRot()
-        {
-            Vector3 ang = Vector3.zero;
-            if (Input.GetKey(KeyCode.LeftArrow)) ang.y += rotateSpead;
-            else if (Input.GetKey(KeyCode.RightArrow)) ang.y -= rotateSpead;
-            if (Input.GetKey(KeyCode.UpArrow)) ang.x -= rotateSpead;
-            else if (Input.GetKey(KeyCode.DownArrow)) ang.x += rotateSpead;
-            cameraTransform.Rotate(ang, Space.Self);
+            // カメラの向いてる方向の右向き
+            var right = transform.right;
+            if (Input.GetKey(KeyCode.D)) transform.Translate(moveSpead * Time.deltaTime * right, Space.World);
+            if (Input.GetKey(KeyCode.A)) transform.Translate(moveSpead * Time.deltaTime * -right, Space.World);
         }
 
         /// <summary>
@@ -60,8 +59,36 @@ namespace KW_Mocap
         /// </summary>
         private void Zoom()
         {
-            if (Input.GetKey(KeyCode.F)) cameraTransform.position -= transform.forward * zoomSpead;
-            else if (Input.GetKey(KeyCode.N)) cameraTransform.position += transform.forward * zoomSpead;
+            if (Input.GetKey(KeyCode.E)) transform.Translate(zoomSpead * Time.deltaTime * transform.forward, Space.World);
+            if (Input.GetKey(KeyCode.C)) transform.Translate(zoomSpead * Time.deltaTime * -transform.forward, Space.World);
+        }
+
+        /// <summary>
+        /// カメラのディスプレイを中心とした回転
+        /// </summary>
+        private void RotateAround()
+        {
+            float yAngle = 0;
+            if (Input.GetKey(KeyCode.LeftArrow)) yAngle = rotateSpead * Time.deltaTime;
+            else if (Input.GetKey(KeyCode.RightArrow)) yAngle = -rotateSpead * Time.deltaTime;
+            /* 点rotCenterを通る方向ベクトルtranform.upを軸とするyAngleラジアンの回転*/
+            transform.RotateAround(rotCenter, transform.up, yAngle);
+
+            float xAngle = 0;
+            if (Input.GetKey(KeyCode.UpArrow)) xAngle = rotateSpead * Time.deltaTime;
+            else if (Input.GetKey(KeyCode.DownArrow)) xAngle = -rotateSpead * Time.deltaTime;
+            /* 点rotCenterを通る方向ベクトルtranform.rightを軸とするyAngleラジアンの回転*/
+            transform.RotateAround(rotCenter, transform.right, -xAngle);
+        }
+
+        /// <summary>
+        /// カメラのローカル上方向がなるべくワールド上方向を向くようにカメラを回転する。
+        /// </summary>
+        private void ForceLocalYAxisUp()
+        {
+            Vector3 projectionVector = Vector3.ProjectOnPlane(vector: Vector3.up, planeNormal: transform.forward);
+            float angle = Vector3.SignedAngle(from: transform.up, to: projectionVector, axis: transform.forward);
+            transform.Rotate(transform.forward, angle, Space.World);
         }
 
         /// <summary>
@@ -69,8 +96,9 @@ namespace KW_Mocap
         /// </summary>
         private void OnBtn_Camera1()
         {
-            cameraTransform.position = new Vector3(0.0f, 19.95238f, -11.01941f);
-            cameraTransform.rotation = Quaternion.Euler(new Vector3(60.27f, 0.0f, 0.0f));
+            var pos = new Vector3(0.0f, 19.95238f, -11.01941f);
+            var rot = Quaternion.Euler(new Vector3(60.27f, 0.0f, 0.0f));
+            transform.SetPositionAndRotation(pos, rot);
         }
 
         /// <summary>
@@ -78,8 +106,9 @@ namespace KW_Mocap
         /// </summary>
         private void OnBtn_Camera2()
         {
-            cameraTransform.position = new Vector3(0.0f, 18.2f, 0.0f);
-            cameraTransform.rotation = Quaternion.Euler(new Vector3(90.0f, 0.0f, 0.0f));
+            var pos = new Vector3(0.0f, 18.2f, 0.0f);
+            var rot = Quaternion.Euler(new Vector3(90.0f, 0.0f, 0.0f));
+            transform.SetPositionAndRotation(pos, rot);
         }
     }
 }
