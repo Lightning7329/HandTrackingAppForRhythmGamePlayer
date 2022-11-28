@@ -22,6 +22,15 @@ namespace KW_Mocap
         private static Vector3 lastPosition = pos1;
         private static Quaternion lastRotation = rot1;
 
+        /// <summary>
+        /// カメラが動ける位置のy座標の上限
+        /// </summary>
+        private static readonly float ceiling = 60.0f;
+        /// <summary>
+        /// カメラが動ける位置のy座標の下限
+        /// </summary>
+        private static readonly float floor = 3.0f;
+
         private bool isActive = true;
         private Vector3 preMousePos;
         Button camera1, camera2;
@@ -113,11 +122,14 @@ namespace KW_Mocap
         /// <summary>
         /// カメラのズームイン/アウト
         /// </summary>
-        /// /// <param name="amount">正だと近く。負だと引く。</param>
+        /// /// <param name="amount">正だと前進。負だと後退。</param>
         private void Zoom(float amount)
         {
-            //TODO: ディプレイにめり込まないようにする
-            transform.Translate(amount * zoomSpead * Time.deltaTime * transform.forward, Space.World);
+            bool goingUp = !(transform.forward.y > 0 ^ amount > 0);
+            bool canGoUp = goingUp && transform.position.y < ceiling;
+            bool canGoDown = !goingUp && transform.position.y > floor;
+            if (canGoUp || canGoDown)
+                transform.Translate(amount * zoomSpead * Time.deltaTime * transform.forward, Space.World);
         }
 
         /// <summary>
