@@ -12,6 +12,7 @@ namespace KW_Mocap
     public class CameraController : MonoBehaviour
     {
         private bool isActive = true;
+        private Vector3 preMousePos;
         Button camera1, camera2;
 
         [SerializeField]
@@ -58,13 +59,10 @@ namespace KW_Mocap
         {
             if (!isActive) return;
 
-            Move();
-            if (Input.GetKey(KeyCode.E)) Zoom(1.0f);
-            if (Input.GetKey(KeyCode.C)) Zoom(-1.0f);
-            if (Input.GetKey(KeyCode.LeftArrow)) HorizontalRotateAround(1.0f);
-            if (Input.GetKey(KeyCode.RightArrow)) HorizontalRotateAround(-1.0f);
-            if (Input.GetKey(KeyCode.UpArrow)) VerticalRotateAround(1.0f);
-            if (Input.GetKey(KeyCode.DownArrow)) VerticalRotateAround(-1.0f);
+            MouseControl();
+            KeyControl();
+
+            /* 上向き補正 */
             switch (forceLocalYAxisUp)
             {
                 case LocalYAsisStabilization.ForceLocalYAxisUp:
@@ -81,19 +79,23 @@ namespace KW_Mocap
         }
 
         /// <summary>
-        /// カメラの平行移動
+        /// 水平方向のカメラの平行移動
         /// </summary>
-        private void Move()
+        /// <param name="amout">正だと右。負だと左。</param>
+        private void HorizontalMove(float amout)
         {
-            // カメラの向いてる方向のワールドxy平面に沿った方向ベクトル。言い換えるとローカルzの正射影ベクトルを正規化したもの。
-            var forward = Vector3.ProjectOnPlane(transform.forward, Vector3.up).normalized;
-            if (Input.GetKey(KeyCode.W)) transform.Translate(moveSpead * Time.deltaTime * forward, Space.World);
-            if (Input.GetKey(KeyCode.S)) transform.Translate(moveSpead * Time.deltaTime * -forward, Space.World);
+            transform.Translate(amout * moveSpead * Time.deltaTime * transform.right, Space.World);
+        }
 
-            // カメラの向いてる方向の右向き
-            var right = transform.right;
-            if (Input.GetKey(KeyCode.D)) transform.Translate(moveSpead * Time.deltaTime * right, Space.World);
-            if (Input.GetKey(KeyCode.A)) transform.Translate(moveSpead * Time.deltaTime * -right, Space.World);
+        /// <summary>
+        /// 垂直方向のカメラの平行移動
+        /// </summary>
+        /// <param name="amout">正だと前進。負だと後退。</param>
+        private void VerticalMove(float amout)
+        {
+            /* transform.forwardベクトルのxz平面への正射影を正規化したベクトル */
+            Vector3 forward = Vector3.ProjectOnPlane(transform.forward, Vector3.up).normalized;
+            transform.Translate(amout * moveSpead * Time.deltaTime * forward, Space.World);
         }
 
         /// <summary>
@@ -117,7 +119,7 @@ namespace KW_Mocap
         }
 
         /// <summary>
-        /// カメラのディスプレイを中心とした横方向の回転。
+        /// カメラのディスプレイを中心とした水平方向の回転。
         /// 点rotCenterを通る方向ベクトルtranform.rightを軸とするyAngle度の回転。
         /// </summary>
         /// <param name="amount">正だと左回り。負だと右回り。</param>
@@ -128,7 +130,7 @@ namespace KW_Mocap
         }
 
         /// <summary>
-        /// カメラのディスプレイを中心とした縦方向の回転。
+        /// カメラのディスプレイを中心とした垂直方向の回転。
         /// 点rotCenterを通る方向ベクトルtranform.rightを軸とするyAngle度の回転。
         /// </summary>
         /// <param name="amount">正だと上回り。負だと下回り。</param>
@@ -153,6 +155,65 @@ namespace KW_Mocap
             Vector3 projectionVector = Vector3.ProjectOnPlane(vector: Vector3.up, planeNormal: transform.forward);
             float angle = Vector3.SignedAngle(from: transform.up, to: projectionVector, axis: transform.forward);
             transform.Rotate(transform.forward, angle, Space.World);
+        }
+
+        /// <summary>
+        /// キー入力によるカメラ操作。
+        /// </summary>
+        private void KeyControl()
+        {
+            /* 移動 */
+            if (Input.GetKey(KeyCode.D)) HorizontalMove(1.0f);
+            if (Input.GetKey(KeyCode.A)) HorizontalMove(-1.0f);
+            if (Input.GetKey(KeyCode.W)) VerticalMove(1.0f);
+            if (Input.GetKey(KeyCode.S)) VerticalMove(-1.0f);
+            if (Input.GetKey(KeyCode.E)) Zoom(1.0f);
+            if (Input.GetKey(KeyCode.C)) Zoom(-1.0f);
+
+            /* 回転 */
+            if (Input.GetKey(KeyCode.LeftArrow)) HorizontalRotateAround(1.0f);
+            if (Input.GetKey(KeyCode.RightArrow)) HorizontalRotateAround(-1.0f);
+            if (Input.GetKey(KeyCode.UpArrow)) VerticalRotateAround(1.0f);
+            if (Input.GetKey(KeyCode.DownArrow)) VerticalRotateAround(-1.0f);
+        }
+
+        /// <summary>
+        /// マウスによるカメラ操作。
+        /// </summary>
+        private void MouseControl()
+        {
+            if (Input.GetMouseButtonDown(1) || Input.GetMouseButtonDown(2))
+                preMousePos = Input.mousePosition;
+            if (Input.GetMouseButton(1) || Input.GetMouseButton(2))
+                MouseDrag(Input.mousePosition);
+            Zoom(Input.GetAxis("Mouse ScrollWheel") * 5.0f);
+        }
+
+        /// <summary>
+        /// マウスのドラッグ操作。
+        /// 右ボタンかホイールボタンが押されているときに呼ばれる。
+        /// </summary>
+        /// <param name="mousePos">現在のマウス位置</param>
+        private void MouseDrag(Vector3 mousePos)
+        {
+            Vector3 diff = mousePos - preMousePos;
+            if (diff.sqrMagnitude < Vector3.kEpsilon * Vector3.kEpsilon) return;
+
+            /* 右クリックで回転 */
+            if (Input.GetMouseButton(1))
+            {
+                HorizontalRotateAround(diff.x);
+                VerticalRotateAround(-diff.y);
+            }
+
+            /* ホイールクリックで移動 */
+            if (Input.GetMouseButton(2))
+            {
+                HorizontalMove(-diff.x / 2);
+                VerticalMove(-diff.y / 2);
+            }
+
+            preMousePos = mousePos;
         }
 
         /// <summary>
