@@ -152,6 +152,7 @@ namespace KW_Mocap
         void OnBtn_SceneChange()
         {
             WorldTimer.Stop();
+            cameraController.HoldCurrentSceneTransform();
             UnityEngine.SceneManagement.SceneManager.LoadScene("VideoRecord");
         }
     }

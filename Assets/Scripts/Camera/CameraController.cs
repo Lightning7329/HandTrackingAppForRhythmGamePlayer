@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace KW_Mocap
@@ -11,6 +12,16 @@ namespace KW_Mocap
     [RequireComponent(typeof(Camera))]
     public class CameraController : MonoBehaviour
     {
+        /* 標準的な位置のプリセット */
+        private static Vector3 pos1 = new Vector3(0.0f, 19.95238f, -11.01941f);
+        private static Quaternion rot1 = Quaternion.Euler(60.27f, 0.0f, 0.0f);
+        private static Vector3 pos2 = new Vector3(0.0f, 18.2f, 0.0f);
+        private static Quaternion rot2 = Quaternion.Euler(90.0f, 0.0f, 0.0f);
+
+        /* シーンを跨ぐときに最後の位置と回転を記憶するための変数 */
+        private static Vector3 lastPosition = pos1;
+        private static Quaternion lastRotation = rot1;
+
         private bool isActive = true;
         private Vector3 preMousePos;
         Button camera1, camera2;
@@ -51,6 +62,7 @@ namespace KW_Mocap
 
         void Start()
         {
+            SetLastSceneTransform();
             UISetting.SetButton(ref camera1, "Camera1", OnBtn_Camera1);
             UISetting.SetButton(ref camera2, "Camera2", OnBtn_Camera2);
         }
@@ -70,7 +82,7 @@ namespace KW_Mocap
                     break;
                 case LocalYAsisStabilization.transformLookAt:
                     transform.LookAt(rotCenter);
-                    //↓でも同じ
+                    /* ↓でも同じ */
                     //transform.rotation = Quaternion.LookRotation(rotCenter - transform.position);
                     break;
                 case LocalYAsisStabilization.None:
@@ -221,9 +233,7 @@ namespace KW_Mocap
         /// </summary>
         private void OnBtn_Camera1()
         {
-            var pos = new Vector3(0.0f, 19.95238f, -11.01941f);
-            var rot = Quaternion.Euler(new Vector3(60.27f, 0.0f, 0.0f));
-            transform.SetPositionAndRotation(pos, rot);
+            transform.SetPositionAndRotation(pos1, rot1);
         }
 
         /// <summary>
@@ -231,9 +241,24 @@ namespace KW_Mocap
         /// </summary>
         private void OnBtn_Camera2()
         {
-            var pos = new Vector3(0.0f, 18.2f, 0.0f);
-            var rot = Quaternion.Euler(new Vector3(90.0f, 0.0f, 0.0f));
-            transform.SetPositionAndRotation(pos, rot);
+            transform.SetPositionAndRotation(pos2, rot2);
+        }
+
+        /// <summary>
+        /// シーンをアンロードするときに現在のカメラの位置と回転を記憶する。
+        /// </summary>
+        public void HoldCurrentSceneTransform()
+        {
+            lastPosition = transform.position;
+            lastRotation = transform.rotation;
+        }
+
+        /// <summary>
+        /// シーンをロードしたときに前のシーンのカメラの位置と回転をセットする。
+        /// </summary>
+        private void SetLastSceneTransform()
+        {
+            transform.SetPositionAndRotation(lastPosition, lastRotation);
         }
     }
 }
