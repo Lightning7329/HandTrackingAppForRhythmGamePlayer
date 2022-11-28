@@ -14,8 +14,9 @@ namespace KW_Mocap
         private bool isPlaying = false;
         public bool isLoaded { get; private set; } = false;
         public int frameCount { get; private set; } = 0;
+        public int playbackOffset = 0;  // Echo over you_Normal: -94
 
-        private int _frame = 0;
+        [SerializeField] private int _frame = 0;
         public int frame
         {
             get => _frame;
@@ -40,17 +41,18 @@ namespace KW_Mocap
 
         void Update()
         {
-            if (isPlaying) Play();
+            if (isPlaying) Play(frame + playbackOffset);
         }
 
         /// <summary>
         /// 各フレームの動き（位置と回転）を記述
         /// </summary>
-        void Play()
+        void Play(int n)
         {
+            if (n < 0 || frameCount <= n) return;
             // TODO: leftJoint[0]~leftKJoint[8]のモーションデータも再生する。rightも然り。
-            left.transform.SetPositionAndRotation(motionData[_frame].left.palmPos, motionData[_frame].left.palmRot);
-            right.transform.SetPositionAndRotation(motionData[_frame].right.palmPos, motionData[_frame].right.palmRot);
+            left.transform.SetPositionAndRotation(motionData[n].left.palmPos, motionData[n].left.palmRot);
+            right.transform.SetPositionAndRotation(motionData[n].right.palmPos, motionData[n].right.palmRot);
         }
 
         public void StartPlaying()
@@ -75,8 +77,9 @@ namespace KW_Mocap
 
         public void Skip(float seconds)
         {
-            this.frame += (int)(WorldTimer.frameRate * seconds);
-            if(isPlaying) StartPlaying();
+            //this.frame += (int)(WorldTimer.frameRate * seconds);
+            this.frame += (this.frame & 1) == 0 ? 152 : 151;
+            Play(this.frame);
         }
 
         public void ChangeSpeed(float speedRatio)
