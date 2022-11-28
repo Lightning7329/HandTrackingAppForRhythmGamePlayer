@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,11 +13,12 @@ namespace KW_Mocap
     [RequireComponent(typeof(Camera))]
     public class CameraController : MonoBehaviour
     {
+        #region StaticField
         /* 標準的な位置のプリセット */
         private static Vector3 pos1 = new Vector3(0.0f, 19.95238f, -11.01941f);
-        private static Quaternion rot1 = Quaternion.Euler(60.27f, 0.0f, 0.0f);
-        private static Vector3 pos2 = new Vector3(0.0f, 18.2f, 0.0f);
-        private static Quaternion rot2 = Quaternion.Euler(90.0f, 0.0f, 0.0f);
+        private static Quaternion rot1 = Quaternion.Euler(60.0f, 0.0f, 0.0f);
+        private static Vector3 pos2 = new Vector3(0.0f, 18.1077747f, -2.13255429f);
+        private static Quaternion rot2 = new Quaternion(0.676393151f, 8.08870536e-05f, -8.61902517e-05f, 0.736540854f);
 
         /* シーンを跨ぐときに最後の位置と回転を記憶するための変数 */
         private static Vector3 lastPosition = pos1;
@@ -30,7 +32,9 @@ namespace KW_Mocap
         /// カメラが動ける位置のy座標の下限
         /// </summary>
         private static readonly float floor = 3.0f;
+        #endregion
 
+        #region Field
         private bool isActive = true;
         private Vector3 preMousePos;
         Button camera1, camera2;
@@ -38,20 +42,26 @@ namespace KW_Mocap
         [SerializeField]
         private Vector3 rotCenter = Vector3.zero;
 
-        [SerializeField, Range(0.1f, 30.0f)]
-        private float moveSpead = 10f;
+        [SerializeField, Range(0.0f, 100.0f)]
+        private float moveSpead = 50.0f;
+        private float MoveSpeed
+        {
+            get => moveSpead * 0.5f;
+        }
 
-        [SerializeField, Range(0.01f, 5.0f)]
-        private float horizontalRotateSpead = 2.5f;
+        [SerializeField, Range(0.0f, 100.0f)]
+        private float zoomSpeed = 50.0f;
+        private float ZoomSpeed
+        {
+            get => zoomSpeed * 0.5f;
+        }
 
-        [SerializeField, Range(0.1f, 70.0f)]
-        private float verticalRotateSpead = 30f;
-
-        [SerializeField, Range(0.1f, 30.0f)]
-        private float zoomSpead = 10f;
+        [SerializeField]
+        private RotateSpeed rotateSpeed = new RotateSpeed(50.0f, 50.0f);
 
         [SerializeField]
         private LocalYAsisStabilization forceLocalYAxisUp = LocalYAsisStabilization.ForceLocalYAxisUp;
+        #endregion
 
         /// <summary>
         /// 上向き補正の手法
@@ -76,6 +86,7 @@ namespace KW_Mocap
             UISetting.SetButton(ref camera2, "Camera2", OnBtn_Camera2);
         }
 
+        #region CameraMotion
         void Update()
         {
             if (!isActive) return;
@@ -105,7 +116,7 @@ namespace KW_Mocap
         /// <param name="amout">正だと右。負だと左。</param>
         private void HorizontalMove(float amout)
         {
-            transform.Translate(amout * moveSpead * Time.deltaTime * transform.right, Space.World);
+            transform.Translate(amout * MoveSpeed * Time.deltaTime * transform.right, Space.World);
         }
 
         /// <summary>
@@ -116,7 +127,7 @@ namespace KW_Mocap
         {
             /* transform.forwardベクトルのxz平面への正射影を正規化したベクトル */
             Vector3 forward = Vector3.ProjectOnPlane(transform.forward, Vector3.up).normalized;
-            transform.Translate(amout * moveSpead * Time.deltaTime * forward, Space.World);
+            transform.Translate(amout * MoveSpeed * Time.deltaTime * forward, Space.World);
         }
 
         /// <summary>
@@ -129,7 +140,7 @@ namespace KW_Mocap
             bool canGoUp = goingUp && transform.position.y < ceiling;
             bool canGoDown = !goingUp && transform.position.y > floor;
             if (canGoUp || canGoDown)
-                transform.Translate(amount * zoomSpead * Time.deltaTime * transform.forward, Space.World);
+                transform.Translate(amount * ZoomSpeed * Time.deltaTime * transform.forward, Space.World);
         }
 
         /// <summary>
@@ -149,7 +160,7 @@ namespace KW_Mocap
         /// <param name="amount">正だと左回り。負だと右回り。</param>
         private void HorizontalRotateAround(float amount)
         {
-            float yAngle = GetDistanceFromYAxis() * amount * horizontalRotateSpead * Time.deltaTime;
+            float yAngle = GetDistanceFromYAxis() * amount * rotateSpeed.Horizontal * Time.deltaTime;
             transform.RotateAround(rotCenter, transform.up, yAngle);
         }
 
@@ -166,7 +177,7 @@ namespace KW_Mocap
             bool canGoUp = amount > 0 && depression < 85.0f;    // 上に回り込みたい && まだそんなに下向きじゃない -> まだ上行ける
             if (canGoDown || canGoUp)
             {
-                float xAngle = amount * verticalRotateSpead * Time.deltaTime;
+                float xAngle = amount * rotateSpeed.Vertical * Time.deltaTime;
                 transform.RotateAround(rotCenter, transform.right, xAngle);
             }
         }
@@ -239,6 +250,7 @@ namespace KW_Mocap
 
             preMousePos = mousePos;
         }
+        #endregion
 
         /// <summary>
         /// Camera1ボタンが押されたときに実行。カメラ位置をデフォルトに戻す。
@@ -271,6 +283,30 @@ namespace KW_Mocap
         private void SetLastSceneTransform()
         {
             transform.SetPositionAndRotation(lastPosition, lastRotation);
+        }
+    }
+
+    [Serializable]
+    public struct RotateSpeed
+    {
+        [SerializeField, Range(0.0f, 100.0f)]
+        private float horizontal;
+        public float Horizontal
+        {
+            get => horizontal * 0.05f;
+        }
+
+        [SerializeField, Range(0.0f, 100.0f)]
+        private float vertical;
+        public float Vertical
+        {
+            get => vertical * 0.6f;
+        }
+
+        public RotateSpeed(float horizontal, float vertical)
+        {
+            this.horizontal = horizontal;
+            this.vertical = vertical;
         }
     }
 }
