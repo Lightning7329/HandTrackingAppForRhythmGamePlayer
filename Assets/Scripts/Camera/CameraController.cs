@@ -17,8 +17,8 @@ namespace KW_Mocap
         /* 標準的な位置のプリセット */
         private static Vector3 pos1 = new Vector3(0.0f, -17.4f, -11.01941f);
         private static Quaternion rot1 = Quaternion.Euler(60.0f, 0.0f, 0.0f);
-        private static Vector3 pos2 = new Vector3(0.0f, 18.1077747f, -2.13255429f);
-        private static Quaternion rot2 = new Quaternion(0.676393151f, 8.08870536e-05f, -8.61902517e-05f, 0.736540854f);
+        private static Vector3 pos2 = new Vector3(0.0f, -16.6254234f, -2.06645179f);
+        private static Quaternion rot2 = new Quaternion(0.676119626f, -5.22547793e-07f, -4.97357746e-07f, 0.736791849f);
 
         /* シーンを跨ぐときに最後の位置と回転を記憶するための変数 */
         private static Vector3 lastPosition = pos1;
@@ -84,6 +84,7 @@ namespace KW_Mocap
             SetLastSceneTransform();
             UISetting.SetButton(ref camera1, "Camera1", OnBtn_Camera1);
             UISetting.SetButton(ref camera2, "Camera2", OnBtn_Camera2);
+            rotCenter = GameObject.FindWithTag("Display").GetComponent<Transform>().position;
         }
 
         #region CameraMotion
