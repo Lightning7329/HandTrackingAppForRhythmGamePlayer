@@ -15,7 +15,7 @@ namespace KW_Mocap
     {
         #region StaticField
         /* 標準的な位置のプリセット */
-        private static Vector3 pos1 = new Vector3(0.0f, 19.95238f, -11.01941f);
+        private static Vector3 pos1 = new Vector3(0.0f, -17.4f, -11.01941f);
         private static Quaternion rot1 = Quaternion.Euler(60.0f, 0.0f, 0.0f);
         private static Vector3 pos2 = new Vector3(0.0f, 18.1077747f, -2.13255429f);
         private static Quaternion rot2 = new Quaternion(0.676393151f, 8.08870536e-05f, -8.61902517e-05f, 0.736540854f);
@@ -27,11 +27,11 @@ namespace KW_Mocap
         /// <summary>
         /// カメラが動ける位置のy座標の上限
         /// </summary>
-        private static readonly float ceiling = 60.0f;
+        private static readonly float ceiling = 30.0f;
         /// <summary>
         /// カメラが動ける位置のy座標の下限
         /// </summary>
-        private static readonly float floor = 3.0f;
+        private static readonly float floor = -30.0f;
         #endregion
 
         #region Field
@@ -53,7 +53,7 @@ namespace KW_Mocap
         private float zoomSpeed = 50.0f;
         private float ZoomSpeed
         {
-            get => zoomSpeed * 0.5f;
+            get => zoomSpeed * 10.0f;
         }
 
         [SerializeField]
