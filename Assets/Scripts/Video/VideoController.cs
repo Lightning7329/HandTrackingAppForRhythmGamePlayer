@@ -10,7 +10,7 @@ namespace KW_Mocap
     {
         private VideoPlayer video;
         private SliderController sliderController;
-        [SerializeField] private int startFrame = 500;
+        [SerializeField] private int startFrame = 0;
         public bool isPlaying { get; private set; } = false;
 
         void Start()

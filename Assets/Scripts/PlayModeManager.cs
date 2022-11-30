@@ -16,6 +16,8 @@ namespace KW_Mocap
 
         VideoController videoController = null;
 
+        CameraController cameraController = null;
+
         // uGUI側
         private Text txt_speed, txt_playButton;
         private Button playButton, forwardButton, backwardButton, addSpeedButton, subSpeedButton, sceneChangeButton, fileSelectButton;
@@ -30,6 +32,8 @@ namespace KW_Mocap
 
             // video側
             videoController = GameObject.Find("Display for Play").GetComponent<VideoController>();
+            cameraController = Camera.main.GetComponent<CameraController>();
+
 
             // uGUI側
             //fileSelector = GameObject.Find("File Selection Panel").GetComponent<FileSelector>();
@@ -56,6 +60,7 @@ namespace KW_Mocap
             // 再生中だったら再生を止める
             if (isPlaying) OnBtn_Play();
 
+            cameraController.SetActive(false);
             fileSelector.List();
             StartCoroutine(LoadFile());
         }
@@ -77,6 +82,7 @@ namespace KW_Mocap
                 motionPlayer.ResetFrameCount();
                 videoController.SetVideoClip(fileName);
             }
+            cameraController.SetActive(true);
         }
 
         void OnBtn_Play()
@@ -146,6 +152,7 @@ namespace KW_Mocap
         void OnBtn_SceneChange()
         {
             WorldTimer.Stop();
+            cameraController.HoldCurrentSceneTransform();
             UnityEngine.SceneManagement.SceneManager.LoadScene("VideoRecord");
         }
     }
