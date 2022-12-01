@@ -15,10 +15,10 @@ namespace KW_Mocap
     {
         #region StaticField
         /* 標準的な位置のプリセット */
-        private static Vector3 pos1 = new Vector3(0.0f, -17.4f, -11.01941f);
+        private static Vector3 pos1 = new Vector3(0.0f, 19.95238f, -11.01941f);
         private static Quaternion rot1 = Quaternion.Euler(60.0f, 0.0f, 0.0f);
-        private static Vector3 pos2 = new Vector3(0.0f, -16.6254234f, -2.06645179f);
-        private static Quaternion rot2 = new Quaternion(0.676119626f, -5.22547793e-07f, -4.97357746e-07f, 0.736791849f);
+        private static Vector3 pos2 = new Vector3(0.0f, 18.1077747f, -2.13255429f);
+        private static Quaternion rot2 = new Quaternion(0.676393151f, 8.08870536e-05f, -8.61902517e-05f, 0.736540854f);
 
         /* シーンを跨ぐときに最後の位置と回転を記憶するための変数 */
         private static Vector3 lastPosition = pos1;
@@ -258,7 +258,9 @@ namespace KW_Mocap
         /// </summary>
         private void OnBtn_Camera1()
         {
-            transform.SetPositionAndRotation(pos1, rot1);
+            //transform.SetPositionAndRotation(pos1, rot1);
+            transform.localPosition = pos1;
+            transform.localRotation = rot1;
         }
 
         /// <summary>
@@ -266,7 +268,9 @@ namespace KW_Mocap
         /// </summary>
         private void OnBtn_Camera2()
         {
-            transform.SetPositionAndRotation(pos2, rot2);
+            //transform.SetPositionAndRotation(pos2, rot2);
+            transform.localPosition = pos2;
+            transform.localRotation = rot2;
         }
 
         /// <summary>
@@ -274,8 +278,10 @@ namespace KW_Mocap
         /// </summary>
         public void HoldCurrentSceneTransform()
         {
-            lastPosition = transform.position;
-            lastRotation = transform.rotation;
+            //lastPosition = transform.position;
+            //lastRotation = transform.rotation;
+            lastPosition = transform.localPosition;
+            lastRotation = transform.localRotation;
         }
 
         /// <summary>
@@ -283,7 +289,9 @@ namespace KW_Mocap
         /// </summary>
         private void SetLastSceneTransform()
         {
-            transform.SetPositionAndRotation(lastPosition, lastRotation);
+            //transform.SetPositionAndRotation(lastPosition, lastRotation);
+            transform.localPosition = lastPosition;
+            transform.localRotation = lastRotation;
         }
     }
 
