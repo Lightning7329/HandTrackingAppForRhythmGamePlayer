@@ -9,6 +9,8 @@ namespace KW_Mocap
     {
         [SerializeField] GameObject left, right, midPoint;
         [SerializeField] AverageMethod AverageMode = AverageMethod.Slerp;
+        [SerializeField, Range(0.1f, 200.0f)]
+        float scaleForLeapMotion = 80.0f;
 
         Button clbPosButton, clbRotButton;
         Text count;
@@ -36,6 +38,9 @@ namespace KW_Mocap
         void Update()
         {
             UpdateMidPoint();
+            left.GetComponent<LeapHandModel>().scl = scaleForLeapMotion;
+            right.GetComponent<LeapHandModel>().scl = scaleForLeapMotion;
+
         }
 
         /// <summary>
@@ -84,6 +89,11 @@ namespace KW_Mocap
             if (midPoint == null) return;
             midPoint.transform.position = 0.5f * (left.transform.position + right.transform.position);
             midPoint.transform.rotation = Avg[AverageMode](left.transform.rotation, right.transform.rotation);
+        }
+
+        void SetCalibrationPose(GameObject hand)
+        {
+            // TODO: éwÇÃä÷êﬂÇÃâÒì]ÇïœçXÅB
         }
     }
 }

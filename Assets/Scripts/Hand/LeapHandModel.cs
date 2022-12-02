@@ -9,7 +9,7 @@ namespace KW_Mocap
 		[SerializeField] private Chirality LR;
 
         [SerializeField, Range(0.1f, 100.0f)]
-		private float scl = 70.0f;
+		public float scl = 70.0f;
 
         private Hand lmHand;
 
