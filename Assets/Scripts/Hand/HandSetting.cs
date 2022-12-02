@@ -21,13 +21,13 @@ namespace KW_Mocap {
 			{
 				foreach (GameObject Gc in children)
 				{
-					if (Gc.name == fingerName + (2 - now_go % 3).ToString())
+					if (Gc.name == fingerName + (1 + now_go % 3).ToString())
 						joints[now_go++] = Gc;
 				}
 			}
 
 			// 手のひら
-			joints[now_go] = this.gameObject;
+			joints[now_go] = this.transform.Find("P").gameObject;
 		}
 
 		/// <summary>
