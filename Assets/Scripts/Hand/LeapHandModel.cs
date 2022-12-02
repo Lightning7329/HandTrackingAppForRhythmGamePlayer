@@ -50,6 +50,10 @@ namespace KW_Mocap
 		public override void UpdateHand()
 		{
 			var palmPose = lmHand.GetPalmPose();
+			//lmHand.WristPosition	手首の位置。おそらくこっちも使った方がいい。
+			//lmHand.PalmWidth		手首の幅
+
+			
 			gameObject.transform.localPosition = scl * palmPose.position;
 			gameObject.transform.localRotation = palmPose.rotation;
 		}

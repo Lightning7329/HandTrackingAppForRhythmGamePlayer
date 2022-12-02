@@ -34,7 +34,7 @@ namespace KW_Mocap
         {
             HandData left = new HandData(leftHand.position, leftHand.rotation);
             HandData right = new HandData(rightHand.position, rightHand.rotation);
-            motionData[recordDataCount] = new MotionData(left, right);            
+            motionData[recordDataCount] = new MotionData(left, right);
         }
 
         public void StartRecording()
