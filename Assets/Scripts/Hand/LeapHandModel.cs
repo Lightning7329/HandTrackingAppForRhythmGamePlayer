@@ -7,8 +7,11 @@ namespace KW_Mocap
 	public class LeapHandModel : HandModelBase
 	{
 		[SerializeField] private Chirality LR;
-        [SerializeField][Range(0.1f, 100.0f)] private float scl;
-		private Hand lmHand;
+
+        [SerializeField, Range(0.1f, 100.0f)]
+		private float scl = 70.0f;
+
+        private Hand lmHand;
 
 		public override Chirality Handedness
 		{
@@ -23,7 +26,7 @@ namespace KW_Mocap
 
         public void Start()
         {
-            OnBegin += changeMaterial_OnBegin;
+			OnBegin += changeMaterial_OnBegin;
 			OnFinish += changeMaterial_OnFinish;
 		}
 
@@ -50,10 +53,6 @@ namespace KW_Mocap
 		public override void UpdateHand()
 		{
 			var palmPose = lmHand.GetPalmPose();
-			//lmHand.WristPosition	手首の位置。おそらくこっちも使った方がいい。
-			//lmHand.PalmWidth		手首の幅
-
-			
 			gameObject.transform.localPosition = scl * palmPose.position;
 			gameObject.transform.localRotation = palmPose.rotation;
 		}

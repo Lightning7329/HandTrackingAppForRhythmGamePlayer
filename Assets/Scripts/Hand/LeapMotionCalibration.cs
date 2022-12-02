@@ -81,6 +81,7 @@ namespace KW_Mocap
 
         void UpdateMidPoint()
         {
+            if (midPoint == null) return;
             midPoint.transform.position = 0.5f * (left.transform.position + right.transform.position);
             midPoint.transform.rotation = Avg[AverageMode](left.transform.rotation, right.transform.rotation);
         }
