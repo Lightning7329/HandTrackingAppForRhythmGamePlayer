@@ -21,7 +21,8 @@ namespace KW_Mocap
 
         public enum AverageMethod {Lerp, Slerp}
         delegate Quaternion AverageQuaternion(Quaternion q1, Quaternion q2);
-        Dictionary<AverageMethod, AverageQuaternion> Avg = new Dictionary<AverageMethod, AverageQuaternion>() {
+        Dictionary<AverageMethod, AverageQuaternion> Avg
+            = new Dictionary<AverageMethod, AverageQuaternion>() {
                 { AverageMethod.Lerp,  (q1, q2) => Quaternion.Lerp(q1, q2, 0.5f) },
                 { AverageMethod.Slerp, (q1, q2) => Quaternion.Slerp(q1, q2, 0.5f) }
             };

@@ -60,13 +60,13 @@ namespace KW_Mocap
         private RotateSpeed rotateSpeed = new RotateSpeed(50.0f, 50.0f);
 
         [SerializeField]
-        private LocalYAsisStabilization forceLocalYAxisUp = LocalYAsisStabilization.ForceLocalYAxisUp;
+        private LocalYAxisStabilization forceLocalYAxisUp = LocalYAxisStabilization.ForceLocalYAxisUp;
         #endregion
 
         /// <summary>
         /// 上向き補正の手法
         /// </summary>
-        public enum LocalYAsisStabilization
+        public enum LocalYAxisStabilization
         {
             None,
             ForceLocalYAxisUp,
@@ -98,15 +98,15 @@ namespace KW_Mocap
             /* 上向き補正 */
             switch (forceLocalYAxisUp)
             {
-                case LocalYAsisStabilization.ForceLocalYAxisUp:
+                case LocalYAxisStabilization.ForceLocalYAxisUp:
                     ForceLocalYAxisUp();
                     break;
-                case LocalYAsisStabilization.transformLookAt:
+                case LocalYAxisStabilization.transformLookAt:
                     transform.LookAt(rotCenter);
                     /* ↓でも同じ */
                     //transform.rotation = Quaternion.LookRotation(rotCenter - transform.position);
                     break;
-                case LocalYAsisStabilization.None:
+                case LocalYAxisStabilization.None:
                     break;
             }
         }

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44608766, g: 0.49585128, b: 0.5745041, a: 1}
+  m_IndirectSpecularColor: {r: 0.44608718, g: 0.49585086, b: 0.5745036, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2824,7 +2824,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1649370224
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5568,14 +5568,13 @@ MonoBehaviour:
   - Index
   - Middle
   - Ring
+  fingerBoneIndex: 310032003300
   materials:
     Palm: {fileID: 2100000, guid: bb3324742fc04479a8af92143005a46c, type: 2}
     Finger: {fileID: 2100000, guid: bb3324742fc04479a8af92143005a46c, type: 2}
     Joint: {fileID: 2100000, guid: 808f8f67dee4d4c4f9f619a87687ae86, type: 2}
     Top: {fileID: 2100000, guid: 808f8f67dee4d4c4f9f619a87687ae86, type: 2}
     Error: {fileID: 2100000, guid: e12b24aa97f461c4abfee7bdf201f1b6, type: 2}
-  now_go: 0
-  joints: []
 --- !u!4 &9100244175336023545
 Transform:
   m_ObjectHideFlags: 0

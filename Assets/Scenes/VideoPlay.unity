@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44608766, g: 0.49585128, b: 0.5745041, a: 1}
+  m_IndirectSpecularColor: {r: 0.44608718, g: 0.49585086, b: 0.5745036, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -607,6 +607,16 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 139544831}
   m_CullTransparentMesh: 1
+--- !u!1 &236173730 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2883887362371423899, guid: f9148b59fab33c24a897ddc1bf72b941, type: 3}
+  m_PrefabInstance: {fileID: 478759152}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &236173731 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2883887362371423876, guid: f9148b59fab33c24a897ddc1bf72b941, type: 3}
+  m_PrefabInstance: {fileID: 478759152}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &259770771
 GameObject:
   m_ObjectHideFlags: 0
@@ -1241,6 +1251,34 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1417507091}
     m_Modifications:
+    - target: {fileID: 2883887362371423876, guid: f9148b59fab33c24a897ddc1bf72b941, type: 3}
+      propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2883887362371423877, guid: f9148b59fab33c24a897ddc1bf72b941, type: 3}
+      propertyPath: fingerNames.Array.size
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2883887362371423877, guid: f9148b59fab33c24a897ddc1bf72b941, type: 3}
+      propertyPath: fingerNames.Array.data[0]
+      value: Thumb
+      objectReference: {fileID: 0}
+    - target: {fileID: 2883887362371423877, guid: f9148b59fab33c24a897ddc1bf72b941, type: 3}
+      propertyPath: fingerNames.Array.data[1]
+      value: Index
+      objectReference: {fileID: 0}
+    - target: {fileID: 2883887362371423877, guid: f9148b59fab33c24a897ddc1bf72b941, type: 3}
+      propertyPath: fingerNames.Array.data[2]
+      value: Middle
+      objectReference: {fileID: 0}
+    - target: {fileID: 2883887362371423877, guid: f9148b59fab33c24a897ddc1bf72b941, type: 3}
+      propertyPath: fingerNames.Array.data[3]
+      value: Ring
+      objectReference: {fileID: 0}
+    - target: {fileID: 2883887362371423877, guid: f9148b59fab33c24a897ddc1bf72b941, type: 3}
+      propertyPath: fingerNames.Array.data[4]
+      value: Pinky
+      objectReference: {fileID: 0}
     - target: {fileID: 8803339374926729799, guid: f9148b59fab33c24a897ddc1bf72b941, type: 3}
       propertyPath: m_Name
       value: Hand-R
@@ -1488,6 +1526,30 @@ PrefabInstance:
     - target: {fileID: 1565083570598333578, guid: 7f0823eef42154078947c92a84b440db, type: 3}
       propertyPath: m_Name
       value: Hand-L
+      objectReference: {fileID: 0}
+    - target: {fileID: 1565083570598333588, guid: 7f0823eef42154078947c92a84b440db, type: 3}
+      propertyPath: fingerNames.Array.size
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1565083570598333588, guid: 7f0823eef42154078947c92a84b440db, type: 3}
+      propertyPath: fingerNames.Array.data[0]
+      value: Thumb
+      objectReference: {fileID: 0}
+    - target: {fileID: 1565083570598333588, guid: 7f0823eef42154078947c92a84b440db, type: 3}
+      propertyPath: fingerNames.Array.data[1]
+      value: Index
+      objectReference: {fileID: 0}
+    - target: {fileID: 1565083570598333588, guid: 7f0823eef42154078947c92a84b440db, type: 3}
+      propertyPath: fingerNames.Array.data[2]
+      value: Middle
+      objectReference: {fileID: 0}
+    - target: {fileID: 1565083570598333588, guid: 7f0823eef42154078947c92a84b440db, type: 3}
+      propertyPath: fingerNames.Array.data[3]
+      value: Ring
+      objectReference: {fileID: 0}
+    - target: {fileID: 1565083570598333588, guid: 7f0823eef42154078947c92a84b440db, type: 3}
+      propertyPath: fingerNames.Array.data[4]
+      value: Pinky
       objectReference: {fileID: 0}
     - target: {fileID: 1565083570598333589, guid: 7f0823eef42154078947c92a84b440db, type: 3}
       propertyPath: m_RootOrder
@@ -3198,7 +3260,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 2114241606}
-  - {fileID: 1475632806}
+  - {fileID: 236173731}
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3214,8 +3276,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74375aaea50e2470b83bd3cf52144835, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  left: {fileID: 0}
-  right: {fileID: 0}
+  left: {fileID: 1620760399}
+  right: {fileID: 236173730}
   playbackOffset: -94
   _frame: 0
 --- !u!1 &1462079310
@@ -3297,11 +3359,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1462079310}
   m_CullTransparentMesh: 1
---- !u!4 &1475632806 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 8803339374926729816, guid: f9148b59fab33c24a897ddc1bf72b941, type: 3}
-  m_PrefabInstance: {fileID: 478759152}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1476932157
 GameObject:
   m_ObjectHideFlags: 0
@@ -3580,7 +3637,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2108429694}
   m_HandleRect: {fileID: 2108429693}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -3703,6 +3760,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1581956958}
   m_CullTransparentMesh: 1
+--- !u!1 &1620760399 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1565083570598333578, guid: 7f0823eef42154078947c92a84b440db, type: 3}
+  m_PrefabInstance: {fileID: 634792645}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1649370223
 GameObject:
   m_ObjectHideFlags: 0
