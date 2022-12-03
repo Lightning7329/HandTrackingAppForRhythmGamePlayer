@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static KW_Mocap.HandData;
 
 namespace KW_Mocap
 {
@@ -87,28 +88,14 @@ namespace KW_Mocap
         /// <param name="offset">左手か右手かでbyte配列の読み取り位置が異なる</param>
         public HandData(byte[] buf, Offset offset)
         {
-            palmPos = Vector3.zero;
-            palmRot = Quaternion.identity;
-
+            int next = (int)offset;
             // 手のひらの位置と回転
-            palmPos.x = BitConverter.ToSingle(buf, (int)offset);
-            palmPos.y = BitConverter.ToSingle(buf, 4 + (int)offset);
-            palmPos.z = BitConverter.ToSingle(buf, 8 + (int)offset);
-            palmRot.w = BitConverter.ToSingle(buf, 12 + (int)offset);
-            palmRot.x = BitConverter.ToSingle(buf, 16 + (int)offset);
-            palmRot.y = BitConverter.ToSingle(buf, 20 + (int)offset);
-            palmRot.z = BitConverter.ToSingle(buf, 24 + (int)offset);
-
+            (palmPos, next) = ExtendedBitConverter.GetVector3FromBytes(buf, next);
+            (palmRot, next) = ExtendedBitConverter.GetQuaternionFromBytes(buf, next);
             // 関節の回転
             for (int i = 0; i < jointRot.Length; i++)
             {
-                jointRot[i] = Quaternion.identity;
-
-                int shift = 16 * i + (int)offset;
-                jointRot[i].w = BitConverter.ToSingle(buf, 28 + shift);
-                jointRot[i].x = BitConverter.ToSingle(buf, 32 + shift);
-                jointRot[i].y = BitConverter.ToSingle(buf, 36 + shift);
-                jointRot[i].z = BitConverter.ToSingle(buf, 40 + shift);
+                (jointRot[i], next) = ExtendedBitConverter.GetQuaternionFromBytes(buf, next);
             }
         }
 
@@ -119,28 +106,23 @@ namespace KW_Mocap
         /// <param name="offset"></param>
         public void SetBytes(byte[] buf, Offset offset)
         {
+            int next = (int)offset;
             // 手のひらの位置と回転
-            SetByteBuf(BitConverter.GetBytes(palmPos.x), buf, (int)offset, 4);
-            SetByteBuf(BitConverter.GetBytes(palmPos.y), buf, 4 + (int)offset, 4);
-            SetByteBuf(BitConverter.GetBytes(palmPos.z), buf, 8 + (int)offset, 4);
-            SetByteBuf(BitConverter.GetBytes(palmRot.w), buf, 12 + (int)offset, 4);
-            SetByteBuf(BitConverter.GetBytes(palmRot.x), buf, 16 + (int)offset, 4);
-            SetByteBuf(BitConverter.GetBytes(palmRot.y), buf, 20 + (int)offset, 4);
-            SetByteBuf(BitConverter.GetBytes(palmRot.z), buf, 24 + (int)offset, 4);
+            next = palmPos.SetBytesFromVector3(buf, next);
+            next = palmRot.SetBytesFromQuaternion(buf, next);
             // ここまでで配列bufのbuf[0 + offset]からbuf[27 + offset]まで使用
-
+            
             // 関節の回転
             // ここで配列bufのbuf[28 + offset]からbuf[187 + offset]まで使用（40+16*9+3=187）
             for (int i = 0; i < jointRot.Length; i++)
             {
-                int shift = 16 * i + (int)offset;
-                SetByteBuf(BitConverter.GetBytes(jointRot[i].w), buf, 28 + shift, 4);
-                SetByteBuf(BitConverter.GetBytes(jointRot[i].x), buf, 32 + shift, 4);
-                SetByteBuf(BitConverter.GetBytes(jointRot[i].y), buf, 36 + shift, 4);
-                SetByteBuf(BitConverter.GetBytes(jointRot[i].z), buf, 40 + shift, 4);
+                next = jointRot[i].SetBytesFromQuaternion(buf, next);
             }
         }
+    }
 
+    public static class ExtendedBitConverter
+    {
         /// <summary>
         /// byteDataからdataCount個の数値ををbufのoffset番目から代入する
         /// </summary>
@@ -148,12 +130,66 @@ namespace KW_Mocap
         /// <param name="buf">バッファ用byte配列</param>
         /// <param name="offset">bufに入れ始めるindex</param>
         /// <param name="dataCount">bufに記録する数値の数</param>
-        private void SetByteBuf(byte[] byteData, byte[] buf, int offset, int dataCount)
+        public static void SetByteBuf(byte[] byteData, byte[] buf, int offset, int dataCount)
         {
             for (int i = 0; i < dataCount; i++)
-            {
                 buf[offset + i] = byteData[i];
-            }
+        }
+
+        /// <summary>
+        /// Vector3型の構造体変数をシリアライズして引数で受け取ったbyte配列に格納する。
+        /// </summary>
+        /// <param name="position"></param>
+        /// <param name="buf">バッファ用byte配列</param>
+        /// <param name="offset">bufに入れ始めるindex</param>
+        /// <returns>次の要素をbufに入れる際のoffset</returns>
+        public static int SetBytesFromVector3(this Vector3 position, byte[] buf, int offset)
+        {
+            for (int i = 0; i < 3; i++)
+                SetByteBuf(BitConverter.GetBytes(position[i]), buf, 4 * i + offset, 4);
+            return 12 + offset;
+        }
+
+        /// <summary>
+        /// Quaternion型の構造体変数をシリアライズして引数で受け取ったbyte配列に格納する。
+        /// </summary>
+        /// <param name="rotation"></param>
+        /// <param name="buf">バッファ用byte配列</param>
+        /// <param name="offset">bufに入れ始めるindex</param>
+        /// <returns>次の要素をbufに入れる際のoffset</returns>
+        public static int SetBytesFromQuaternion(this Quaternion rotation, byte[] buf, int offset)
+        {
+            for (int i = 0; i < 4; i++)
+                SetByteBuf(BitConverter.GetBytes(rotation[i]), buf, 4 * i + offset, 4);
+            return 16 + offset;
+        }
+
+        /// <summary>
+        /// byte配列のoffsetの位置から12バイト読み取ってVector3型構造体を作成して返す。
+        /// </summary>
+        /// <param name="buf"></param>
+        /// <param name="offset">読み取り開始位置</param>
+        /// <returns>読み取ったVector3と次の読み取り位置のタプル</returns>
+        public static (Vector3 position, int next) GetVector3FromBytes(byte[] buf, int offset)
+        {
+            Vector3 position = Vector3.zero;
+            for (int i = 0; i < 3; i++)
+                position[i] = BitConverter.ToSingle(buf, 4 * i + offset);
+            return (position, 12 + offset);
+        }
+
+        /// <summary>
+        /// byte配列のoffsetの位置から16バイト読み取ってQuaternion型構造体を作成して返す。
+        /// </summary>
+        /// <param name="buf"></param>
+        /// <param name="offset">読み取り開始位置</param>
+        /// <returns>読み取ったQuaternionと次の読み取り位置のタプル</returns>
+        public static (Quaternion rotation, int next) GetQuaternionFromBytes(byte[] buf, int offset)
+        {
+            Quaternion rotation = Quaternion.identity;
+            for (int i = 0; i < 4; i++)
+                rotation[i] = BitConverter.ToSingle(buf, 4 * i + offset);
+            return (rotation, 16 + offset);
         }
     }
 }

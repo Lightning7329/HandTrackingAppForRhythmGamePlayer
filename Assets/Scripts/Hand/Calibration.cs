@@ -5,19 +5,17 @@ using UnityEngine.UI;
 
 namespace KW_Mocap
 {
-    public class LeapMotionCalibration : MonoBehaviour
+    public class Calibration : MonoBehaviour
     {
         [SerializeField] GameObject left, right, midPoint, hands;
 
-        [SerializeField] AverageMethod AverageMode = AverageMethod.Slerp;
+        [SerializeField] AverageMethod averageMode = AverageMethod.Slerp;
 
-        [SerializeField, Range(0.1f, 200.0f)]
-        float scaleForLeapMotion = 80.0f;
+        [SerializeField, Range(0.1f, 200.0f)] float scaleForLeapMotion = 80.0f;
 
         public Vector3 adjustPos = Vector3.zero;
 
         Vector3 midPos = new Vector3(-2.31645107f, -32.073246f, 5.7862258f);
-        Quaternion midRot;
         Button calibrationButton;
         Text count;
 
@@ -101,7 +99,7 @@ namespace KW_Mocap
         /// </summary>
         void CalibrateRotation()
         {
-            midRot = Avg[AverageMode](left.transform.rotation, right.transform.rotation);
+            Quaternion midRot = Avg[averageMode](left.transform.rotation, right.transform.rotation);
             this.transform.rotation = Quaternion.Inverse(midRot) * this.transform.rotation;
         }
 
@@ -109,7 +107,7 @@ namespace KW_Mocap
         {
             if (midPoint == null) return;
             midPoint.transform.position = 0.5f * (left.transform.position + right.transform.position);
-            midPoint.transform.rotation = Avg[AverageMode](left.transform.rotation, right.transform.rotation);
+            midPoint.transform.rotation = Avg[averageMode](left.transform.rotation, right.transform.rotation);
         }
     }
 }
