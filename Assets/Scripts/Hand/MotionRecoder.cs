@@ -71,6 +71,8 @@ namespace KW_Mocap
             {
                 using (FileStream fs = new FileStream($"SavedMotionData/{fileName}.bin", FileMode.CreateNew, FileAccess.Write))
                 {
+                    // TODO: handsオブジェクトのlocalPositionを記録する部分を書く。
+                    //byte[] handsLocalPosition = 
                     byte[] byte_DataCount = BitConverter.GetBytes(recordDataCount);
                     fs.Write(byte_DataCount, 0, byte_DataCount.Length);
 
