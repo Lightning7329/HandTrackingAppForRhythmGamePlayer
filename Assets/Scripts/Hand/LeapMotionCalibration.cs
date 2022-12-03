@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -45,9 +45,9 @@ namespace KW_Mocap
         }
 
         /// <summary>
-        /// �J�E���g�_�E�����s���A0�b�ɂȂ�����L�����u���[�V���������s�����B
+        /// カウントダウンを行い、0秒になったらキャリブレーションが実行される。
         /// </summary>
-        /// <param name="second">�J�E���g�_�E���̕b��</param>
+        /// <param name="second">カウントダウンの秒数</param>
         /// <returns></returns>
         IEnumerator CountDown(int second)
         {
@@ -67,7 +67,7 @@ namespace KW_Mocap
         } 
 
         /// <summary>
-        /// �ʒu�̃L�����u���[�V�����B�Ȃ��ALeapMotion�̈ʒu�͌��_�ȊO�u���ƃX�P�[�����O���������Ȃ�B
+        /// 位置のキャリブレーション。なお、LeapMotionの位置は原点以外置くとスケーリングおかしくなる。
         /// </summary>
         void CalibratePosition()
         {
@@ -77,7 +77,7 @@ namespace KW_Mocap
         }
 
         /// <summary>
-        /// ��]�̃L�����u���[�V�����B
+        /// 回転のキャリブレーション。
         /// </summary>
         void CalibrateRotation()
         {
@@ -94,7 +94,7 @@ namespace KW_Mocap
 
         void SetCalibrationPose(GameObject hand)
         {
-            // TODO: �w�̊֐߂̉�]��ύX�B
+            // TODO: 指の関節の回転を変更。
         }
     }
 }

@@ -2358,17 +2358,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fingerNames:
+  - Thumb
   - Index
   - Middle
   - Ring
+  - Pinky
+  fingerBoneIndex: 310032003300
   materials:
     Palm: {fileID: 2100000, guid: bb3324742fc04479a8af92143005a46c, type: 2}
     Finger: {fileID: 2100000, guid: bb3324742fc04479a8af92143005a46c, type: 2}
     Joint: {fileID: 2100000, guid: 808f8f67dee4d4c4f9f619a87687ae86, type: 2}
     Top: {fileID: 2100000, guid: 808f8f67dee4d4c4f9f619a87687ae86, type: 2}
     Error: {fileID: 2100000, guid: e12b24aa97f461c4abfee7bdf201f1b6, type: 2}
-  now_go: 0
-  joints: []
 --- !u!1 &2883887362409454150
 GameObject:
   m_ObjectHideFlags: 0
