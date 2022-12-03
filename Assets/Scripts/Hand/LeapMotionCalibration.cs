@@ -7,21 +7,24 @@ namespace KW_Mocap
 {
     public class LeapMotionCalibration : MonoBehaviour
     {
-        [SerializeField] GameObject left, right, midPoint;
+        [SerializeField] GameObject left, right, midPoint, hands;
+
         [SerializeField] AverageMethod AverageMode = AverageMethod.Slerp;
+
         [SerializeField, Range(0.1f, 200.0f)]
         float scaleForLeapMotion = 80.0f;
 
-        Button clbPosButton, clbRotButton;
-        Text count;
-        Vector3 midPos;
-        Quaternion midRot;
         public Vector3 adjustPos = Vector3.zero;
-        public Quaternion adjustRot = Quaternion.identity;
+
+        Vector3 midPos = new Vector3(-2.31645107f, -32.073246f, 5.7862258f);
+        Quaternion midRot;
+        Button calibrationButton;
+        Text count;
 
         public enum AverageMethod {Lerp, Slerp}
         delegate Quaternion AverageQuaternion(Quaternion q1, Quaternion q2);
-        Dictionary<AverageMethod, AverageQuaternion> Avg
+
+        readonly Dictionary<AverageMethod, AverageQuaternion> Avg
             = new Dictionary<AverageMethod, AverageQuaternion>() {
                 { AverageMethod.Lerp,  (q1, q2) => Quaternion.Lerp(q1, q2, 0.5f) },
                 { AverageMethod.Slerp, (q1, q2) => Quaternion.Slerp(q1, q2, 0.5f) }
@@ -30,8 +33,7 @@ namespace KW_Mocap
 
         void Start()
         {
-            //UISetting.SetButton(ref clbPosButton, "CalibrationPosition", CalibratePosition);
-            UISetting.SetButton(ref clbRotButton, "CalibrationRotation", () => StartCoroutine(CountDown(3)));
+            UISetting.SetButton(ref calibrationButton, "Calibration", () => StartCoroutine(CountDown(3)));
             count = GameObject.Find("Count").GetComponent<Text>();
             count.gameObject.SetActive(false);
         }
@@ -41,6 +43,7 @@ namespace KW_Mocap
             UpdateMidPoint();
             left.GetComponent<LeapHandModel>().scl = scaleForLeapMotion;
             right.GetComponent<LeapHandModel>().scl = scaleForLeapMotion;
+            hands.transform.localPosition = -midPos + adjustPos;
 
         }
 
@@ -51,29 +54,46 @@ namespace KW_Mocap
         /// <returns></returns>
         IEnumerator CountDown(int second)
         {
+            /* 前処理として手のポーズをキャリブレーション用にする */
+            left.GetComponent<HandSetting>().SetCalibrationPose();
+            right.GetComponent<HandSetting>().SetCalibrationPose();
+
+            /* カウントダウンの数字を表示 */
             count.gameObject.SetActive(true);
             count.text = second.ToString();
+
+            /* カウントダウン */
             var wait = new WaitForSeconds(1.0f);
             for (int i = second - 1; i >= 0; i--)
             {
+                /* 前の数字を1秒間表示してから数字を更新する */
                 yield return wait;
                 count.text = i.ToString();
-                Debug.Log("countDown: " + i);
             }
-            //CalibratePosition();
+
+            /* カウントが0になったフレームで回転のキャリブレーション */
             CalibrateRotation();
+
+            /* 回転が補正されて1フレーム待ってから位置を補正する */
+            yield return null;
+            CalibratePosition();
+
+            /* 後処理として手のポーズをもとに戻す */
+            left.GetComponent<HandSetting>().SetNormalPose();
+            right.GetComponent<HandSetting>().SetNormalPose();
+
+            /* 0.5秒間「0」を表示してからカウント表示を消す */
             yield return new WaitForSeconds(0.5f);
             count.gameObject.SetActive(false);
         } 
 
         /// <summary>
-        /// 位置のキャリブレーション。なお、LeapMotionの位置は原点以外置くとスケーリングおかしくなる。
+        /// 位置のキャリブレーション。
         /// </summary>
         void CalibratePosition()
         {
-            midPos = 0.5f * (left.transform.position + right.transform.position);
-            Vector3 complement = adjustPos - midPos;
-            this.transform.position = complement;
+            midPos = 0.5f * (left.transform.localPosition + right.transform.localPosition);
+            hands.transform.localPosition = -midPos + adjustPos;
         }
 
         /// <summary>
@@ -90,11 +110,6 @@ namespace KW_Mocap
             if (midPoint == null) return;
             midPoint.transform.position = 0.5f * (left.transform.position + right.transform.position);
             midPoint.transform.rotation = Avg[AverageMode](left.transform.rotation, right.transform.rotation);
-        }
-
-        void SetCalibrationPose(GameObject hand)
-        {
-            // TODO: 指の関節の回転を変更。
         }
     }
 }
