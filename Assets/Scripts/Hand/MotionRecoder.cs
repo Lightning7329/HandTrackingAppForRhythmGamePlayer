@@ -71,8 +71,11 @@ namespace KW_Mocap
             {
                 using (FileStream fs = new FileStream($"SavedMotionData/{fileName}.bin", FileMode.CreateNew, FileAccess.Write))
                 {
-                    // TODO: handsオブジェクトのlocalPositionを記録する部分を書く。
-                    //byte[] handsLocalPosition = 
+                    /* HandsオブジェクトのVirtual Deskに対する相対位置を書き込み */
+                    this.transform.localPosition.SetBytesFromVector3(buf, 0);
+                    fs.Write(buf, 0, 12);
+
+                    /* モーションデータのデータ点数を書き込み */
                     byte[] byte_DataCount = BitConverter.GetBytes(recordDataCount);
                     fs.Write(byte_DataCount, 0, byte_DataCount.Length);
 

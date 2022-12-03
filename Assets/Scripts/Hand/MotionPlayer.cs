@@ -113,7 +113,11 @@ namespace KW_Mocap
             {
                 using (FileStream fs = new FileStream(pass, FileMode.Open, FileAccess.Read))
                 {
-                    // 読み込むデータ点数
+                    /* Virtual Deskに対する相対位置 */
+                    fs.Read(buf, 0, 12);
+                    this.transform.localPosition = ExtendedBitConverter.GetVector3FromBytes(buf, 0).position;
+
+                    /* 読み込むデータ点数 */
                     fs.Read(buf, 0, 4);
                     frameCount = BitConverter.ToInt32(buf, 0);
                     motionData = new MotionData[frameCount];
@@ -130,7 +134,7 @@ namespace KW_Mocap
             catch (IOException e)
             {
                 Debug.Log(e);
-            }            
+            } 
         }
     }
 }
