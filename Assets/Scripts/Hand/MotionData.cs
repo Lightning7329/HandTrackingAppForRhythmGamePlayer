@@ -82,7 +82,24 @@ namespace KW_Mocap
         }
 
         /// <summary>
-        /// byte配列から片手分のモーションデータを復元するコンストラクタ
+        /// 手のひらの位置と回転、各関節の回転から片手分のモーションデータを作成するコンストラクタ。
+        /// </summary>
+        /// <param name="palmPos"></param>
+        /// <param name="palmRot"></param>
+        /// <param name="joints"></param>
+        public HandData(Vector3 palmPos, Quaternion palmRot, Quaternion[] joints)
+        {
+            this.palmPos = palmPos;
+            this.palmRot = palmRot;
+            for (int i = 0; i < jointRot.Length; i++)
+            {
+                this.jointRot[i] = joints[i];
+            }
+        }
+
+        /// <summary>
+        /// byte配列から片手分のモーションデータを復元するコンストラクタ。
+        /// MotionPlayerから呼ばれる。
         /// </summary>
         /// <param name="buf">1フレーム分のモーションデータを格納したbyte配列</param>
         /// <param name="offset">左手か右手かでbyte配列の読み取り位置が異なる</param>
