@@ -19,7 +19,7 @@ namespace KW_Mocap
         CameraController cameraController = null;
 
         // uGUI側
-        private Text txt_speed, txt_playButton;
+        private Text txt_speed, txt_playButton, dataCount;
         private Button playButton, forwardButton, backwardButton, addSpeedButton, subSpeedButton, sceneChangeButton, fileSelectButton;
         private FileSelector fileSelector = null;
         public GameObject obj_fileSelector;
@@ -48,11 +48,14 @@ namespace KW_Mocap
             txt_speed = GameObject.Find("Speed").transform.Find("Text").gameObject.GetComponent<Text>();
             txt_speed.text = "x1.00";
             txt_playButton = playButton.GetComponentInChildren<Text>();
+            dataCount = GameObject.Find("Play Data Count").GetComponent<Text>();
         }
 
         void Update()
         {
-
+            int frame = motionPlayer.frame + motionPlayer.playbackOffset;
+            frame = frame > 0 ? frame : 0;
+            dataCount.text = "Data Count: " + frame.ToString();
         }
 
         void OnBtn_FileSelect()

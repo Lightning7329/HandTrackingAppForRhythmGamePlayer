@@ -32,7 +32,7 @@ namespace KW_Mocap
         void Start()
         {
             UISetting.SetButton(ref calibrationButton, "Calibration", () => StartCoroutine(CountDown(3)));
-            count = GameObject.Find("Count").GetComponent<Text>();
+            count = GameObject.Find("Calibration Count Down").GetComponent<Text>();
             count.gameObject.SetActive(false);
         }
 

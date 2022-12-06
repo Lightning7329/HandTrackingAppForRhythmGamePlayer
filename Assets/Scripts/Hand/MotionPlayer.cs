@@ -14,7 +14,7 @@ namespace KW_Mocap
         private bool isPlaying = false;
         public bool isLoaded { get; private set; } = false;
         public int frameCount { get; private set; } = 0;
-        public int playbackOffset = 0;  // Echo over you_Normal: -94
+        public int playbackOffset = 0;
 
         [SerializeField] private int _frame = 0;
         public int frame
