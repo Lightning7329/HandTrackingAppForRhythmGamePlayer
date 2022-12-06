@@ -3357,7 +3357,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   left: {fileID: 1620760399}
   right: {fileID: 236173730}
-  playbackOffset: -94
+  playbackOffset: 0
   _frame: 0
 --- !u!1 &1462079310
 GameObject:
