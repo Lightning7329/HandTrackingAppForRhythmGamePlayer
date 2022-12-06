@@ -66,7 +66,7 @@ namespace KW_Mocap
             FileNameInputPanel.SetActive(true);
             cameraController.SetActive(false);
             var now = DateTime.Now;
-            fileNameInputField.text = now.ToString("yyyyMMdd-hhmmss");
+            fileNameInputField.text = now.ToString("yyyyMMdd-HHmmss");
             fileNameInputField.ActivateInputField();
         }
 
