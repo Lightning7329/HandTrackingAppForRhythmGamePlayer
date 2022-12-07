@@ -91,7 +91,7 @@ namespace KW_Mocap
         void CalibratePosition()
         {
             midPos = 0.5f * (left.transform.localPosition + right.transform.localPosition);
-            hands.transform.localPosition = -midPos + adjustPos;
+            hands.transform.localPosition = adjustPos - midPos;
         }
 
         /// <summary>
