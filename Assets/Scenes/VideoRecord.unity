@@ -3305,7 +3305,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _leapProvider: {fileID: 568567837}
   LR: 0
-  scl: 79.5
+  scl: 80
+  isDetected: 0
 --- !u!1 &2072072121
 GameObject:
   m_ObjectHideFlags: 0
@@ -3617,6 +3618,7 @@ MonoBehaviour:
   _leapProvider: {fileID: 568567837}
   LR: 1
   scl: 80
+  isDetected: 0
 --- !u!1 &8890665529666899122
 GameObject:
   m_ObjectHideFlags: 0
