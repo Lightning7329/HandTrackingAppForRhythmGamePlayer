@@ -29,11 +29,19 @@ namespace SS_KinetrackIII
 		public int now_sens;
 		public ushort stat;
 		public float vbt, fps;
+
+		/// <summary>
+		/// Motion Capture Unitの情報
+		/// </summary>
 		public MCUPAR Pmc;
+
+		/// <summary>
+		/// IMUセンサーからの情報
+		/// </summary>
 		public IMUPAR[] Pim = new IMUPAR[16];
 
 		/// <summary>
-		/// Communication
+		/// UDP通信。Communicationの略。
 		/// </summary>
 		private SS_UDP Com = new SS_UDP();
 		System.Threading.Thread rcvThread = null;
@@ -41,7 +49,7 @@ namespace SS_KinetrackIII
 		/// <summary>
 		/// Connectボタンが押されたとき呼ばれる
 		/// </summary>
-		/// <param name="ip"></param>
+		/// <param name="ip">IPアドレス</param>
 		/// <returns></returns>
 		public bool Connect(string ip)
 		{
@@ -71,7 +79,7 @@ namespace SS_KinetrackIII
 		/// <summary>
 		/// Readyボタンが押されたとき呼ばれる
 		/// </summary>
-		/// <param name="flg"></param>
+		/// <param name="flg">トグルスイッチのOn/Off</param>
 		public void Ready(bool flg)
 		{
 			if (flg)
@@ -97,6 +105,10 @@ namespace SS_KinetrackIII
 			}
 		}
 		//..............................................................
+		/// <summary>
+		/// MCUから情報を読み込む。コネクションを確立するときに呼ばれる。
+		/// </summary>
+		/// <returns>MCUから正しく情報を読み取ったか</returns>
 		public bool Stat()
 		{
 			if (!flg_auto)
@@ -111,10 +123,10 @@ namespace SS_KinetrackIII
 						int np_c = 2 * (int)BitConverter.ToUInt16(bc, 0);
 						if (np_c <= np)
 						{
-							stat = BitConverter.ToUInt16(bc, 2);
-							now_sens = (int)BitConverter.ToUInt16(bc, 6);
-							vbt = 0.01f * (float)BitConverter.ToUInt16(bc, 8);
-							fps = (float)BitConverter.ToUInt16(bc, 10);
+							stat = BitConverter.ToUInt16(bc, 2);				//センサーの有効・無効かを1ビットずつで表現したもの
+							now_sens = (int)BitConverter.ToUInt16(bc, 6);		//センサーの個数
+							vbt = 0.01f * (float)BitConverter.ToUInt16(bc, 8);	//電圧
+							fps = (float)BitConverter.ToUInt16(bc, 10);			//フレームレート
 							//
 							return (true);
 						}
@@ -151,6 +163,9 @@ namespace SS_KinetrackIII
 			flg_ready = false;
 		}
 		//..............................................................
+		/// <summary>
+		/// 別スレッドに実行してもらうために渡すデリゲート
+		/// </summary>
 		private void _RcvAuto()
 		{
 			while (DateTime.Now.Millisecond != 0) ;

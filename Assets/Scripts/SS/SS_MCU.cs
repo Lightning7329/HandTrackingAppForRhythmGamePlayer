@@ -4,7 +4,8 @@
 // Hand Motion Tracking System ver.3
 //	Mcu Controll for Recording Class
 //
-//--------------------------------------------------------------
+//--------------------------------------------
+//------------------
 // (C)Copyright Allrights reserved by Sakai Shigekazu 2022 -
 //..............................................................
 using System.Collections ;

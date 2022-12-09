@@ -20,6 +20,11 @@ namespace SS_KinetrackIII
 		private Color C_off = new Color(0.04f, 0.04f, 0.04f);
 		private Color C_err = new Color(0.8f, 0.05f, 0.05f);
 		//..............................................................
+		public void Init(GameObject Go, string name)
+        {
+			this.Init(Go);
+			this.Name(name);
+		}
 		public void Init(GameObject Go)
 		{
 			GameObject Gc;

@@ -73,12 +73,12 @@ namespace SS_KinetrackIII
 		public long now_rec, now_key;
 
 		/// <summary>
-		/// frame * sensor
+		/// frame毎にsensorの個数分だけ作成される。
 		/// </summary>
 		public IMUPAR[,] Pim;
 
 		/// <summary>
-		/// 
+		/// frame毎に作成される。
 		/// </summary>
 		public MCUPAR[] Pmc;
 
@@ -112,7 +112,7 @@ namespace SS_KinetrackIII
 		/// 
 		/// </summary>
 		/// <param name="mf">max frame</param>
-		/// <param name="ms">sensor</param>
+		/// <param name="ms">sensorの個数</param>
 		/// <param name="mk">max key</param>
 		/// <param name="stat">status from imu</param>
 		/// <param name="fs">frame rate</param>
@@ -175,7 +175,8 @@ namespace SS_KinetrackIII
 		/// <summary>
 		/// キャリブレーション時に呼び出してそのときの回転とかを入れる
 		/// </summary>
-		/// <param name="nf">そのときのフレーム</param>
+		/// <param name="nf">そのときのフレーム
+		/// </param>
 		/// <param name="Qi"></param>
 		/// <param name="Qo"></param>
 		public void AddKey(long nf, Quaternion[] Qi, Quaternion[] Qo)

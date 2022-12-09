@@ -29,7 +29,7 @@ public class SS_HAND : MonoBehaviour
 	[SerializeField] private Vector3[] offAng = new Vector3[16];
 
 	/// <summary>
-	/// sensor to hand(Leap Motionが定義した関節番号)
+	/// sensor to hand(LeapMotionが定義した関節番号)
 	/// 関節番号0から3までの関節に何番のセンサーを割り当てるかをスペース区切りで記述する。
 	/// センサーが存在しない場合は 'x' と入れる。
 	/// </summary>
@@ -50,13 +50,14 @@ public class SS_HAND : MonoBehaviour
 	private Transform[,] Tr = new Transform[n_fing, n_bone];
 
 	/// <summary>
-	/// finger to reference
+	/// finger to referenceの変換マップ
 	/// s2hから作成される。
 	/// </summary>
 	private int[,] f2r = new int[n_fing, n_bone];       // [finger_no, bone_no] = reference_no
 
 	/// <summary>
-	/// reference to sensor
+	/// reference to sensorの変換マップ。
+	/// 各関節位置に取り付けてあるセンサー番号。センサーがない場合は-1を入れておく。
 	/// </summary>
 	private int[] r2s = new int[16];
 	private Quaternion[] Qoff = new Quaternion[16];
