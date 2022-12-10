@@ -3,6 +3,7 @@
 using System;
 using System.Linq;
 using UnityEngine;
+using SS_KinetrackIII;
 
 namespace KW_Mocap {
 	public class HandSetting : MonoBehaviour
@@ -16,18 +17,89 @@ namespace KW_Mocap {
         /// </summary>
         [SerializeField] private char[] fingerBoneIndex = { '1', '2', '3' };
 		/// <summary>
+		/// sensor to hand(LeapMotionが定義した関節番号)
+		/// 関節番号0から3までの関節に何番のセンサーを割り当てるかをスペース区切りで記述する。
+		/// センサーが存在しない場合は 'x' と入れる。 
+		/// </summary>
+		[SerializeField]
+		private string[] sensorTable =
+		{
+			"x 15 14 13",
+			"x 12 11 10",
+			"9 8 7 6",
+			"x 5 4 3",
+			"x 2 1 0"
+		};
+		/// <summary>
 		/// 正常時とエラー時のマテリアルを集めたクラス。
 		/// </summary>
 		[SerializeField] private HandMaterial materials;
 		/// <summary>
 		/// ハンドモデルの関節を表す2次元配列。1次元目が指、2次元目が関節。
 		/// </summary>
-		public GameObject[,] joints = new GameObject[5,3];	//指の本数 * 関節の数
+		public GameObject[,] joints = new GameObject[5,3];  //指の本数 * 関節の数
+
+		/// <summary>
+		/// finger to referenceの変換マップ
+		/// sensorTableから作成される。
+		/// </summary>
+		private int[,] f2r = new int[5, 4];
+
+		private SS_CALIB imuCalibration = new SS_CALIB();
 
 		private void Start()
 		{
 			GrabJoints();
         }
+
+		/// <summary>
+		/// 生きてるセンサー情報をもとにセンサーとの関連付けをしたりなど変換マップを作成する。
+		/// </summary>
+		/// <param name="sensorCount">センサーの個数</param>
+		/// <param name="sensorStatus">生きてるセンサー情報</param>
+		public void Init(int sensorCount, ushort sensorStatus)
+		{
+			int[] r2s = CreateReference2SensorMap(sensorCount, sensorStatus);
+			imuCalibration.Init(this.gameObject.name, r2s);
+			CreateFinger2ReferenceMap();
+		}
+		
+		/// <summary>
+		/// 生きてるセンサー情報をもとに関節番号とセンサー番号の関連付けを行う。
+		/// </summary>
+		/// <param name="sensorCount">センサーの個数</param>
+		/// <param name="sensorStatus">生きてるセンサー情報</param>
+		/// <returns>Reference To Sensor Map</returns>
+		private int[] CreateReference2SensorMap(int sensorCount, ushort sensorStatus)
+        {
+			int[] r2s = new int[16];    //reference to sensor number
+			int n = 0;
+			for (int i = 0; i < 16; i++)
+			{
+				ushort msk = (ushort)(0x01 << i);
+				r2s[i] = ((msk & sensorStatus) == msk) ? n++ : -1;
+			}
+
+			if (n != sensorCount)
+				Debug.LogError($"{sensorCount}個のセンサーのうち{n}個しかキャリブレーションにいってない");
+
+			return r2s;
+		}
+
+		/// <summary>
+		/// sensorTableをもとにf2r(Finger To Reference Map)を作成する。
+		/// </summary>
+		private void CreateFinger2ReferenceMap()
+        {
+			for (int i = 0; i < f2r.GetLength(0); i++)
+			{
+				string[] str = sensorTable[i].Split(' ');
+				for (int j = 0; j < f2r.GetLength(1); j++)
+				{
+					f2r[i, j] = ((j < str.Length) && !str[j].Equals("x")) ? int.Parse(str[j]) : -1;
+				}
+			}
+		}
 
 		/// <summary>
 		/// 自分の孫を含めた子オブジェクトの中からボーンになるオブジェクトを二次元配列に格納する。
@@ -81,6 +153,34 @@ namespace KW_Mocap {
 				GameObject Gc = Go.transform.GetChild(i).gameObject;
 				SetMaterial(Gc, flg);
 			}
+		}
+
+		/// <summary>
+		/// ハンドモデルの表示/非表示
+		/// </summary>
+		/// <param name="flg"></param>
+		public void Active(bool flg) => _SetVisible(this.gameObject, flg);
+		private void _SetVisible(GameObject Go, bool flg)
+		{
+			if (Go.GetComponent<MeshRenderer>()) Go.GetComponent<MeshRenderer>().enabled = flg;
+			int n = Go.transform.childCount;
+			if (n < 1) return;
+
+			for (int i = 0; i < n; i++)
+			{
+				GameObject Gc = Go.transform.GetChild(i).gameObject;
+				_SetVisible(Gc, flg);
+			}
+		}
+
+		public void Calibrate(long sf, long df, IMUPAR[,] P)
+		{
+			Quaternion[] offset = new Quaternion[]
+			{
+				//TODO: 各関節の回転オフセットをここに書こう
+			};
+			imuCalibration.Record(sf, df, P);
+			imuCalibration.Calib(offset);
 		}
 
 		[ContextMenu("SetCalibrationPose")]

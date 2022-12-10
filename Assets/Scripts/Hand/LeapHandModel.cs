@@ -11,6 +11,8 @@ namespace KW_Mocap
         [SerializeField, Range(0.1f, 100.0f)]
 		public float scl = 70.0f;
 
+		public bool isDetected = false;
+
         private Hand lmHand;
 
 		public override Chirality Handedness
@@ -35,6 +37,7 @@ namespace KW_Mocap
 		/// </summary>
 		private void changeMaterial_OnBegin()
         {
+			isDetected = true;
 			Debug.Log(LR.ToString() + " Begin");
 			GetComponent<HandSetting>().SetMaterial(this.gameObject, true);
 		}
@@ -44,6 +47,7 @@ namespace KW_Mocap
 		/// </summary>
         private void changeMaterial_OnFinish()
         {
+			isDetected = false;
 			Debug.Log(LR.ToString() + " Finish");
 			GetComponent<HandSetting>().SetMaterial(this.gameObject, false);
         }
