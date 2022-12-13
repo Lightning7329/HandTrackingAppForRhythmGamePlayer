@@ -106,13 +106,13 @@ namespace KW_Mocap {
 		[ContextMenu("SetCalibrationPose")]
 		public void SetCalibrationPose()
 		{
-			for (int j = 0; j < joints.GetLength(1); j++)
+			for (int j = 1; j < joints.GetLength(1); j++)
 			{
-				joints[0, j].transform.localRotation = FixedPose.cal_Thumb[j];
+				joints[0, j].transform.localRotation = FixedPose.cal_Thumb[j-1];
 			}
 			for (int i = 1; i < joints.GetLength(0); i++)
             {
-				for (int j = 0; j < joints.GetLength(1); j++)
+				for (int j = 1; j < joints.GetLength(1); j++)
                 {
 					joints[i, j].transform.localRotation = Quaternion.identity;
                 }
@@ -124,9 +124,9 @@ namespace KW_Mocap {
         {
 			for (int i = 0; i < joints.GetLength(0); i++)
 			{
-				for (int j = 0; j < joints.GetLength(1); j++)
+				for (int j = 1; j < joints.GetLength(1); j++)
 				{
-					joints[i, j].transform.localRotation = FixedPose.nor_Joints[i, j];
+					joints[i, j].transform.localRotation = FixedPose.nor_Joints[i, j-1];
 				}
 			}
 		}
@@ -166,13 +166,13 @@ namespace KW_Mocap {
 					return _cal_joints;
 
 				_cal_joints = new Quaternion[16];
-				for (int i = 0; i <= 12; i++)
+				_cal_joints[0] = cal_Thumb[2]; //親指第一関節
+				_cal_joints[1] = cal_Thumb[1];	//親指第二関節
+				_cal_joints[2] = cal_Thumb[0];	//親指第三関節
+				for (int i = 3; i < 16; i++)
 				{
 					_cal_joints[i] = Quaternion.identity;
 				}
-				_cal_joints[13] = cal_Thumb[2]; //親指第一関節
-				_cal_joints[14] = cal_Thumb[1];	//親指第二関節
-				_cal_joints[15] = cal_Thumb[0];	//親指第三関節
 				return _cal_joints;
             }
 		}
