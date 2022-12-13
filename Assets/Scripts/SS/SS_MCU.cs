@@ -62,6 +62,8 @@ public class	SS_MCU : MonoBehaviour
 		}
 		else if (Imu.Connect(I_net.text))
 		{
+			/* Imu.Connectメソッドの中でStatメソッドが呼ばれていてその結果が返るから
+			 * このImu.Stat()がfalseを返すことはないのでは？ */
 			if (Imu.Stat())
 			{
 				max_sec = (max_sec < 60) ? 60 : max_sec;
@@ -178,6 +180,7 @@ public class	SS_MCU : MonoBehaviour
 //..............................................................
 	private	void	Update()
 	{
+		/* readyでなければ何もしない */
 		if (run_mode < 1)	return;
 //
 		if (Imu.flg_setdat)

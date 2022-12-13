@@ -47,11 +47,11 @@ public class IMUHandModel
         imuCalibration.Calib(FixedPose.cal_joints);
     }
 
-    public void Draw(long nf, IMUPAR[,] Q)
+    public void Draw(IMUPAR[] Q)
     {
         Quaternion[] Qs = new Quaternion[16];   //キャリブレーション済みの絶対回転?
         Quaternion[] Qd;                        //キャリブレーション済みの絶対回転から計算される相対回転?
-        imuCalibration.GetQd(nf, Q, Qs);
+        imuCalibration.GetQd(Q, Qs);
         Qd = Layer(Qs);                         //親のオブジェクトからの相対回転に変換
 
         for (int i = 0; i < n_fing; i++)
@@ -120,7 +120,7 @@ public class IMUHandModel
     /// </summary>
     private int[,] CreateFinger2ReferenceMap(string[] sensorTable)
     {
-        int[,] f2r = new int[n_bone, n_fing];
+        int[,] f2r = new int[n_fing, n_bone];
         for (int i = 0; i < n_fing; i++)
         {
             string[] str = sensorTable[i].Split(' ');

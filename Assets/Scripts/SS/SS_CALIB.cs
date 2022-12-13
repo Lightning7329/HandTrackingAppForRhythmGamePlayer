@@ -190,6 +190,20 @@ namespace SS_KinetrackIII
 				}
 			}
 		}
+
+		public void GetQd(IMUPAR[] P, Quaternion[] Qd)
+		{
+			for (int i = 0; i < 16; i++)
+			{
+				int n = r2s[i];
+				if (n >= 0)
+				{
+					IMUPAR Pc = P[n];
+					Quaternion Qc = new Quaternion(_Scl * (float)Pc.x, _Scl * (float)Pc.y, _Scl * (float)Pc.z, _Scl * (float)Pc.w);
+					Qd[i] = Qi[i] * Qc * Qo[i];
+				}
+			}
+		}
 		//...............................................................
 		private void _InitQio(Quaternion[] Qoff)
 		{
