@@ -1,9 +1,5 @@
-<<<<<<< HEAD:Assets/Scripts/Hand/MotionCaptureUnit.cs
-﻿using UnityEngine;
-=======
 using System.Collections;
 using UnityEngine;
->>>>>>> 471bc7f27198ed434f9b84bf78a8e1e5c9fcb023:Assets/Scripts/Hand/MotionCaptureController.cs
 using UnityEngine.UI;
 using SS_KinetrackIII;
 
@@ -51,9 +47,7 @@ namespace KW_Mocap
             leapHandModel = hand.GetComponent<LeapHandModel>();
             statusPanel.Init(this.gameObject, hand.name);
 
-<<<<<<< HEAD:Assets/Scripts/Hand/MotionCaptureUnit.cs
             /* 最後に使用されたIPアドレスを入力 */
->>>>>>> 471bc7f27198ed434f9b84bf78a8e1e5c9fcb023:Assets/Scripts/Hand/MotionCaptureController.cs
             string last_ip = PlayerPrefs.GetString(gameObject.name + "last_ip");
             if (last_ip.Length > 10) I_net.text = last_ip;
             //run_mode = -1;
@@ -95,10 +89,8 @@ namespace KW_Mocap
                 if (Imu.Stat())
                 {
                     max_sec = (max_sec < 60) ? 60 : max_sec;
-<<<<<<< HEAD:Assets/Scripts/Hand/MotionCaptureUnit.cs
                     long max_data = max_sec * (long)Imu.fps;    //最大フレーム数
                     long max_key = max_sec / 30 + 2;            //最大キーフレーム数
->>>>>>> 471bc7f27198ed434f9b84bf78a8e1e5c9fcb023:Assets/Scripts/Hand/MotionCaptureController.cs
                     Dat.Init(max_data, Imu.now_sens, max_key, Imu.stat, Imu.fps);
                     imuHandModel = new IMUHandModel(hand.name, Imu.now_sens, Imu.stat, handSetting.joints);
                     statusPanel.Stat(Imu.stat);
