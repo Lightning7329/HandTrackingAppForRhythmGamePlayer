@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.UI;
 using SS_KinetrackIII;
 
@@ -32,7 +32,7 @@ namespace KW_Mocap
             handSetting = hand.GetComponent<HandSetting>();
             statusPanel.Init(this.gameObject, hand.name);
 
-            /* ÅŒã‚ÉŽg—p‚³‚ê‚½IPƒAƒhƒŒƒX‚ð“ü—Í */
+            /* æœ€å¾Œã«ä½¿ç”¨ã•ã‚ŒãŸIPã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’å…¥åŠ› */
             string last_ip = PlayerPrefs.GetString(gameObject.name + "last_ip");
             if (last_ip.Length > 10) I_net.text = last_ip;
             run_mode = -1;
@@ -60,8 +60,8 @@ namespace KW_Mocap
                 if (Imu.Stat())
                 {
                     max_sec = (max_sec < 60) ? 60 : max_sec;
-                    long max_data = max_sec * (long)Imu.fps;    //Å‘åƒtƒŒ[ƒ€”
-                    long max_key = max_sec / 30 + 2;            //Å‘åƒL[ƒtƒŒ[ƒ€”
+                    long max_data = max_sec * (long)Imu.fps;    //æœ€å¤§ãƒ•ãƒ¬ãƒ¼ãƒ æ•°
+                    long max_key = max_sec / 30 + 2;            //æœ€å¤§ã‚­ãƒ¼ãƒ•ãƒ¬ãƒ¼ãƒ æ•°
                     Dat.Init(max_data, Imu.now_sens, max_key, Imu.stat, Imu.fps);
                     handSetting.Init(Imu.now_sens, Imu.stat);
                     statusPanel.Stat(Imu.stat);
