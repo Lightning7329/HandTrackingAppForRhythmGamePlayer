@@ -20,10 +20,25 @@ namespace KW_Mocap
             button.GetComponentInChildren<Text>().text = text;
         }
 
+        public static void SetButton(ref Button button, Transform parent, string name, UnityAction call)
+        {
+            button = parent.Find(name).GetComponent<Button>();
+            if (button == null)
+            {
+                Debug.Log($"child object {name} could not be found.");
+            }
+            button.onClick.AddListener(call);
+        }
+
         public static void SetButton(GameObject buttonObject, UnityAction call, string text)
         {
             buttonObject.GetComponent<Button>().onClick.AddListener(call);
             buttonObject.GetComponentInChildren<Text>().text = text;
+        }
+
+        public static void SetButtonColor(Button button, Color color)
+        {
+            button.GetComponent<Image>().color = color;
         }
 
         public static void AddEventTrigger(EventTrigger eventTrigger, EventTriggerType triggerType, UnityAction<BaseEventData> call)
