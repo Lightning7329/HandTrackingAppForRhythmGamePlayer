@@ -9,10 +9,8 @@ namespace KW_Mocap
     {
         [SerializeField] GameObject hand;
         public int cal_sec = 3;
-        public bool isCalibrating = false;
         public int max_sec = 1800;	// = 30 minutes
 
-        private SS_DAT Dat = new SS_DAT();
         private SS_IMU Imu = new SS_IMU();
         private SS_STAT statusPanel = new SS_STAT();
         private IMUHandModel imuHandModel;
@@ -23,14 +21,14 @@ namespace KW_Mocap
         private Toggle Tg_rdy;
         private Image Im_rdy;
         private int run_mode = -1;	// -1 NRY / 0 STBY / 1 RDY / 2 REC,CAL
-        private RunMode runMode = RunMode.NotReady;
+        public RunMode runMode { get; private set; } = RunMode.NotConnected;
 
         public enum RunMode
         {
-            NotReady = -1,
+            NotConnected = -1,
             Standby = 0,
             Ready = 1,
-            Recording = 2
+            Calibrating = 2
         }
 
 
@@ -51,14 +49,14 @@ namespace KW_Mocap
             string last_ip = PlayerPrefs.GetString(gameObject.name + "last_ip");
             if (last_ip.Length > 10) I_net.text = last_ip;
             //run_mode = -1;
-            runMode = RunMode.NotReady;
+            runMode = RunMode.NotConnected;
 
             Tg_rdy.isOn = false;
         }
 
         void Update()
         {
-            if (runMode == RunMode.NotReady || runMode == RunMode.Standby) return;
+            if (runMode == RunMode.NotConnected || runMode == RunMode.Standby) return;
 
             if (Imu.flg_setdat)
             {
@@ -67,8 +65,7 @@ namespace KW_Mocap
                     Imu.Pmc.n0 = 99;
                     Imu.Pmc.p0 = hand.transform.localPosition;
                 }
-                Dat.Rec(Imu.Pim, Imu.Pmc);
-                //flg_newdat = true;
+                imuHandModel.Draw(Imu.Pim);
                 Imu.flg_setdat = false;
             }
         }
@@ -86,12 +83,12 @@ namespace KW_Mocap
             }
             else if (Imu.Connect(I_net.text))
             {
+                /* Imu.Connectメソッドの中でStatメソッドが呼ばれていてその結果が返るから
+			     * このImu.Stat()がfalseを返すことはないのでは？ */
                 if (Imu.Stat())
                 {
                     max_sec = (max_sec < 60) ? 60 : max_sec;
-                    long max_data = max_sec * (long)Imu.fps;    //最大フレーム数
-                    long max_key = max_sec / 30 + 2;            //最大キーフレーム数
-                    Dat.Init(max_data, Imu.now_sens, max_key, Imu.stat, Imu.fps);
+
                     imuHandModel = new IMUHandModel(hand.name, Imu.now_sens, Imu.stat, handSetting.joints);
                     statusPanel.Stat(Imu.stat);
                     statusPanel.FpsVolt(Imu.fps, Imu.vbt);
@@ -106,16 +103,17 @@ namespace KW_Mocap
                 {
                     Imu.Close();
                     //run_mode = -1;
-                    runMode = RunMode.NotReady;
+                    runMode = RunMode.NotConnected;
                     Im_rdy.color = Color.magenta;
                     Debug.Log("Err... " + gameObject.name + " is not ready !!");
                 }
             }
+            Debug.Log("RunMode: " + runMode);
         }
 
         void OnBtn_Ready(bool flg)
         {
-            if (runMode == RunMode.NotReady) return;
+            if (runMode == RunMode.NotConnected) return;
 
             Imu.Ready(flg);
             statusPanel.FpsVolt(Imu.fps, Imu.vbt);
@@ -126,30 +124,44 @@ namespace KW_Mocap
 
         public void Calib()
         {
-            if ((run_mode < 0) || isCalibrating) return;
-            
-            run_mode = 2;
+            if (runMode == RunMode.NotConnected || 
+                runMode == RunMode.Calibrating) 
+                return;
+
+            /* キャリブレーション用のSS_DATクラスのオブジェクトを用意 */
+            SS_DAT calibrationData = new SS_DAT();
+            long max_data = 30 * (long)Imu.fps;     //最大フレーム数
+            long max_key = 3;                       //最大キーフレーム数
+            calibrationData.Init(max_data, Imu.now_sens, max_key, Imu.stat, Imu.fps);
+
+            /* キャリブレーション */
+            runMode = RunMode.Calibrating;
             Im_rdy.color = Color.yellow;
-            isCalibrating = true;
-            StartCoroutine("Calibration");
-            isCalibrating = false;
+            StartCoroutine(Calibration(calibrationData));
+            runMode = RunMode.Ready;
         }
 
-        private IEnumerator Calibration()
+        private IEnumerator Calibration(SS_DAT data)
         {
-            long hs = Dat.GetNowRec();
-            long dh = (long)(cal_sec * (int)Imu.fps);
-            long he = hs + dh;
-            /* Datに記録 */
-            Dat.SetRecFlg(true);
+            long hs = data.GetNowRec();                 //開始フレーム
+            long dh = (long)(cal_sec * (int)Imu.fps);   //キャリブレーション用フレーム数
+            long he = hs + dh;                          //終了フレーム
+            /* dataに記録 */
+            data.SetRecFlg(true);
             Imu.Rec(true);
-            while (Dat.GetNowRec() < he) yield return (null);
-            Dat.SetRecFlg(false);
+            while (data.GetNowRec() < he) yield return (null);
+            data.SetRecFlg(false);
             Imu.Rec(false);
 
             /* 記録したDatを元にキャリブレーション */
-            imuHandModel.Calibrate(hs, dh, Dat.Pim);
-            Dat.SetNowRec(he);
+            imuHandModel.Calibrate(hs, dh, data.Pim);
+            data.SetNowRec(he);
+        }
+
+        public void End()
+        {
+            Imu.Ready(false);
+            Imu.Close();
         }
     }
 }

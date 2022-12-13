@@ -7,17 +7,14 @@ namespace KW_Mocap
 {
     public class LeapCalibration : MonoBehaviour
     {
-        [SerializeField] GameObject left, right, midPoint, hands;
+        [SerializeField] GameObject left, right, hands;
 
         [SerializeField] AverageMethod averageMode = AverageMethod.Slerp;
-
-        [SerializeField, Range(0.1f, 200.0f)] float scaleForLeapMotion = 80.0f;
 
         public Vector3 adjustPos = Vector3.zero;
 
         Vector3 midPos = new Vector3(-2.31645107f, -32.073246f, 5.7862258f);
         Button calibrationButton;
-        Text count;
 
         public enum AverageMethod {Lerp, Slerp}
         delegate Quaternion AverageQuaternion(Quaternion q1, Quaternion q2);
@@ -31,16 +28,11 @@ namespace KW_Mocap
 
         void Start()
         {
-            UISetting.SetButton(ref calibrationButton, "Calibration", () => StartCoroutine(CountDown(3)));
-            count = GameObject.Find("Calibration Count Down").GetComponent<Text>();
-            count.gameObject.SetActive(false);
+            
         }
 
         void Update()
         {
-            UpdateMidPoint();
-            left.GetComponent<LeapHandModel>().scl = scaleForLeapMotion;
-            right.GetComponent<LeapHandModel>().scl = scaleForLeapMotion;
             hands.transform.localPosition = -midPos + adjustPos;
         }
 
@@ -49,7 +41,7 @@ namespace KW_Mocap
         /// </summary>
         /// <param name="second">カウントダウンの秒数</param>
         /// <returns></returns>
-        IEnumerator CountDown(int second)
+        public IEnumerator Calibration(Text count, int second)
         {
             /* 前処理として手のポーズをキャリブレーション用にする */
             left.GetComponent<HandSetting>().SetCalibrationPose();
@@ -100,13 +92,6 @@ namespace KW_Mocap
         {
             Quaternion midRot = Avg[averageMode](left.transform.rotation, right.transform.rotation);
             this.transform.rotation = Quaternion.Inverse(midRot) * this.transform.rotation;
-        }
-
-        void UpdateMidPoint()
-        {
-            if (midPoint == null) return;
-            midPoint.transform.position = 0.5f * (left.transform.position + right.transform.position);
-            midPoint.transform.rotation = Avg[averageMode](left.transform.rotation, right.transform.rotation);
         }
     }
 }
