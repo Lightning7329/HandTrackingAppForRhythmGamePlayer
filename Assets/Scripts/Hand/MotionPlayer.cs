@@ -51,8 +51,10 @@ namespace KW_Mocap
         {
             if (n < 0 || frameCount <= n) return;
             // TODO: leftJoint[0,0]~leftKJoint[4,2]のモーションデータも再生する。rightも然り。
-            left.transform.SetPositionAndRotation(motionData[n].left.palmPos, motionData[n].left.palmRot);
-            right.transform.SetPositionAndRotation(motionData[n].right.palmPos, motionData[n].right.palmRot);
+            left.transform.localPosition = motionData[n].left.palmPos;
+            left.transform.localRotation = motionData[n].left.palmRot;
+            right.transform.localPosition = motionData[n].right.palmPos;
+            right.transform.localRotation = motionData[n].right.palmRot;
         }
 
         public void StartPlaying()

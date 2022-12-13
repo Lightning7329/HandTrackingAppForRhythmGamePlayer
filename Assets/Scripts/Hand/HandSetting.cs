@@ -16,90 +16,21 @@ namespace KW_Mocap {
         /// 指の関節を表すGameObjectのインデックスに使用する文字。
         /// </summary>
         [SerializeField] private char[] fingerBoneIndex = { '1', '2', '3' };
-		/// <summary>
-		/// sensor to hand(LeapMotionが定義した関節番号)
-		/// 関節番号0から3までの関節に何番のセンサーを割り当てるかをスペース区切りで記述する。
-		/// センサーが存在しない場合は 'x' と入れる。 
-		/// </summary>
-		[SerializeField]
-		private string[] sensorTable =
-		{
-			"x 15 14 13",
-			"x 12 11 10",
-			"9 8 7 6",
-			"x 5 4 3",
-			"x 2 1 0"
-		};
+
 		/// <summary>
 		/// 正常時とエラー時のマテリアルを集めたクラス。
 		/// </summary>
 		[SerializeField] private HandMaterial materials;
 		/// <summary>
 		/// ハンドモデルの関節を表す2次元配列。1次元目が指、2次元目が関節。
+		/// 2次元目の0番目はnull。
 		/// </summary>
-		public GameObject[,] joints = new GameObject[5,3];  //指の本数 * 関節の数
-
-		/// <summary>
-		/// finger to referenceの変換マップ
-		/// sensorTableから作成される。
-		/// </summary>
-		private int[,] f2r = new int[5, 4];
-
-		private SS_CALIB imuCalibration = new SS_CALIB();
+		public Transform[,] joints = new Transform[5,4];  //指の本数 * 関節の数
 
 		private void Start()
 		{
 			GrabJoints();
         }
-
-		/// <summary>
-		/// 生きてるセンサー情報をもとにセンサーとの関連付けをしたりなど変換マップを作成する。
-		/// </summary>
-		/// <param name="sensorCount">センサーの個数</param>
-		/// <param name="sensorStatus">生きてるセンサー情報</param>
-		public void Init(int sensorCount, ushort sensorStatus)
-		{
-			int[] r2s = CreateReference2SensorMap(sensorCount, sensorStatus);
-			imuCalibration.Init(this.gameObject.name, r2s);
-			CreateFinger2ReferenceMap();
-		}
-		
-		/// <summary>
-		/// 生きてるセンサー情報をもとに関節番号とセンサー番号の関連付けを行う。
-		/// </summary>
-		/// <param name="sensorCount">センサーの個数</param>
-		/// <param name="sensorStatus">生きてるセンサー情報</param>
-		/// <returns>Reference To Sensor Map</returns>
-		private int[] CreateReference2SensorMap(int sensorCount, ushort sensorStatus)
-        {
-			int[] r2s = new int[16];    //reference to sensor number
-			int n = 0;
-			for (int i = 0; i < 16; i++)
-			{
-				ushort msk = (ushort)(0x01 << i);
-				r2s[i] = ((msk & sensorStatus) == msk) ? n++ : -1;
-			}
-
-			if (n != sensorCount)
-				Debug.LogError($"{sensorCount}個のセンサーのうち{n}個しかキャリブレーションにいってない");
-
-			return r2s;
-		}
-
-		/// <summary>
-		/// sensorTableをもとにf2r(Finger To Reference Map)を作成する。
-		/// </summary>
-		private void CreateFinger2ReferenceMap()
-        {
-			for (int i = 0; i < f2r.GetLength(0); i++)
-			{
-				string[] str = sensorTable[i].Split(' ');
-				for (int j = 0; j < f2r.GetLength(1); j++)
-				{
-					f2r[i, j] = ((j < str.Length) && !str[j].Equals("x")) ? int.Parse(str[j]) : -1;
-				}
-			}
-		}
 
 		/// <summary>
 		/// 自分の孫を含めた子オブジェクトの中からボーンになるオブジェクトを二次元配列に格納する。
@@ -114,9 +45,8 @@ namespace KW_Mocap {
             {
                 int i = Array.IndexOf(fingerNames, Gc.name.TrimEnd(fingerBoneIndex));
 				if (i == -1) continue;
-                int j = int.Parse(Gc.name[Gc.name.Length - 1].ToString()) - 1;
-                this.joints[i, j] = Gc;
-				//Debug.Log($"joint[{i}, {j}] assigned");
+                int j = int.Parse(Gc.name[Gc.name.Length - 1].ToString());
+                this.joints[i, j] = Gc.transform;
 			}
         }
 
@@ -173,16 +103,6 @@ namespace KW_Mocap {
 			}
 		}
 
-		public void Calibrate(long sf, long df, IMUPAR[,] P)
-		{
-			Quaternion[] offset = new Quaternion[]
-			{
-				//TODO: 各関節の回転オフセットをここに書こう
-			};
-			imuCalibration.Record(sf, df, P);
-			imuCalibration.Calib(offset);
-		}
-
 		[ContextMenu("SetCalibrationPose")]
 		public void SetCalibrationPose()
 		{
@@ -224,6 +144,9 @@ namespace KW_Mocap {
 
 	public static class FixedPose
 	{
+		/// <summary>
+		/// 親指の付け根から0,1,2
+		/// </summary>
 		public static Quaternion[] cal_Thumb = new Quaternion[]
 		{
 			new Quaternion(0.0132610817f, 0.113525867f, -0.604481161f, 0.788377225f),
@@ -231,7 +154,30 @@ namespace KW_Mocap {
 			new Quaternion(0.436801821f, 0.0f, 0.0f, 0.899557769f)
 		};
 
-		public static Quaternion[,] nor_Joints = new Quaternion[5, 3]
+		private static Quaternion[] _cal_joints = null;
+		/// <summary>
+		/// 添え字は関節番号。小指の第一関節から0,1,2,...
+		/// </summary>
+		public static Quaternion[] cal_joints
+		{
+			get
+			{
+				if (_cal_joints != null)
+					return _cal_joints;
+
+				_cal_joints = new Quaternion[16];
+				for (int i = 0; i <= 12; i++)
+				{
+					_cal_joints[i] = Quaternion.identity;
+				}
+				_cal_joints[13] = cal_Thumb[2]; //親指第一関節
+				_cal_joints[14] = cal_Thumb[1];	//親指第二関節
+				_cal_joints[15] = cal_Thumb[0];	//親指第三関節
+				return _cal_joints;
+            }
+		}
+
+        public static Quaternion[,] nor_Joints = new Quaternion[5, 3]
         {
 			{	// Thumb
 				new Quaternion(-0.109803915f, 0.31287995f, -0.542804599f, 0.771629691f),
