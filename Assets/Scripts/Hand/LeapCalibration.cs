@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace KW_Mocap
 {
-    public class Calibration : MonoBehaviour
+    public class LeapCalibration : MonoBehaviour
     {
         [SerializeField] GameObject left, right, midPoint, hands;
 
@@ -42,7 +42,6 @@ namespace KW_Mocap
             left.GetComponent<LeapHandModel>().scl = scaleForLeapMotion;
             right.GetComponent<LeapHandModel>().scl = scaleForLeapMotion;
             hands.transform.localPosition = -midPos + adjustPos;
-
         }
 
         /// <summary>

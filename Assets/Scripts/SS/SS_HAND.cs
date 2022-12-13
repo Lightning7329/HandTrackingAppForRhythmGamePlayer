@@ -35,7 +35,6 @@ public class SS_HAND : MonoBehaviour
 	/// </summary>
 	[SerializeField] private string[] s2h = new string[n_fing];
 
-
 	private SS_CALIB Cal = new SS_CALIB();
 
 	/// <summary>
@@ -154,8 +153,8 @@ public class SS_HAND : MonoBehaviour
 	//..............................................................
 	public void Draw(long nf, IMUPAR[,] Q, Vector3 Pc)
 	{
-		Quaternion[] Qs = new Quaternion[16];
-		Quaternion[] Qd = new Quaternion[16];
+		Quaternion[] Qs = new Quaternion[16];	//キャリブレーション済みの絶対回転?
+		Quaternion[] Qd = new Quaternion[16];	//キャリブレーション済みの絶対回転から計算される相対回転?
 		Cal.GetQd(nf, Q, Qs);
 		_Layer(Qs, Qd);
 		//

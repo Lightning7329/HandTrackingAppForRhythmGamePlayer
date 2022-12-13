@@ -41,6 +41,12 @@ namespace SS_KinetrackIII
 			}
 		}
 		//...............................................................
+		/// <summary>
+		/// sfからncフレーム分の16個のIMUPARを使ってQsを作成する
+		/// </summary>
+		/// <param name="sf">start frame</param>
+		/// <param name="nc">number of calibration</param>
+		/// <param name="P"></param>
 		public void Record(long sf, long nc, IMUPAR[,] P)
 		{
 			cal_size = (int)nc;
@@ -143,6 +149,11 @@ namespace SS_KinetrackIII
 			}
 		}
 		//...............................................................
+		/// <summary>
+		/// 与えられた各関節の回転に合わせてキャリブレーションをする。
+		/// 事前にRecordメソッドを呼んでおく必要あり。
+		/// </summary>
+		/// <param name="Qoff"></param>
 		public void Calib(Quaternion[] Qoff)
 		{
 			_InitQio(Qoff);
