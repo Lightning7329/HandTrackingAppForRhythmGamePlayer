@@ -20,7 +20,6 @@ namespace KW_Mocap
         private Button B_net;
         private Toggle Tg_rdy;
         private Image Im_rdy;
-        private int run_mode = -1;	// -1 NRY / 0 STBY / 1 RDY / 2 REC,CAL
         public RunMode runMode { get; private set; } = RunMode.NotConnected;
 
         public enum RunMode
@@ -48,7 +47,6 @@ namespace KW_Mocap
             /* 最後に使用されたIPアドレスを入力 */
             string last_ip = PlayerPrefs.GetString(gameObject.name + "last_ip");
             if (last_ip.Length > 10) I_net.text = last_ip;
-            //run_mode = -1;
             runMode = RunMode.NotConnected;
 
             Tg_rdy.isOn = false;
@@ -84,7 +82,7 @@ namespace KW_Mocap
             else if (Imu.Connect(I_net.text))
             {
                 /* Imu.Connectメソッドの中でStatメソッドが呼ばれていてその結果が返るから
-			     * このImu.Stat()がfalseを返すことはないのでは？ */
+                 * このImu.Stat()がfalseを返すことはないのでは？ */
                 if (Imu.Stat())
                 {
                     max_sec = (max_sec < 60) ? 60 : max_sec;
@@ -93,7 +91,6 @@ namespace KW_Mocap
                     statusPanel.Stat(Imu.stat);
                     statusPanel.FpsVolt(Imu.fps, Imu.vbt);
                     statusPanel.Frame(string.Format("{0:.00}", max_sec));
-                    //run_mode = 0;
                     runMode = RunMode.Standby;
                     Im_rdy.color = (leapHandModel.isDetected) ? Color.blue : Color.white;
                     PlayerPrefs.SetString((gameObject.name + "last_ip"), I_net.text);

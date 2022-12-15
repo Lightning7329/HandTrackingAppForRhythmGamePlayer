@@ -41,9 +41,15 @@ public class IMUHandModel
         this.Tr = joints;
     }
 
-    public void Calibrate(long sf, long df, IMUPAR[,] P)
+    /// <summary>
+    /// フレーム数 * センサー個数分の配列imuParsのうちstartFrameからdeltaFrame分を使ってキャリブレーションを実行する
+    /// </summary>
+    /// <param name="startFrame">開始フレーム</param>
+    /// <param name="deltaFrame">フレーム数</param>
+    /// <param name="imuPars"></param>
+    public void Calibrate(long startFrame, long deltaFrame, IMUPAR[,] imuPars)
     {
-        imuCalibration.Record(sf, df, P);
+        imuCalibration.Record(startFrame, deltaFrame, imuPars);
         imuCalibration.Calib(FixedPose.cal_joints);
     }
 

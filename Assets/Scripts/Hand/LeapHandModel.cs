@@ -4,61 +4,61 @@ using Leap.Unity;
 
 namespace KW_Mocap
 {
-	public class LeapHandModel : HandModelBase
-	{
-		[SerializeField] private Chirality LR;
+    public class LeapHandModel : HandModelBase
+    {
+        [SerializeField] private Chirality LR;
 
         [SerializeField, Range(0.1f, 100.0f)]
-		public float scl = 70.0f;
+        public float scl = 70.0f;
 
-		public bool isDetected = false;
+        public bool isDetected = false;
 
         private Hand lmHand;
 
-		public override Chirality Handedness
-		{
-			get => LR;
-			set {}
-		}
+        public override Chirality Handedness
+        {
+            get => LR;
+            set {}
+        }
 
-		public override ModelType HandModelType
-		{
-			get => ModelType.Graphics;
-		}
+        public override ModelType HandModelType
+        {
+            get => ModelType.Graphics;
+        }
 
         public void Start()
         {
-			OnBegin += changeMaterial_OnBegin;
-			OnFinish += changeMaterial_OnFinish;
-		}
+            OnBegin += changeMaterial_OnBegin;
+            OnFinish += changeMaterial_OnFinish;
+        }
 
-		/// <summary>
-		/// LeapMotionが手を検知し始めたらMaterialを通常モードに変更する。
-		/// </summary>
-		private void changeMaterial_OnBegin()
+        /// <summary>
+        /// LeapMotionが手を検知し始めたらMaterialを通常モードに変更する。
+        /// </summary>
+        private void changeMaterial_OnBegin()
         {
-			isDetected = true;
-			Debug.Log(LR.ToString() + " Begin");
-			GetComponent<HandSetting>().SetMaterial(this.gameObject, true);
-		}
+            isDetected = true;
+            Debug.Log(LR.ToString() + " Begin");
+            GetComponent<HandSetting>().SetMaterial(this.gameObject, true);
+        }
 
-		/// <summary>
-		/// LeapMotionが手を検知できなくなったらMaterialをエラーモードに変更する。
-		/// </summary>
+        /// <summary>
+        /// LeapMotionが手を検知できなくなったらMaterialをエラーモードに変更する。
+        /// </summary>
         private void changeMaterial_OnFinish()
         {
-			isDetected = false;
-			Debug.Log(LR.ToString() + " Finish");
-			GetComponent<HandSetting>().SetMaterial(this.gameObject, false);
+            isDetected = false;
+            Debug.Log(LR.ToString() + " Finish");
+            GetComponent<HandSetting>().SetMaterial(this.gameObject, false);
         }
 
         public override Hand GetLeapHand() { return (lmHand); }
-		public override void SetLeapHand(Hand hand) { lmHand = hand; }
-		public override void UpdateHand()
-		{
-			var palmPose = lmHand.GetPalmPose();
-			gameObject.transform.localPosition = scl * palmPose.position;
-			gameObject.transform.localRotation = palmPose.rotation;
-		}
-	}
+        public override void SetLeapHand(Hand hand) { lmHand = hand; }
+        public override void UpdateHand()
+        {
+            var palmPose = lmHand.GetPalmPose();
+            gameObject.transform.localPosition = scl * palmPose.position;
+            gameObject.transform.localRotation = palmPose.rotation;
+        }
+    }
 }
