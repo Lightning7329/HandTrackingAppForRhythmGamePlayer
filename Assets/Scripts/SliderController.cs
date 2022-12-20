@@ -30,7 +30,7 @@ namespace KW_Mocap
             timeSlider.wholeNumbers = true;
 
             //VideoPlayerの取得、設定
-            video = GameObject.Find("Display for Play").GetComponent<VideoPlayer>();
+            video = GameObject.FindWithTag("Display").GetComponent<VideoPlayer>();
             video.prepareCompleted += OnCompletePrepare;
         }
 

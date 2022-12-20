@@ -31,7 +31,7 @@ namespace KW_Mocap
             motionPlayer = GameObject.Find("Hands").GetComponent<MotionPlayer>();
 
             // video側
-            videoController = GameObject.Find("Display for Play").GetComponent<VideoController>();
+            videoController = GameObject.FindWithTag("Display").GetComponent<VideoController>();
             cameraController = Camera.main.GetComponent<CameraController>();
 
 
