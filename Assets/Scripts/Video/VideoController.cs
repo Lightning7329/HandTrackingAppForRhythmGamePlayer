@@ -12,6 +12,29 @@ namespace KW_Mocap
         private SliderController sliderController;
         [SerializeField] private int startFrame = 0;
         public bool isPlaying { get; private set; } = false;
+        /// <summary>
+        /// The length of the Video, in seconds.
+        /// </summary>
+        public double Length { get => video.length; }
+        /// <summary>
+        /// Number of frames in the current video.
+        /// </summary>
+        public ulong FrameCount { get => video.frameCount; }
+        /// <summary>
+        /// The clock time that the VideoPlayer follows to schedule its samples, in seconds. 
+        /// </summary>
+        public double ClockTime { get => video.clockTime; }
+        /// <summary>
+        /// The frame index of the currently available frame in Video.
+        /// </summary>
+        public long Frame
+        {
+            get => video.frame;
+            set => video.frame = value;
+        }
+
+        public void SetPrepareCompleted(VideoPlayer.EventHandler method) => video.prepareCompleted += method;
+
 
         void Start()
         {
@@ -37,6 +60,17 @@ namespace KW_Mocap
         {
             if (!isPlaying) return;
 
+            video.Pause();
+            isPlaying = false;
+        }
+
+        /// <summary>
+        /// 一瞬再生して一時停止する。
+        /// </summary>
+        public void PlayAndPause()
+        {
+            if (!isPlaying)
+                video.Play();
             video.Pause();
             isPlaying = false;
         }
