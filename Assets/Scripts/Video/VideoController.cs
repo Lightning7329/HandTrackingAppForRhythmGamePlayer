@@ -6,17 +6,35 @@ using UnityEngine.Video;
 
 namespace KW_Mocap
 {
-    public class VideoController : MonoBehaviour, Player
+    public class VideoController : MonoBehaviour
     {
         private VideoPlayer video;
-        private SliderController sliderController;
         [SerializeField] private int startFrame = 0;
         public bool isPlaying { get; private set; } = false;
+        /// <summary>
+        /// The length of the Video, in seconds.
+        /// </summary>
+        public double Length { get => video.length; }
+        /// <summary>
+        /// Number of frames in the current video.
+        /// </summary>
+        public ulong FrameCount { get => video.frameCount; }
+        /// <summary>
+        /// The clock time that the VideoPlayer follows to schedule its samples, in seconds. 
+        /// </summary>
+        public double ClockTime { get => video.clockTime; }
+        /// <summary>
+        /// The frame index of the currently available frame in Video.
+        /// </summary>
+        public long Frame
+        {
+            get => video.frame;
+            set => video.frame = value;
+        }
 
         void Start()
         {
             video = GetComponent<VideoPlayer>();
-            sliderController = GameObject.Find("TimeSlider").GetComponent<SliderController>();
         }
 
         /// <summary>
@@ -42,27 +60,25 @@ namespace KW_Mocap
         }
 
         /// <summary>
-        /// 指定秒数動画を進める。
+        /// 一瞬再生して一時停止する。
         /// </summary>
-        /// <param name="seconds">進める秒数。負のときは戻す。</param>
-        public void Skip(float seconds)
+        public void PlayAndPause()
         {
-            video.frame += (long)(seconds * video.frameRate);
+            if (!isPlaying)
+                video.Play();
+            video.Pause();
+            isPlaying = false;
         }
 
         /// <summary>
         /// 指定倍率で動画の再生速度を変更する。
         /// </summary>
         /// <param name="speedRatio">再生速度倍率</param>
-        public void ChangeSpeed(float speedRatio)
-        {
-            video.playbackSpeed = speedRatio;
-        }
+        public void ChangeSpeed(float speedRatio) => video.playbackSpeed = speedRatio;
 
-        public void ResetFrameCount()
-        {
-            video.frame = startFrame;
-        }
+        public void SetPrepareCompleted(VideoPlayer.EventHandler method) => video.prepareCompleted += method;
+
+        public void ResetFrameCount() => video.frame = startFrame;
 
         /// <summary>
         /// 全体時間の秒、フレームレート、フレーム数をコンソールに表示
@@ -96,11 +112,9 @@ namespace KW_Mocap
             }
 
             // VideoPlayerコンポーネントに割り当てて再生準備をする
-            sliderController.enabled = false;   // VideoPlayer側のPrepareが終わったらtrueに戻る
             video.clip = videoClip;
             video.frame = startFrame;
-            video.Play();
-            video.Pause();
+            PlayAndPause();
         }
     }
 }
