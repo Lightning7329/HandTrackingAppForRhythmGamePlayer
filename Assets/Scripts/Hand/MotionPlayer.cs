@@ -92,7 +92,8 @@ namespace KW_Mocap
                 {
                     /* Virtual Deskに対する相対位置 */
                     fs.Read(buf, 0, 12);
-                    this.transform.localPosition = ExtendedBitConverter.GetVector3FromBytes(buf, 0).position;
+                    //this.transform.localPosition = ExtendedBitConverter.GetVector3FromBytes(buf, 0).position;
+                    this.transform.localPosition = new Vector3(100f, 2.8599999f, 102.510002f);
 
                     /* 読み込むデータ点数 */
                     fs.Read(buf, 0, 4);
