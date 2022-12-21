@@ -21,12 +21,6 @@ namespace KW_Mocap {
             count.gameObject.SetActive(false);
         }
 
-        
-        void Update()
-        {
-
-        }
-
         void OnBtn_Both()
         {
             Debug.Log("Both Calibrate");
