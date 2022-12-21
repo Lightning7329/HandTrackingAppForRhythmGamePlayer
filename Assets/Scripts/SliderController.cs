@@ -12,6 +12,7 @@ namespace KW_Mocap
     {
         private bool isTouching = false;
         EventTrigger eventTrigger;
+        MotionPlayer motion;
         VideoController video;
         Slider timeSlider;
         Text currentTime, maxTime;
@@ -25,13 +26,14 @@ namespace KW_Mocap
             //Event Triggerコンポーネントの追加
             eventTrigger = this.gameObject.AddComponent<EventTrigger>();
 
-            //Sliderの取得、設定
+            //Sliderの取得
             timeSlider = GetComponent<Slider>();
-            timeSlider.wholeNumbers = true;
 
             //VideoPlayerの取得、設定
             video = GameObject.FindWithTag("Display").GetComponent<VideoController>();
             video.SetPrepareCompleted(OnCompletePrepare);
+
+            motion = GameObject.Find("Hands").GetComponent<MotionPlayer>();
         }
 
         /// <summary>
@@ -41,7 +43,6 @@ namespace KW_Mocap
         private void OnCompletePrepare(VideoPlayer source)
         {
             Debug.Log("再生準備完了");
-            timeSlider.maxValue = video.FrameCount;
 
             //[イベントトリガー] PointerDown, PointerUp の追加
             UISetting.AddEventTrigger(eventTrigger, EventTriggerType.PointerDown, PointerDown);
@@ -59,12 +60,31 @@ namespace KW_Mocap
 
         void Update()
         {
-            //現時刻の表示を更新
+            /* 現時刻の表示を更新 */
             currentTime.text = SecondsToMMSS(video.ClockTime);
 
-            //スライダーを触っていないときのみ毎フレームスライダーを進める
+            /* スライダーを触っていないときのみ毎フレームスライダーを進める
+             * video.Frame / video.FrameCountでtimeSlider.valueを計算しようとするとSkip時に上手くいかない
+             * 一瞬倍くらいの値の位置までスライダーのヘッドが移動する
+             */
             if (!isTouching)
-                timeSlider.value = video.Frame;
+                timeSlider.value = (float)(video.ClockTime / video.Length);
+
+            /* モーションのフレームは動画時間分のモーションフレーム数にスライダーのvalueを掛けたもの */
+            motion.frame = (int)(timeSlider.value * motion.frameRate * video.Length);
+        }
+
+        /// <summary>
+        /// 指定秒数動画を進める。
+        /// スライダーはUpdateメソッド内でvideoを参照して更新される。
+        /// モーションはスライダーに依存しているのでここで変える必要なし。
+        /// </summary>
+        /// <param name="second">進める秒数。負だと戻る。</param>
+        public void Skip(double second)
+        {
+            double targetSliderValue = timeSlider.value + second / video.Length;
+            video.Frame = (long)(targetSliderValue * video.FrameCount);
+            if (!video.isPlaying) video.PlayAndPause();
         }
 
         /// <summary>
@@ -99,11 +119,10 @@ namespace KW_Mocap
         /// </summary>
         private IEnumerator ShowPreview(bool wasPlaying)
         {
-            Debug.Log("コルーチン開始");
             var wait = new WaitForSeconds(coroutineWaitTime);
             while (isTouching)
             {
-                video.Frame = (long)timeSlider.value;
+                video.Frame = (long)(timeSlider.value * video.FrameCount);
                 video.PlayAndPause();
                 yield return wait;
             }
@@ -113,7 +132,6 @@ namespace KW_Mocap
             {
                 video.StartPlaying();
             }
-            Debug.Log("コルーチン終了");
         }
 
         /// <summary>
@@ -121,7 +139,7 @@ namespace KW_Mocap
         /// </summary>
         /// <param name="second">秒</param>
         /// <returns>"分分:秒秒" 形式文字列</returns>
-        private string SecondsToMMSS(double second)
+        private static string SecondsToMMSS(double second)
         {
             var t = System.TimeSpan.FromSeconds(second);
             return string.Format("{0:0}:{1:00}", (int)t.TotalMinutes, t.Seconds);

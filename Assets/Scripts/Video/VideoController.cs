@@ -6,10 +6,9 @@ using UnityEngine.Video;
 
 namespace KW_Mocap
 {
-    public class VideoController : MonoBehaviour, Player
+    public class VideoController : MonoBehaviour
     {
         private VideoPlayer video;
-        private SliderController sliderController;
         [SerializeField] private int startFrame = 0;
         public bool isPlaying { get; private set; } = false;
         /// <summary>
@@ -33,13 +32,9 @@ namespace KW_Mocap
             set => video.frame = value;
         }
 
-        public void SetPrepareCompleted(VideoPlayer.EventHandler method) => video.prepareCompleted += method;
-
-
         void Start()
         {
             video = GetComponent<VideoPlayer>();
-            sliderController = GameObject.Find("TimeSlider").GetComponent<SliderController>();
         }
 
         /// <summary>
@@ -76,27 +71,14 @@ namespace KW_Mocap
         }
 
         /// <summary>
-        /// 指定秒数動画を進める。
-        /// </summary>
-        /// <param name="seconds">進める秒数。負のときは戻す。</param>
-        public void Skip(float seconds)
-        {
-            video.frame += (long)(seconds * video.frameRate);
-        }
-
-        /// <summary>
         /// 指定倍率で動画の再生速度を変更する。
         /// </summary>
         /// <param name="speedRatio">再生速度倍率</param>
-        public void ChangeSpeed(float speedRatio)
-        {
-            video.playbackSpeed = speedRatio;
-        }
+        public void ChangeSpeed(float speedRatio) => video.playbackSpeed = speedRatio;
 
-        public void ResetFrameCount()
-        {
-            video.frame = startFrame;
-        }
+        public void SetPrepareCompleted(VideoPlayer.EventHandler method) => video.prepareCompleted += method;
+
+        public void ResetFrameCount() => video.frame = startFrame;
 
         /// <summary>
         /// 全体時間の秒、フレームレート、フレーム数をコンソールに表示
@@ -130,11 +112,9 @@ namespace KW_Mocap
             }
 
             // VideoPlayerコンポーネントに割り当てて再生準備をする
-            sliderController.enabled = false;   // VideoPlayer側のPrepareが終わったらtrueに戻る
             video.clip = videoClip;
             video.frame = startFrame;
-            video.Play();
-            video.Pause();
+            PlayAndPause();
         }
     }
 }

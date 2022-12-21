@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace KW_Mocap
 {
-    public class MotionPlayer : MonoBehaviour, Player
+    public class MotionPlayer : MonoBehaviour
     {
         MotionData[] motionData = null;
         [SerializeField] GameObject left, right;
@@ -14,9 +14,10 @@ namespace KW_Mocap
         private bool isPlaying = false;
         public bool isLoaded { get; private set; } = false;
         public int frameCount { get; private set; } = 0;
-        public int playbackOffset = 0;
+        public int frameRate { get => WorldTimer.frameRate; }
+        [HideInInspector] public int playbackOffset = 0;
 
-        [SerializeField] private int _frame = 0;
+        private int _frame = 0;
         public int frame
         {
             get => _frame;
@@ -64,7 +65,6 @@ namespace KW_Mocap
             if (isPlaying) return;
 
             isPlaying = true;
-            WorldTimer.CountUp += PlayDataCountUp;
             Debug.Log("Start Playing");
         }
 
@@ -73,32 +73,7 @@ namespace KW_Mocap
             if (!isPlaying) return;
 
             isPlaying = false;
-            WorldTimer.CountUp -= PlayDataCountUp;
             Debug.Log("Stop Playing");
-        }
-
-        public void Skip(float seconds)
-        {
-            //this.frame += (int)(WorldTimer.frameRate * seconds);
-            this.frame += (this.frame & 1) == 0 ? 152 : 151;
-            Play(this.frame);
-        }
-
-        public void ChangeSpeed(float speedRatio)
-        {
-            WorldTimer.ChangeSpeed(speedRatio);
-        }
-
-        /// <summary>
-        /// StartPlaying()でWorldTimerクラスのCountUpにデリゲートとして渡される。
-        /// motionデータ点数を超えると自動的に再生が止まる。
-        /// </summary>
-        void PlayDataCountUp()
-        {
-            if (this._frame >= frameCount - 1)
-                PausePlaying();
-
-            this.frame++;
         }
 
         public void ResetFrameCount()

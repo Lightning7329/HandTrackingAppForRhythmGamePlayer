@@ -3358,7 +3358,6 @@ MonoBehaviour:
   left: {fileID: 1620760399}
   right: {fileID: 236173730}
   playbackOffset: 185
-  _frame: 0
 --- !u!1 &1462079310
 GameObject:
   m_ObjectHideFlags: 0
@@ -5071,6 +5070,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isPlaying: 0
+  motionOffset: 192
   speedChange: 0.05
   skipSeconds: 5
   obj_fileSelector: {fileID: 2139351187}
