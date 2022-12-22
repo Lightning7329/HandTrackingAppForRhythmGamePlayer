@@ -8,14 +8,15 @@ namespace KW_Mocap
     public class PlayModeManager : MonoBehaviour
     {
         [SerializeField] bool isPlaying = false;
-        private float currentSpeed = 1.0f;
-        [SerializeField] private float speedChange = 0.05f;
+        [SerializeField] int motionOffset = 0;
         [SerializeField] private float skipSeconds = 5.0f;
+        [SerializeField] private float speedChange = 0.05f;
+        private float currentSpeed = 1.0f;
 
+        // control側
+        SliderController sliderController = null;
         MotionPlayer motionPlayer = null;
-
         VideoController videoController = null;
-
         CameraController cameraController = null;
 
         // uGUI側
@@ -26,14 +27,11 @@ namespace KW_Mocap
 
         void Start()
         {
-            //WorldTimer.DisplayFrameCount();
-            WorldTimer.Run();
+            // control側
+            sliderController = GameObject.Find("TimeSlider").GetComponent<SliderController>();
             motionPlayer = GameObject.Find("Hands").GetComponent<MotionPlayer>();
-
-            // video側
-            videoController = GameObject.Find("Display for Play").GetComponent<VideoController>();
+            videoController = GameObject.FindWithTag("Display").GetComponent<VideoController>();
             cameraController = Camera.main.GetComponent<CameraController>();
-
 
             // uGUI側
             //fileSelector = GameObject.Find("File Selection Panel").GetComponent<FileSelector>();
@@ -56,6 +54,7 @@ namespace KW_Mocap
             int frame = motionPlayer.frame + motionPlayer.playbackOffset;
             frame = frame > 0 ? frame : 0;
             dataCount.text = "Data Count: " + frame.ToString();
+            motionPlayer.playbackOffset = motionOffset;
         }
 
         void OnBtn_FileSelect()
@@ -66,6 +65,7 @@ namespace KW_Mocap
             cameraController.SetActive(false);
             fileSelector.List();
             StartCoroutine(LoadFile());
+            cameraController.SetActive(true);
         }
 
         IEnumerator LoadFile()
@@ -83,9 +83,18 @@ namespace KW_Mocap
                     motionPlayer.Load(fileName);
                 }
                 motionPlayer.ResetFrameCount();
-                videoController.SetVideoClip(fileName);
+
+                var videoFilePath = Application.streamingAssetsPath + "/../Resources/Videos/" + fileName + ".MP4";
+                if (System.IO.File.Exists(videoFilePath))
+                {
+                    sliderController.enabled = false;   // VideoPlayer側のPrepareが終わったらtrueに戻る
+                    videoController.SetVideoClip(fileName);
+                }
+                else
+                {
+                    Debug.LogError($"VideoClip {fileName} could not be found.");
+                }
             }
-            cameraController.SetActive(true);
         }
 
         void OnBtn_Play()
@@ -114,20 +123,12 @@ namespace KW_Mocap
 
         void OnBtn_Forward()
         {
-            // motion側
-            motionPlayer.Skip(skipSeconds);
-
-            // video側
-            videoController.Skip(skipSeconds);
+            sliderController.Skip(skipSeconds);
         }
 
         void OnBtn_Backward()
         {
-            // motion側
-            motionPlayer.Skip(-skipSeconds);
-
-            // video側
-            videoController.Skip(-skipSeconds);
+            sliderController.Skip(-skipSeconds);
         }
 
         void OnBtn_AddSpeed()
@@ -142,10 +143,7 @@ namespace KW_Mocap
 
         void ChangeSpeed(float newSpeed)
         {
-            // motion側
-            motionPlayer.ChangeSpeed(newSpeed);
-
-            // video側
+            // control側
             videoController.ChangeSpeed(newSpeed);
 
             // uGUI側
@@ -154,7 +152,6 @@ namespace KW_Mocap
 
         void OnBtn_SceneChange()
         {
-            WorldTimer.Stop();
             cameraController.HoldCurrentSceneTransform();
             UnityEngine.SceneManagement.SceneManager.LoadScene("VideoRecord");
         }

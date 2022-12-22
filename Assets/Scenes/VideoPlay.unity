@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44608766, g: 0.49585128, b: 0.5745041, a: 1}
+  m_IndirectSpecularColor: {r: 0.44608718, g: 0.49585086, b: 0.5745036, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2155,7 +2155,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
   m_LocalRotation: {x: 0.50203913, y: -0, z: -0, w: 0.8648449}
-  m_LocalPosition: {x: 0, y: 17.430006, z: -11.01941}
+  m_LocalPosition: {x: 0, y: 17.430006, z: -11.019409}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1759698721}
@@ -3357,8 +3357,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   left: {fileID: 1620760399}
   right: {fileID: 236173730}
-  playbackOffset: 0
-  _frame: 0
+  playbackOffset: 185
 --- !u!1 &1462079310
 GameObject:
   m_ObjectHideFlags: 0
@@ -3716,7 +3715,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2108429694}
   m_HandleRect: {fileID: 2108429693}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -5071,6 +5070,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isPlaying: 0
+  motionOffset: 192
   speedChange: 0.05
   skipSeconds: 5
   obj_fileSelector: {fileID: 2139351187}

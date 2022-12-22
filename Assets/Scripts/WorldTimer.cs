@@ -36,13 +36,6 @@ namespace KW_Mocap
             timer = null;
         }
 
-        public static void ChangeSpeed(float speedRatio)
-        {
-            if (timer == null) return;
-            int newPeriod = (int)(period / speedRatio);
-            timer.Change(0, newPeriod);
-        }
-
         public static void FrameCountReset()
         {
             frameCount = 0;
