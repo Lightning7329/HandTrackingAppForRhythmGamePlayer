@@ -48,26 +48,38 @@ namespace KW_Mocap {
                 count.text = i.ToString();
             }
 
+            count.text = "Recording";
             foreach (var imuCalib in imuCalibs) imuCalib.Calib();
-            bool calibrating = false;
+
+            bool calibrating;
             do
             {
+                calibrating = false;
                 foreach (var imuCalib in imuCalibs)
                 {
-                    calibrating |= imuCalib.runMode == MotionCaptureController.RunMode.Calibrating;
+                    calibrating |= imuCalib.calibrationLevel == MotionCaptureController.CalibrationLevel.Recording;
                 }
                 yield return null;
             } while (calibrating);
 
-            /* 0.5秒間「0」を表示してからカウント表示を消す */
-            yield return new WaitForSeconds(0.5f);
-            count.gameObject.SetActive(false);
+            count.gameObject.SetActive(false);            
+            do
+            {
+                calibrating = false;
+                foreach (var imuCalib in imuCalibs)
+                {
+                    calibrating |= imuCalib.calibrationLevel == MotionCaptureController.CalibrationLevel.Calculating;
+                }
+                yield return null;
+            } while (calibrating);
+            foreach (var imuCalib in imuCalibs) imuCalib.Ready();
             UISetting.SetButtonColor(imuButton, Color.white);
         }
 
         private void OnApplicationQuit()
         {
             foreach (var imuCalib in imuCalibs) imuCalib.End();
+            Debug.Log("OnApplicationQuit was called");
         }
     }
 }

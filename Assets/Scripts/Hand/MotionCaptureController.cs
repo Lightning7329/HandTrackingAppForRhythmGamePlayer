@@ -10,6 +10,8 @@ namespace KW_Mocap
         [SerializeField] GameObject hand;
         public int cal_sec = 3;
         public int max_sec = 1800;	// = 30 minutes
+        [SerializeField] private RunMode _runMode = RunMode.NotConnected;
+        [SerializeField] private CalibrationLevel _calibrationLevel = CalibrationLevel.DoingNothing;
 
         private SS_IMU Imu = new SS_IMU();
         private SS_STAT statusPanel = new SS_STAT();
@@ -20,7 +22,16 @@ namespace KW_Mocap
         private Button B_net;
         private Toggle Tg_rdy;
         private Image Im_rdy;
-        public RunMode runMode { get; private set; } = RunMode.NotConnected;
+        public RunMode runMode
+        { 
+            get => _runMode;
+            private set => _runMode = value;
+        }
+        public CalibrationLevel calibrationLevel
+        {
+            get => _calibrationLevel;
+            private set => _calibrationLevel = value;
+        }
 
         public enum RunMode
         {
@@ -28,6 +39,13 @@ namespace KW_Mocap
             Standby = 0,
             Ready = 1,
             Calibrating = 2
+        }
+
+        public enum CalibrationLevel
+        {
+            DoingNothing = 0,
+            Recording = 1,
+            Calculating = 2
         }
 
 
@@ -119,11 +137,17 @@ namespace KW_Mocap
             handSetting.Active(flg);
         }
 
+        public void Ready() { OnBtn_Ready(true); }
+
         public void Calib()
         {
             if (runMode == RunMode.NotConnected || 
-                runMode == RunMode.Calibrating) 
+                calibrationLevel != CalibrationLevel.DoingNothing)
+            {
+                //yield break;
                 return;
+            }
+            Debug.Log("Calibration Starts");    //Clear
 
             /* キャリブレーション用のSS_DATクラスのオブジェクトを用意 */
             SS_DAT calibrationData = new SS_DAT();
@@ -134,25 +158,45 @@ namespace KW_Mocap
             /* キャリブレーション */
             runMode = RunMode.Calibrating;
             Im_rdy.color = Color.yellow;
+            calibrationLevel = CalibrationLevel.Recording;
+            //yield return Calibration(calibrationData);
             StartCoroutine(Calibration(calibrationData));
             runMode = RunMode.Ready;
+            Debug.Log("Caribration Finished");
         }
 
         private IEnumerator Calibration(SS_DAT data)
         {
+            Debug.Log("Coroutine Starts");
             long hs = data.GetNowRec();                 //開始フレーム
             long dh = (long)(cal_sec * (int)Imu.fps);   //キャリブレーション用フレーム数
             long he = hs + dh;                          //終了フレーム
+            Debug.Log($"hs:{hs} hd:{dh} he:{he}");      //hs:0 hd:150 he:150
             /* dataに記録 */
             data.SetRecFlg(true);
             Imu.Rec(true);
-            while (data.GetNowRec() < he) yield return (null);
+            while (data.GetNowRec() < he)
+            {
+                if (!Imu.flg_setdat)
+                {
+                    yield return null;
+                    continue;
+                }
+
+                Debug.Log("data.Rec, GetNowRec->" + data.GetNowRec().ToString());
+                data.Rec(Imu.Pim, Imu.Pmc);
+                Imu.flg_setdat = false;
+                yield return null;
+            }
             data.SetRecFlg(false);
             Imu.Rec(false);
 
             /* 記録したDatを元にキャリブレーション */
+            calibrationLevel = CalibrationLevel.Calculating;
             imuHandModel.Calibrate(hs, dh, data.Pim);
             data.SetNowRec(he);
+            calibrationLevel = CalibrationLevel.DoingNothing;
+            Debug.Log("Coroutine Finished");
         }
 
         public void End()

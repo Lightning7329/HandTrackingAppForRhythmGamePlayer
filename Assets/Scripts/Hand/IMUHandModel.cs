@@ -50,6 +50,7 @@ public class IMUHandModel
     public void Calibrate(long startFrame, long deltaFrame, IMUPAR[,] imuPars)
     {
         imuCalibration.Record(startFrame, deltaFrame, imuPars);
+        Debug.Log("IMUHandModel.Calibrate");
         imuCalibration.Calib(FixedPose.cal_joints);
     }
 

@@ -173,6 +173,7 @@ namespace KW_Mocap {
                 {
                     _cal_joints[i] = Quaternion.identity;
                 }
+                foreach (var q in _cal_joints) Debug.Log(q.eulerAngles);
                 return _cal_joints;
             }
         }
