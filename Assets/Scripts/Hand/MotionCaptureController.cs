@@ -13,6 +13,7 @@ namespace KW_Mocap
         [SerializeField] private RunMode _runMode = RunMode.NotConnected;
         [SerializeField] private CalibrationLevel _calibrationLevel = CalibrationLevel.DoingNothing;
 
+        private SS_DAT data = new SS_DAT();
         private SS_IMU Imu = new SS_IMU();
         private SS_STAT statusPanel = new SS_STAT();
         private IMUHandModel imuHandModel;
@@ -81,6 +82,7 @@ namespace KW_Mocap
                     Imu.Pmc.n0 = 99;
                     Imu.Pmc.p0 = hand.transform.localPosition;
                 }
+                data.Rec(Imu.Pim, Imu.Pmc);
                 imuHandModel.Draw(Imu.Pim);
                 Imu.flg_setdat = false;
             }
@@ -160,12 +162,12 @@ namespace KW_Mocap
             Im_rdy.color = Color.yellow;
             calibrationLevel = CalibrationLevel.Recording;
             //yield return Calibration(calibrationData);
-            StartCoroutine(Calibration(calibrationData));
+            StartCoroutine(Calibration());
             runMode = RunMode.Ready;
             Debug.Log("Caribration Finished");
         }
 
-        private IEnumerator Calibration(SS_DAT data)
+        private IEnumerator Calibration()
         {
             Debug.Log("Coroutine Starts");
             long hs = data.GetNowRec();                 //開始フレーム
@@ -175,19 +177,7 @@ namespace KW_Mocap
             /* dataに記録 */
             data.SetRecFlg(true);
             Imu.Rec(true);
-            while (data.GetNowRec() < he)
-            {
-                if (!Imu.flg_setdat)
-                {
-                    yield return null;
-                    continue;
-                }
-
-                Debug.Log("data.Rec, GetNowRec->" + data.GetNowRec().ToString());
-                data.Rec(Imu.Pim, Imu.Pmc);
-                Imu.flg_setdat = false;
-                yield return null;
-            }
+            while (data.GetNowRec() < he) yield return null;
             data.SetRecFlg(false);
             Imu.Rec(false);
 
