@@ -26,6 +26,11 @@ namespace KW_Mocap
             buttonObject.GetComponentInChildren<Text>().text = text;
         }
 
+        public static void SetButtonText(GameObject buttonObject, string text)
+        {
+            buttonObject.GetComponentInChildren<Text>().text = text;
+        }
+
         public static void AddEventTrigger(EventTrigger eventTrigger, EventTriggerType triggerType, UnityAction<BaseEventData> call)
         {
             EventTrigger.Entry entry = new EventTrigger.Entry();
