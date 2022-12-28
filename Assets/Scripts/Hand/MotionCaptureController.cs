@@ -106,7 +106,9 @@ namespace KW_Mocap
                 if (Imu.Stat())
                 {
                     max_sec = (max_sec < 60) ? 60 : max_sec;
-
+                    long max_data = max_sec * (long)Imu.fps;
+                    long max_key = max_sec / 30 + 2;
+                    data.Init(max_data, Imu.now_sens, max_key, Imu.stat, Imu.fps);
                     imuHandModel = new IMUHandModel(hand.name, Imu.now_sens, Imu.stat, handSetting.joints);
                     statusPanel.Stat(Imu.stat);
                     statusPanel.FpsVolt(Imu.fps, Imu.vbt);
@@ -125,7 +127,6 @@ namespace KW_Mocap
                     Debug.Log("Err... " + gameObject.name + " is not ready !!");
                 }
             }
-            Debug.Log("RunMode: " + runMode);
         }
 
         void OnBtn_Ready(bool flg)
