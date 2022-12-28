@@ -9,8 +9,11 @@ namespace KW_Mocap
     {
         [SerializeField] bool isPlaying = false;
         [SerializeField] int motionOffset = 0;
-        [SerializeField] private float skipSeconds = 5.0f;
+        [SerializeField] private float neutralSkipSeconds = 5.0f;
         [SerializeField] private float speedChange = 0.05f;
+        [SerializeField] private float minSpeed = 0.25f;
+        [SerializeField] private float maxSpeed = 2.00f;
+        private float skipSeconds;
         private float currentSpeed = 1.0f;
 
         // control側
@@ -21,7 +24,7 @@ namespace KW_Mocap
 
         // uGUI側
         private Text txt_speed, txt_playButton, dataCount;
-        private Button playButton, forwardButton, backwardButton, addSpeedButton, subSpeedButton, sceneChangeButton, fileSelectButton;
+        private Button fileSelectButton, playButton, forwardButton, backwardButton, addSpeedButton, subSpeedButton, sceneChangeButton;
         private FileSelector fileSelector = null;
         public GameObject obj_fileSelector;
 
@@ -32,17 +35,17 @@ namespace KW_Mocap
             motionPlayer = GameObject.Find("Hands").GetComponent<MotionPlayer>();
             videoController = GameObject.FindWithTag("Display").GetComponent<VideoController>();
             cameraController = Camera.main.GetComponent<CameraController>();
+            skipSeconds = neutralSkipSeconds;
 
             // uGUI側
-            //fileSelector = GameObject.Find("File Selection Panel").GetComponent<FileSelector>();
-            fileSelector = obj_fileSelector.GetComponent<FileSelector>();
             UISetting.SetButton(ref fileSelectButton, "FileSelectButton", OnBtn_FileSelect, "Load");
             UISetting.SetButton(ref playButton, "PlayButton", OnBtn_Play, "Play");
-            UISetting.SetButton(ref forwardButton, "ForwardButton", OnBtn_Forward, $"{skipSeconds}s");
-            UISetting.SetButton(ref backwardButton, "BackwardButton", OnBtn_Backward, $"{skipSeconds}s");
-            UISetting.SetButton(ref addSpeedButton, "AddSpeedButton", OnBtn_AddSpeed, "+0.05");
-            UISetting.SetButton(ref subSpeedButton, "SubSpeedButton", OnBtn_SubSpeed, "-0.05");
+            UISetting.SetButton(ref forwardButton, "ForwardButton", OnBtn_Forward, $"{neutralSkipSeconds}s");
+            UISetting.SetButton(ref backwardButton, "BackwardButton", OnBtn_Backward, $"{neutralSkipSeconds}s");
+            UISetting.SetButton(ref addSpeedButton, "AddSpeedButton", OnBtn_AddSpeed, $"+{speedChange:F2}");
+            UISetting.SetButton(ref subSpeedButton, "SubSpeedButton", OnBtn_SubSpeed, $"-{speedChange:F2}");
             UISetting.SetButton(ref sceneChangeButton, "SceneChangeButton", OnBtn_SceneChange, "RecordMode");
+            fileSelector = obj_fileSelector.GetComponent<FileSelector>();
             txt_speed = GameObject.Find("Speed").transform.Find("Text").gameObject.GetComponent<Text>();
             txt_speed.text = "x1.00";
             txt_playButton = playButton.GetComponentInChildren<Text>();
@@ -133,12 +136,26 @@ namespace KW_Mocap
 
         void OnBtn_AddSpeed()
         {
+            if (currentSpeed > maxSpeed - speedChange / 2) return;
+
             ChangeSpeed(currentSpeed += speedChange);
+            if (currentSpeed > maxSpeed - speedChange / 2)
+            {
+                addSpeedButton.interactable = false;
+            }
+            subSpeedButton.interactable = true;
         }
 
         void OnBtn_SubSpeed()
         {
+            if (currentSpeed < minSpeed + speedChange / 2) return;
+
             ChangeSpeed(currentSpeed -= speedChange);
+            if (currentSpeed < minSpeed + speedChange / 2)
+            {
+                subSpeedButton.interactable = false;
+            }
+            addSpeedButton.interactable = true;
         }
 
         void ChangeSpeed(float newSpeed)
@@ -147,6 +164,10 @@ namespace KW_Mocap
             videoController.ChangeSpeed(newSpeed);
 
             // uGUI側
+            skipSeconds = neutralSkipSeconds * currentSpeed;
+            string newSkipSeconds = skipSeconds.ToString("F2").TrimEnd('0').TrimEnd('.') + "s";
+            forwardButton.GetComponentInChildren<Text>().text = newSkipSeconds;
+            backwardButton.GetComponentInChildren<Text>().text = newSkipSeconds;
             txt_speed.text = $"x{newSpeed:F2}";
         }
 
