@@ -8,7 +8,6 @@ namespace KW_Mocap
     public class PlayModeManager : MonoBehaviour
     {
         [SerializeField] bool isPlaying = false;
-        [SerializeField] int motionOffset = 0;
         [SerializeField] private float neutralSkipSeconds = 5.0f;
         [SerializeField] private float speedChange = 0.05f;
         [SerializeField] private float minSpeed = 0.25f;
@@ -21,6 +20,7 @@ namespace KW_Mocap
         MotionPlayer motionPlayer = null;
         VideoController videoController = null;
         CameraController cameraController = null;
+        OffsetManager offsetManager = null;
 
         // uGUI側
         private Text txt_speed, txt_playButton, dataCount;
@@ -35,11 +35,11 @@ namespace KW_Mocap
             motionPlayer = GameObject.Find("Hands").GetComponent<MotionPlayer>();
             videoController = GameObject.FindWithTag("Display").GetComponent<VideoController>();
             cameraController = Camera.main.GetComponent<CameraController>();
+            offsetManager = new OffsetManager(GameObject.Find("Canvas/Motion Offset Panel"), motionPlayer);
             skipSeconds = neutralSkipSeconds;
 
             // uGUI側
             UISetting.SetButton(ref fileSelectButton, "FileSelectButton", OnBtn_FileSelect, "Load");
-            UISetting.SetButton(ref saveOffsetButton, "Canvas/Motion Offset Panel/SaveOffsetButton", OnBtn_SaveMotionOffset);
             UISetting.SetButton(ref playButton, "PlayButton", OnBtn_Play, "Play");
             UISetting.SetButton(ref forwardButton, "ForwardButton", OnBtn_Forward, $"{neutralSkipSeconds}s");
             UISetting.SetButton(ref backwardButton, "BackwardButton", OnBtn_Backward, $"{neutralSkipSeconds}s");
@@ -58,7 +58,6 @@ namespace KW_Mocap
             int frame = motionPlayer.frame + motionPlayer.playbackOffset;
             frame = frame > 0 ? frame : 0;
             dataCount.text = "Data Count: " + frame.ToString();
-            motionPlayer.playbackOffset = motionOffset;
         }
 
         void OnBtn_FileSelect()
@@ -87,7 +86,7 @@ namespace KW_Mocap
                     motionPlayer.Load(fileName);
                 }
                 motionPlayer.ResetFrameCount();
-                this.motionOffset = motionPlayer.playbackOffset;
+                offsetManager.MotionOffset = motionPlayer.playbackOffset;
 
                 var videoFilePath = Application.streamingAssetsPath + "/../Resources/Videos/" + fileName + ".MP4";
                 if (System.IO.File.Exists(videoFilePath))
@@ -171,11 +170,6 @@ namespace KW_Mocap
             forwardButton.GetComponentInChildren<Text>().text = newSkipSeconds;
             backwardButton.GetComponentInChildren<Text>().text = newSkipSeconds;
             txt_speed.text = $"x{newSpeed:F2}";
-        }
-
-        void OnBtn_SaveMotionOffset()
-        {
-            motionPlayer.SavePlaybackOffset();
         }
 
         void OnBtn_SceneChange()

@@ -49,7 +49,7 @@ namespace KW_Mocap
         /// <summary>
         /// 各フレームの動き（位置と回転）を記述
         /// </summary>
-        void Play(int n)
+        public void Play(int n)
         {
             if (n < 0 || frameCount <= n) return;
             // TODO: leftJoint[0,0]~leftKJoint[4,2]のモーションデータも再生する。rightも然り。
