@@ -113,22 +113,30 @@ namespace KW_Mocap
                     }
                 }
                 isLoaded = true;
+                this.currentMotionDataFilePath = pass;
                 Debug.Log($"Motion Loaded " + fileName);
             }
             catch (IOException e)
             {
                 Debug.Log(e);
             }
-            this.currentMotionDataFilePath = pass;
         }
 
         public void SavePlaybackOffset()
         {
-            using (FileStream fileStream = new FileStream(this.currentMotionDataFilePath, FileMode.Open, FileAccess.Write))
+            try
             {
-                fileStream.Seek(12, SeekOrigin.Begin);
-                byte[] buf = BitConverter.GetBytes(this.playbackOffset);
-                fileStream.Write(buf, 0, 4);
+                using (FileStream fileStream = new FileStream(this.currentMotionDataFilePath, FileMode.Open, FileAccess.Write))
+                {
+                    fileStream.Seek(12, SeekOrigin.Begin);
+                    byte[] buf = BitConverter.GetBytes(this.playbackOffset);
+                    fileStream.Write(buf, 0, 4);
+                }
+                Debug.Log($"MotionOffset saved: " + this.playbackOffset);
+            }
+            catch (IOException e)
+            {
+                Debug.Log(e);
             }
         }
     }

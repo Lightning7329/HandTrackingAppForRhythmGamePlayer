@@ -87,6 +87,7 @@ namespace KW_Mocap
                     motionPlayer.Load(fileName);
                 }
                 motionPlayer.ResetFrameCount();
+                this.motionOffset = motionPlayer.playbackOffset;
 
                 var videoFilePath = Application.streamingAssetsPath + "/../Resources/Videos/" + fileName + ".MP4";
                 if (System.IO.File.Exists(videoFilePath))
