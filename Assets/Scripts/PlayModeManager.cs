@@ -24,7 +24,7 @@ namespace KW_Mocap
 
         // uGUI側
         private Text txt_speed, txt_playButton, dataCount;
-        private Button fileSelectButton, playButton, forwardButton, backwardButton, addSpeedButton, subSpeedButton, sceneChangeButton;
+        private Button fileSelectButton, saveOffsetButton, playButton, forwardButton, backwardButton, addSpeedButton, subSpeedButton, sceneChangeButton;
         private FileSelector fileSelector = null;
         public GameObject obj_fileSelector;
 
@@ -39,6 +39,7 @@ namespace KW_Mocap
 
             // uGUI側
             UISetting.SetButton(ref fileSelectButton, "FileSelectButton", OnBtn_FileSelect, "Load");
+            UISetting.SetButton(ref saveOffsetButton, "Canvas/Motion Offset Panel/SaveOffsetButton", OnBtn_SaveMotionOffset);
             UISetting.SetButton(ref playButton, "PlayButton", OnBtn_Play, "Play");
             UISetting.SetButton(ref forwardButton, "ForwardButton", OnBtn_Forward, $"{neutralSkipSeconds}s");
             UISetting.SetButton(ref backwardButton, "BackwardButton", OnBtn_Backward, $"{neutralSkipSeconds}s");
@@ -169,6 +170,11 @@ namespace KW_Mocap
             forwardButton.GetComponentInChildren<Text>().text = newSkipSeconds;
             backwardButton.GetComponentInChildren<Text>().text = newSkipSeconds;
             txt_speed.text = $"x{newSpeed:F2}";
+        }
+
+        void OnBtn_SaveMotionOffset()
+        {
+            motionPlayer.SavePlaybackOffset();
         }
 
         void OnBtn_SceneChange()

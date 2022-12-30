@@ -16,6 +16,7 @@ namespace KW_Mocap
         public int frameCount { get; private set; } = 0;
         public int frameRate { get => WorldTimer.frameRate; }
         [HideInInspector] public int playbackOffset = 0;
+        private string currentMotionDataFilePath = null;
 
         private int _frame = 0;
         public int frame
@@ -92,8 +93,13 @@ namespace KW_Mocap
                 {
                     /* Virtual Deskに対する相対位置 */
                     fs.Read(buf, 0, 12);
-                    //this.transform.localPosition = ExtendedBitConverter.GetVector3FromBytes(buf, 0).position;
-                    this.transform.localPosition = new Vector3(100f, 2.8599999f, 102.510002f);
+                    if (fileName == "Echo over you_Hard40FPS")
+                        this.transform.localPosition = new Vector3(100f, 2.8599999f, 102.510002f);
+                    else this.transform.localPosition = ExtendedBitConverter.GetVector3FromBytes(buf, 0).position;
+
+                    /* モーションデータのデータオフセット */
+                    fs.Read(buf, 0, 4);
+                    this.playbackOffset = BitConverter.ToInt32(buf, 0);
 
                     /* 読み込むデータ点数 */
                     fs.Read(buf, 0, 4);
@@ -112,7 +118,18 @@ namespace KW_Mocap
             catch (IOException e)
             {
                 Debug.Log(e);
-            } 
+            }
+            this.currentMotionDataFilePath = pass;
+        }
+
+        public void SavePlaybackOffset()
+        {
+            using (FileStream fileStream = new FileStream(this.currentMotionDataFilePath, FileMode.Open, FileAccess.Write))
+            {
+                fileStream.Seek(12, SeekOrigin.Begin);
+                byte[] buf = BitConverter.GetBytes(this.playbackOffset);
+                fileStream.Write(buf, 0, 4);
+            }
         }
     }
 }
