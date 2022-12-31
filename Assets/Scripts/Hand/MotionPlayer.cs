@@ -43,9 +43,13 @@ namespace KW_Mocap
 
         void Update()
         {
-            if (isPlaying) Play(frame + playbackOffset);
+            if (isPlaying) Play();
         }
 
+        /// <summary>
+        /// 現在のフレームにオフセットを加えたモーションを再生
+        /// </summary>
+        public void Play() => this.Play(frame + playbackOffset);
         /// <summary>
         /// 各フレームの動き（位置と回転）を記述
         /// </summary>

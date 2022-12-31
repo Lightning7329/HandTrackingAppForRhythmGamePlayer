@@ -122,6 +122,7 @@ namespace KW_Mocap
             {
                 video.Frame = (long)(timeSlider.value * video.FrameCount);
                 video.PlayAndPause();
+                motion.Play();
                 yield return wait;
             }
 

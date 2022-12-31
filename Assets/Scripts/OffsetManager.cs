@@ -59,7 +59,7 @@ namespace KW_Mocap
         void PlayAfterEdit()
         {
             motionPlayer.playbackOffset = motionOffset;
-            motionPlayer.Play(motionPlayer.frame + motionOffset);
+            motionPlayer.Play();
         }
 
         void OnBtn_SaveMotionOffset()
