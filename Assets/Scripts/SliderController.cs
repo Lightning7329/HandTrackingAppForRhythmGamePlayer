@@ -81,7 +81,7 @@ namespace KW_Mocap
         public void Skip(double second)
         {
             double targetSliderValue = timeSlider.value + second / video.Length;
-            video.Frame = (long)(targetSliderValue * video.FrameCount);
+            video.Time = targetSliderValue * video.Length;
             if (!video.isPlaying) video.PlayAndPause();
         }
 
@@ -120,7 +120,7 @@ namespace KW_Mocap
             var wait = new WaitForSeconds(coroutineWaitTime);
             while (isTouching)
             {
-                video.Frame = (long)(timeSlider.value * video.FrameCount);
+                video.Time = timeSlider.value * video.Length;
                 video.PlayAndPause();
                 motion.Play();
                 yield return wait;

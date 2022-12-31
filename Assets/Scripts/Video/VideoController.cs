@@ -24,6 +24,14 @@ namespace KW_Mocap
         /// </summary>
         public double ClockTime { get => video.clockTime; }
         /// <summary>
+        /// The presentation time of the currently available frame in VideoPlayer.texture.
+        /// </summary>
+        public double Time
+        {
+            get => video.time;
+            set => video.time = value;
+        }
+        /// <summary>
         /// The frame index of the currently available frame in Video.
         /// </summary>
         public long Frame
