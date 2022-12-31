@@ -7,11 +7,11 @@ namespace KW_Mocap
 {
     public class PlayModeManager : MonoBehaviour
     {
-        [SerializeField] bool isPlaying = false;
         [SerializeField] private float neutralSkipSeconds = 5.0f;
         [SerializeField] private float speedChange = 0.05f;
         [SerializeField] private float minSpeed = 0.25f;
         [SerializeField] private float maxSpeed = 2.00f;
+        private bool isPlaying = false;
         private float skipSeconds;
         private float currentSpeed = 1.0f;
 
@@ -24,7 +24,7 @@ namespace KW_Mocap
 
         // uGUI側
         private Text txt_speed, txt_playButton, dataCount;
-        private Button fileSelectButton, saveOffsetButton, playButton, forwardButton, backwardButton, addSpeedButton, subSpeedButton, sceneChangeButton;
+        private Button fileSelectButton, playButton, forwardButton, backwardButton, addSpeedButton, subSpeedButton, sceneChangeButton;
         private FileSelector fileSelector = null;
         public GameObject obj_fileSelector;
 
@@ -68,7 +68,6 @@ namespace KW_Mocap
             cameraController.SetActive(false);
             fileSelector.List();
             StartCoroutine(LoadFile());
-            cameraController.SetActive(true);
         }
 
         IEnumerator LoadFile()
@@ -99,6 +98,7 @@ namespace KW_Mocap
                     Debug.LogError($"VideoClip {fileName} could not be found.");
                 }
             }
+            cameraController.SetActive(true);
         }
 
         void OnBtn_Play()
