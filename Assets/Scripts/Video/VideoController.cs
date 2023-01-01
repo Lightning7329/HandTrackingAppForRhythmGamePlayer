@@ -9,6 +9,7 @@ namespace KW_Mocap
     public class VideoController : MonoBehaviour
     {
         private VideoPlayer video;
+        private RenderTexture renderTexture;
         [SerializeField] private int startFrame = 0;
         public bool isPlaying { get; private set; } = false;
         /// <summary>
@@ -89,7 +90,7 @@ namespace KW_Mocap
         public void ResetFrameCount() => video.frame = startFrame;
 
         /// <summary>
-        /// 全体時間の秒、フレームレート、フレーム数をコンソールに表示
+        /// 全体時間の秒、フレームレート、フレーム数、ピクセル数をコンソールに表示
         /// </summary>
         public void DisplayState()
         {
@@ -97,7 +98,6 @@ namespace KW_Mocap
             Debug.Log("frame rate: " + video.frameRate);
             Debug.Log("frame count: " + video.frameCount);
             Debug.Log($"width: {video.width} / height: {video.height}");
-            Debug.Log($"Aspect Ratio {video.clip.pixelAspectRatioNumerator}:{video.clip.pixelAspectRatioDenominator}");
         }
 
         /// <summary>
@@ -106,13 +106,14 @@ namespace KW_Mocap
         /// <param name="name">拡張子なしの動画ファイル名</param>
         public void SetVideoClip(string name)
         {
-            // 前に割り当てていたvideo clipをアンロードする
+            /* 前に割り当てていたvideo clipをアンロードする */
             if (video.clip != null) {
                 Resources.UnloadAsset(video.clip);
+                renderTexture.Release();
                 Debug.Log("VideoClip Unloaded " + video.clip.name);
             }
 
-            // 新しくvideo clipをロードする（拡張子はなしでいいらしい）
+            /* 新しくvideo clipをロードする（拡張子はなしでいいらしい）*/
             VideoClip videoClip = Resources.Load("Videos/" + name) as VideoClip;
 
             if (videoClip == null)
@@ -121,10 +122,33 @@ namespace KW_Mocap
                 return;
             }
 
-            // VideoPlayerコンポーネントに割り当てて再生準備をする
+            /* VideoPlayerコンポーネントに割り当てて再生準備をする */
+            CreateAndSetRenderTexture((int)videoClip.width, (int)videoClip.height);
             video.clip = videoClip;
             video.frame = startFrame;
             PlayAndPause();
+        }
+
+        /// <summary>
+        /// video clipのピクセル数から新しいRender Textureを作成し、
+        /// DisplayのGameObjectのMaterialのMain Textureとしてそれを貼り付ける。
+        /// さらにVideoPlayerのtargetTextureにも設定する。
+        /// </summary>
+        /// <param name="width">video clipの横のピクセル数</param>
+        /// <param name="height">video clipの縦のピクセル数</param>
+        private void CreateAndSetRenderTexture(int width, int height)
+        {
+            renderTexture = new RenderTexture(width, height, 24);
+            renderTexture.Create();
+            var mat = this.GetComponent<MeshRenderer>().material;
+            mat.mainTexture = renderTexture;
+            video.targetTexture = renderTexture;
+        }
+
+        private void OnApplicationQuit()
+        {
+            if (renderTexture != null && renderTexture.IsCreated())
+                renderTexture.Release();
         }
     }
 }
