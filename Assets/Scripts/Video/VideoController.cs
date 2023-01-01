@@ -93,9 +93,11 @@ namespace KW_Mocap
         /// </summary>
         public void DisplayState()
         {
-            Debug.Log("lengh: " + video.length + "s");
+            Debug.Log($"lengh: {video.length}s");
             Debug.Log("frame rate: " + video.frameRate);
             Debug.Log("frame count: " + video.frameCount);
+            Debug.Log($"width: {video.width} / height: {video.height}");
+            Debug.Log($"Aspect Ratio {video.clip.pixelAspectRatioNumerator}:{video.clip.pixelAspectRatioDenominator}");
         }
 
         /// <summary>

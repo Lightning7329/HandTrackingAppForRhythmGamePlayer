@@ -4496,7 +4496,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2108429694}
   m_HandleRect: {fileID: 2108429693}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -6130,8 +6130,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5af58aad21d0422bb12f7183f98c948, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isPlaying: 0
-  motionOffset: 660
   neutralSkipSeconds: 5
   speedChange: 0.05
   minSpeed: 0.25
