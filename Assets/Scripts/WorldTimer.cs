@@ -13,7 +13,7 @@ namespace KW_Mocap
 
         public static int frameCount { get; private set; } = 0;
 
-        private static int _frameRate = 30;
+        private static int _frameRate = 40;
         public static int frameRate
         {
             get => _frameRate;
@@ -34,13 +34,6 @@ namespace KW_Mocap
             timer.Change(Timeout.Infinite, Timeout.Infinite);
             timer.Dispose();
             timer = null;
-        }
-
-        public static void ChangeSpeed(float speedRatio)
-        {
-            if (timer == null) return;
-            int newPeriod = (int)(period / speedRatio);
-            timer.Change(0, newPeriod);
         }
 
         public static void FrameCountReset()

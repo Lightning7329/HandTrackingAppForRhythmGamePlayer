@@ -15,6 +15,7 @@ namespace KW_Mocap
         GameObject FileNameInputPanel;
         InputField fileNameInputField;
         Text caution;
+        Text dataCount;
 
         void Start()
         {
@@ -24,6 +25,7 @@ namespace KW_Mocap
             UISetting.SetButton(ref recordButton, "RecordButton", OnBtn_Record);
             UISetting.SetButton(ref openInputPanelButton, "OpenInputPanelButton", OnBtn_OpenInputPanel);
             UISetting.SetButton(ref sceneChangeButton, "SceneChangeButton", OnBtn_SceneChange);
+            dataCount = GameObject.Find("DataCount").GetComponent<Text>();
 
             /* FileName Input Panelの設定 */
             FileNameInputPanel = GameObject.Find("FileName Input Panel");
@@ -37,7 +39,7 @@ namespace KW_Mocap
 
         void Update()
         {
-
+            dataCount.text = "Data Count: " + motionRecoder.recordDataCount.ToString();
         }
 
         void OnBtn_Record()
@@ -66,7 +68,7 @@ namespace KW_Mocap
             FileNameInputPanel.SetActive(true);
             cameraController.SetActive(false);
             var now = DateTime.Now;
-            fileNameInputField.text = now.ToString("yyyyMMdd-hhmmss");
+            fileNameInputField.text = now.ToString("yyyyMMdd-HHmmss");
             fileNameInputField.ActivateInputField();
         }
 

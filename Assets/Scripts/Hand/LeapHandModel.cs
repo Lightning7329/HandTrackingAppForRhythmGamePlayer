@@ -7,8 +7,11 @@ namespace KW_Mocap
 	public class LeapHandModel : HandModelBase
 	{
 		[SerializeField] private Chirality LR;
-        [SerializeField][Range(0.1f, 100.0f)] private float scl;
-		private Hand lmHand;
+
+        [SerializeField, Range(0.1f, 100.0f)]
+		public float scl = 70.0f;
+
+        private Hand lmHand;
 
 		public override Chirality Handedness
 		{
@@ -23,7 +26,7 @@ namespace KW_Mocap
 
         public void Start()
         {
-            OnBegin += changeMaterial_OnBegin;
+			OnBegin += changeMaterial_OnBegin;
 			OnFinish += changeMaterial_OnFinish;
 		}
 
