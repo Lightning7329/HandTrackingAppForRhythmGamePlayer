@@ -87,8 +87,8 @@ namespace KW_Mocap
                 motionPlayer.ResetFrameCount();
                 offsetManager.MotionOffset = motionPlayer.playbackOffset;
 
-                var videoFilePath = Application.streamingAssetsPath + "/../Resources/Videos/" + fileName + ".MP4";
-                if (System.IO.File.Exists(videoFilePath))
+                var videoFilePath = Application.streamingAssetsPath + "/../Resources/Videos/" + fileName;
+                if (System.IO.File.Exists(videoFilePath + ".MP4") || System.IO.File.Exists(videoFilePath + ".MOV"))
                 {
                     sliderController.enabled = false;   // VideoPlayer側のPrepareが終わったらtrueに戻る
                     videoController.SetVideoClip(fileName);
