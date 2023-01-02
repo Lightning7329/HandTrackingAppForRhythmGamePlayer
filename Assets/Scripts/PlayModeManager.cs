@@ -24,7 +24,7 @@ namespace KW_Mocap
 
         // uGUI側
         private Text txt_speed, txt_playButton, dataCount;
-        private Button fileSelectButton, playButton, forwardButton, backwardButton, addSpeedButton, subSpeedButton, sceneChangeButton;
+        private Button fileSelectButton, playButton, forwardButton, backwardButton, addSpeedButton, subSpeedButton, sceneChangeButton, rotateClockwiseButton, rotateAnticlockwiseButton;
         private FileSelector fileSelector = null;
         public GameObject obj_fileSelector;
 
@@ -45,6 +45,8 @@ namespace KW_Mocap
             UISetting.SetButton(ref backwardButton, "BackwardButton", OnBtn_Backward, $"{neutralSkipSeconds}s");
             UISetting.SetButton(ref addSpeedButton, "AddSpeedButton", OnBtn_AddSpeed, $"+{speedChange:F2}");
             UISetting.SetButton(ref subSpeedButton, "SubSpeedButton", OnBtn_SubSpeed, $"-{speedChange:F2}");
+            UISetting.SetButton(ref rotateClockwiseButton, "RotateClockwiseButton", () => videoController.RotateDisplay(true));
+            UISetting.SetButton(ref rotateAnticlockwiseButton, "RotateAnticlockwiseButton", () => videoController.RotateDisplay(false));
             UISetting.SetButton(ref sceneChangeButton, "SceneChangeButton", OnBtn_SceneChange, "RecordMode");
             fileSelector = obj_fileSelector.GetComponent<FileSelector>();
             txt_speed = GameObject.Find("Speed").transform.Find("Text").gameObject.GetComponent<Text>();

@@ -14,10 +14,12 @@ namespace KW_Mocap
 			if (WebCamTexture.devices.Length < 1) return;
 
 			Vtex = new WebCamTexture[WebCamTexture.devices.Length];
-			SelVid(0, 0);   // ビデオソースの0番をテクスチャー0番に割り当てる
+			for (int i = 0; i < Vtex.Length; i++)
+				SelVid(i, i);   // ビデオソースの0番をテクスチャー0番に割り当てる
 			GetComponent<MeshRenderer>().material = Vmat[0];
 			check();
 		}
+
 		void SelVid(int nc, int nd)
 		{
 			WebCamDevice cam = WebCamTexture.devices[nd];

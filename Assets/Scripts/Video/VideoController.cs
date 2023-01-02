@@ -6,6 +6,7 @@ using UnityEngine.Video;
 
 namespace KW_Mocap
 {
+    [RequireComponent(typeof(VideoPlayer))]
     public class VideoController : MonoBehaviour
     {
         private VideoPlayer video;
@@ -118,12 +119,13 @@ namespace KW_Mocap
 
             if (videoClip == null)
             {
-                Debug.LogError($"VideoClip {name} could not be found.");
+                Debug.LogError($"VideoClip {name} could not be loaded.");
                 return;
             }
 
             /* VideoPlayerコンポーネントに割り当てて再生準備をする */
             CreateAndSetRenderTexture((int)videoClip.width, (int)videoClip.height);
+            SetDisplaySize((int)videoClip.width, (int)videoClip.height);
             video.clip = videoClip;
             video.frame = startFrame;
             PlayAndPause();
@@ -143,6 +145,28 @@ namespace KW_Mocap
             var mat = this.GetComponent<MeshRenderer>().material;
             mat.mainTexture = renderTexture;
             video.targetTexture = renderTexture;
+        }
+
+        /// <summary>
+        /// Displayのサイズを引数のピクセル数から変更する
+        /// </summary>
+        /// <param name="width">video clipの横のピクセル数</param>
+        /// <param name="height">video clipの縦のピクセル数</param>
+        private void SetDisplaySize(int width, int height)
+        {
+            float displayScale = 7.0f / 480.0f;
+            this.transform.localScale = new Vector3(width * displayScale, height * displayScale, 1);
+        }
+
+        /// <summary>
+        /// Displayを90度回転する
+        /// </summary>
+        /// <param name="clockWise">trueなら時計回り、falseなら反時計回り</param>
+        public void RotateDisplay(bool clockWise)
+        {
+            Vector3 localOrigin = this.transform.parent.position;
+            float angle = clockWise ? 90.0f : -90.0f;
+            this.transform.RotateAround(localOrigin, Vector3.up, angle);
         }
 
         private void OnApplicationQuit()
