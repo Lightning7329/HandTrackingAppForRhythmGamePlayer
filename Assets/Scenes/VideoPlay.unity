@@ -3154,7 +3154,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe458eca83153471b85172e008dcf84f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotCenter: {x: 0, y: -34.83, z: 0}
+  rotCenter: {x: 0, y: 0, z: 0}
   moveSpead: 17.6
   zoomSpeed: 13.8
   rotateSpeed:
