@@ -36,6 +36,14 @@ namespace KW_Mocap
             buttonObject.GetComponentInChildren<Text>().text = text;
         }
 
+<<<<<<< HEAD
+=======
+        public static void SetButtonText(GameObject buttonObject, string text)
+        {
+            buttonObject.GetComponentInChildren<Text>().text = text;
+        }
+
+>>>>>>> main
         public static void SetButtonColor(Button button, Color color)
         {
             button.GetComponent<Image>().color = color;

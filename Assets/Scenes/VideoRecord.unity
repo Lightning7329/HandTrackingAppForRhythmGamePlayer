@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44608766, g: 0.49585128, b: 0.5745041, a: 1}
+  m_IndirectSpecularColor: {r: 0.44608718, g: 0.49585086, b: 0.5745036, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1387,6 +1387,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   left: {fileID: 2048777865}
   right: {fileID: 8234911754632013711}
+<<<<<<< HEAD
+=======
+  midPoint: {fileID: 0}
+>>>>>>> main
   hands: {fileID: 1417507090}
   averageMode: 1
   adjustPos: {x: 0, y: 1.81, z: -8.88}
@@ -2812,6 +2816,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d65b4002f69a48138706247d5a93e3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+<<<<<<< HEAD
 --- !u!1 &1424695333
 GameObject:
   m_ObjectHideFlags: 0
@@ -2986,6 +2991,8 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+=======
+>>>>>>> main
 --- !u!1 &1462079310
 GameObject:
   m_ObjectHideFlags: 0

@@ -14,24 +14,9 @@ namespace KW_Mocap
     public class CameraController : MonoBehaviour
     {
         #region StaticField
-        /* 標準的な位置のプリセット */
-        private static Vector3 pos1 = new Vector3(0.0f, 19.95238f, -11.01941f);
-        private static Quaternion rot1 = Quaternion.Euler(60.0f, 0.0f, 0.0f);
-        private static Vector3 pos2 = new Vector3(0.0f, 18.1077747f, -2.13255429f);
-        private static Quaternion rot2 = new Quaternion(0.676393151f, 8.08870536e-05f, -8.61902517e-05f, 0.736540854f);
-
         /* シーンを跨ぐときに最後の位置と回転を記憶するための変数 */
-        private static Vector3 lastPosition = pos1;
-        private static Quaternion lastRotation = rot1;
-
-        /// <summary>
-        /// カメラが動ける位置のy座標の上限
-        /// </summary>
-        private static readonly float ceiling = 30.0f;
-        /// <summary>
-        /// カメラが動ける位置のy座標の下限
-        /// </summary>
-        private static readonly float floor = -30.0f;
+        private static Vector3 lastPosition = CameraControllerPreferences.pos1;
+        private static Quaternion lastRotation = CameraControllerPreferences.rot1;
         #endregion
 
         #region Field
@@ -138,8 +123,8 @@ namespace KW_Mocap
         private void Zoom(float amount)
         {
             bool goingUp = !(transform.forward.y > 0 ^ amount > 0);
-            bool canGoUp = goingUp && transform.position.y < ceiling;
-            bool canGoDown = !goingUp && transform.position.y > floor;
+            bool canGoUp = goingUp && transform.position.y < CameraControllerPreferences.ceiling;
+            bool canGoDown = !goingUp && transform.position.y > CameraControllerPreferences.floor;
             if (canGoUp || canGoDown)
                 transform.Translate(amount * ZoomSpeed * Time.deltaTime * transform.forward, Space.World);
         }
@@ -258,9 +243,8 @@ namespace KW_Mocap
         /// </summary>
         private void OnBtn_Camera1()
         {
-            //transform.SetPositionAndRotation(pos1, rot1);
-            transform.localPosition = pos1;
-            transform.localRotation = rot1;
+            transform.localPosition = CameraControllerPreferences.pos1;
+            transform.localRotation = CameraControllerPreferences.rot1;
         }
 
         /// <summary>
@@ -268,9 +252,8 @@ namespace KW_Mocap
         /// </summary>
         private void OnBtn_Camera2()
         {
-            //transform.SetPositionAndRotation(pos2, rot2);
-            transform.localPosition = pos2;
-            transform.localRotation = rot2;
+            transform.localPosition = CameraControllerPreferences.pos2;
+            transform.localRotation = CameraControllerPreferences.rot2;
         }
 
         /// <summary>
@@ -278,8 +261,6 @@ namespace KW_Mocap
         /// </summary>
         public void HoldCurrentSceneTransform()
         {
-            //lastPosition = transform.position;
-            //lastRotation = transform.rotation;
             lastPosition = transform.localPosition;
             lastRotation = transform.localRotation;
         }
@@ -289,10 +270,40 @@ namespace KW_Mocap
         /// </summary>
         private void SetLastSceneTransform()
         {
-            //transform.SetPositionAndRotation(lastPosition, lastRotation);
             transform.localPosition = lastPosition;
             transform.localRotation = lastRotation;
         }
+    }
+
+    public static class CameraControllerPreferences
+    {
+        /* 標準的な位置のプリセット */
+        /// <summary>
+        /// カメラ1の位置
+        /// </summary>
+        public static readonly Vector3 pos1 = new Vector3(0.0f, 19.95238f, -11.01941f);
+        /// <summary>
+        /// カメラ1の向き
+        /// </summary>
+        public static readonly Quaternion rot1 = Quaternion.Euler(60.0f, 0.0f, 0.0f);
+        /// <summary>
+        /// カメラ2の位置
+        /// </summary>
+        public static readonly Vector3 pos2 = new Vector3(0.0f, 18.1077747f, -2.13255429f);
+        /// <summary>
+        /// カメラ2の向き
+        /// </summary>
+        public static readonly Quaternion rot2 = new Quaternion(0.676393151f, 8.08870536e-05f, -8.61902517e-05f, 0.736540854f);
+
+        /* カメラの移動可能範囲 */
+        /// <summary>
+        /// カメラが動ける位置のy座標の上限
+        /// </summary>
+        public static readonly float ceiling = 30.0f;
+        /// <summary>
+        /// カメラが動ける位置のy座標の下限
+        /// </summary>
+        public static readonly float floor = -30.0f;
     }
 
     [Serializable]
