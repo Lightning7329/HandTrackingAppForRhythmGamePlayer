@@ -7,12 +7,11 @@ namespace KW_Mocap
 {
     public class PlayModeManager : MonoBehaviour
     {
-        [SerializeField] bool isPlaying = false;
-        [SerializeField] int motionOffset = 0;
         [SerializeField] private float neutralSkipSeconds = 5.0f;
         [SerializeField] private float speedChange = 0.05f;
         [SerializeField] private float minSpeed = 0.25f;
         [SerializeField] private float maxSpeed = 2.00f;
+        private bool isPlaying = false;
         private float skipSeconds;
         private float currentSpeed = 1.0f;
 
@@ -21,10 +20,11 @@ namespace KW_Mocap
         MotionPlayer motionPlayer = null;
         VideoController videoController = null;
         CameraController cameraController = null;
+        OffsetManager offsetManager = null;
 
         // uGUI側
         private Text txt_speed, txt_playButton, dataCount;
-        private Button fileSelectButton, playButton, forwardButton, backwardButton, addSpeedButton, subSpeedButton, sceneChangeButton;
+        private Button fileSelectButton, playButton, forwardButton, backwardButton, addSpeedButton, subSpeedButton, sceneChangeButton, rotateClockwiseButton, rotateAnticlockwiseButton;
         private FileSelector fileSelector = null;
         public GameObject obj_fileSelector;
 
@@ -35,6 +35,7 @@ namespace KW_Mocap
             motionPlayer = GameObject.Find("Hands").GetComponent<MotionPlayer>();
             videoController = GameObject.FindWithTag("Display").GetComponent<VideoController>();
             cameraController = Camera.main.GetComponent<CameraController>();
+            offsetManager = new OffsetManager(GameObject.Find("Canvas/Motion Offset Panel"), motionPlayer);
             skipSeconds = neutralSkipSeconds;
 
             // uGUI側
@@ -44,6 +45,8 @@ namespace KW_Mocap
             UISetting.SetButton(ref backwardButton, "BackwardButton", OnBtn_Backward, $"{neutralSkipSeconds}s");
             UISetting.SetButton(ref addSpeedButton, "AddSpeedButton", OnBtn_AddSpeed, $"+{speedChange:F2}");
             UISetting.SetButton(ref subSpeedButton, "SubSpeedButton", OnBtn_SubSpeed, $"-{speedChange:F2}");
+            UISetting.SetButton(ref rotateClockwiseButton, "RotateClockwiseButton", () => videoController.RotateDisplay(true));
+            UISetting.SetButton(ref rotateAnticlockwiseButton, "RotateAnticlockwiseButton", () => videoController.RotateDisplay(false));
             UISetting.SetButton(ref sceneChangeButton, "SceneChangeButton", OnBtn_SceneChange, "RecordMode");
             fileSelector = obj_fileSelector.GetComponent<FileSelector>();
             txt_speed = GameObject.Find("Speed").transform.Find("Text").gameObject.GetComponent<Text>();
@@ -57,7 +60,6 @@ namespace KW_Mocap
             int frame = motionPlayer.frame + motionPlayer.playbackOffset;
             frame = frame > 0 ? frame : 0;
             dataCount.text = "Data Count: " + frame.ToString();
-            motionPlayer.playbackOffset = motionOffset;
         }
 
         void OnBtn_FileSelect()
@@ -68,7 +70,6 @@ namespace KW_Mocap
             cameraController.SetActive(false);
             fileSelector.List();
             StartCoroutine(LoadFile());
-            cameraController.SetActive(true);
         }
 
         IEnumerator LoadFile()
@@ -86,9 +87,10 @@ namespace KW_Mocap
                     motionPlayer.Load(fileName);
                 }
                 motionPlayer.ResetFrameCount();
+                offsetManager.MotionOffset = motionPlayer.playbackOffset;
 
-                var videoFilePath = Application.streamingAssetsPath + "/../Resources/Videos/" + fileName + ".MP4";
-                if (System.IO.File.Exists(videoFilePath))
+                var videoFilePath = Application.streamingAssetsPath + "/../Resources/Videos/" + fileName;
+                if (System.IO.File.Exists(videoFilePath + ".MP4") || System.IO.File.Exists(videoFilePath + ".MOV"))
                 {
                     sliderController.enabled = false;   // VideoPlayer側のPrepareが終わったらtrueに戻る
                     videoController.SetVideoClip(fileName);
@@ -98,6 +100,7 @@ namespace KW_Mocap
                     Debug.LogError($"VideoClip {fileName} could not be found.");
                 }
             }
+            cameraController.SetActive(true);
         }
 
         void OnBtn_Play()

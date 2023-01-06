@@ -83,7 +83,13 @@ namespace KW_Mocap {
 			}
 		}
 
-		[ContextMenu("SetCalibrationPose")]
+        [ContextMenu("SetNormalMaterial")]
+        public void SetNormalMaterial() => SetMaterial(this.gameObject, true);
+
+        [ContextMenu("SetErrorMaterial")]
+		public void SetErrorMaterial() => SetMaterial(this.gameObject, false);
+
+        [ContextMenu("SetCalibrationPose")]
 		public void SetCalibrationPose()
 		{
 			for (int j = 0; j < joints.GetLength(1); j++)

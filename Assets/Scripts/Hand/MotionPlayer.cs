@@ -16,6 +16,7 @@ namespace KW_Mocap
         public int frameCount { get; private set; } = 0;
         public int frameRate { get => WorldTimer.frameRate; }
         [HideInInspector] public int playbackOffset = 0;
+        private string currentMotionDataFilePath = null;
 
         private int _frame = 0;
         public int frame
@@ -42,13 +43,17 @@ namespace KW_Mocap
 
         void Update()
         {
-            if (isPlaying) Play(frame + playbackOffset);
+            if (isPlaying) Play();
         }
 
         /// <summary>
+        /// 現在のフレームにオフセットを加えたモーションを再生
+        /// </summary>
+        public void Play() => this.Play(frame + playbackOffset);
+        /// <summary>
         /// 各フレームの動き（位置と回転）を記述
         /// </summary>
-        void Play(int n)
+        public void Play(int n)
         {
             if (n < 0 || frameCount <= n) return;
             // TODO: leftJoint[0,0]~leftKJoint[4,2]のモーションデータも再生する。rightも然り。
@@ -92,8 +97,13 @@ namespace KW_Mocap
                 {
                     /* Virtual Deskに対する相対位置 */
                     fs.Read(buf, 0, 12);
-                    //this.transform.localPosition = ExtendedBitConverter.GetVector3FromBytes(buf, 0).position;
-                    this.transform.localPosition = new Vector3(100f, 2.8599999f, 102.510002f);
+                    if (fileName == "Echo over you_Hard40FPS")
+                        this.transform.localPosition = new Vector3(100f, 2.8599999f, 102.510002f);
+                    else this.transform.localPosition = ExtendedBitConverter.GetVector3FromBytes(buf, 0).position;
+
+                    /* モーションデータのデータオフセット */
+                    fs.Read(buf, 0, 4);
+                    this.playbackOffset = BitConverter.ToInt32(buf, 0);
 
                     /* 読み込むデータ点数 */
                     fs.Read(buf, 0, 4);
@@ -107,12 +117,31 @@ namespace KW_Mocap
                     }
                 }
                 isLoaded = true;
+                this.currentMotionDataFilePath = pass;
                 Debug.Log($"Motion Loaded " + fileName);
             }
             catch (IOException e)
             {
                 Debug.Log(e);
-            } 
+            }
+        }
+
+        public void SavePlaybackOffset()
+        {
+            try
+            {
+                using (FileStream fileStream = new FileStream(this.currentMotionDataFilePath, FileMode.Open, FileAccess.Write))
+                {
+                    fileStream.Seek(12, SeekOrigin.Begin);
+                    byte[] buf = BitConverter.GetBytes(this.playbackOffset);
+                    fileStream.Write(buf, 0, 4);
+                }
+                Debug.Log($"MotionOffset saved: " + this.playbackOffset);
+            }
+            catch (IOException e)
+            {
+                Debug.Log(e);
+            }
         }
     }
 }

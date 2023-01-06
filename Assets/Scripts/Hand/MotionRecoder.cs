@@ -61,6 +61,16 @@ namespace KW_Mocap
             recordDataCount++;
         }
 
+        /// <summary>
+        /// 記録したモーションデータをシリアライズしてバイナリファイルに書き出す。
+        /// [ファイルの構成]
+        ///  0-11byte   this.transform.localPosition,
+        /// 12-15byte   モーションデータ再生時のオフセット用（MotionPlayer::SavePlaybackOffsetで再設定可能）,
+        /// 16-19byte   モーションデータ点数,
+        /// 20以降       モーションデータ（1フレームあたりHandData.MinimumBufferSize * 2 = 376byte）
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <exception cref="DuplicateFileNameException"></exception>
         public void Save(string fileName)
         {
             if (isRecording) return;
@@ -74,6 +84,9 @@ namespace KW_Mocap
                     /* HandsオブジェクトのVirtual Deskに対する相対位置を書き込み */
                     this.transform.localPosition.SetBytesFromVector3(buf, 0);
                     fs.Write(buf, 0, 12);
+
+                    /* モーションデータのデータオフセット。とりあえず0に設定。 */
+                    fs.Write(new byte[] { 0, 0, 0, 0 }, 0, 4);
 
                     /* モーションデータのデータ点数を書き込み */
                     byte[] byte_DataCount = BitConverter.GetBytes(recordDataCount);
