@@ -10,6 +10,7 @@ namespace KW_Mocap
     {
         bool isRecording = false;
         MotionRecoder motionRecoder = null;
+        VideoCapture videoCapture = null;
         CameraController cameraController = null;
         Button recordButton, openInputPanelButton, saveButton, cancelButton, sceneChangeButton;
         GameObject FileNameInputPanel;
@@ -21,6 +22,7 @@ namespace KW_Mocap
         {
             WorldTimer.Run();
             motionRecoder = GameObject.Find("Hands").GetComponent<MotionRecoder>();
+            videoCapture = GameObject.FindWithTag("Display").GetComponent<VideoCapture>();
             cameraController = Camera.main.GetComponent<CameraController>();
             UISetting.SetButton(ref recordButton, "RecordButton", OnBtn_Record);
             UISetting.SetButton(ref openInputPanelButton, "OpenInputPanelButton", OnBtn_OpenInputPanel);
@@ -51,6 +53,7 @@ namespace KW_Mocap
                 t.color = Color.black;
                 recordButton.GetComponent<Image>().color = Color.white;
                 motionRecoder.StopRecording();
+                videoCapture.StopRecording();
                 isRecording = false;
             }
             else
@@ -59,6 +62,7 @@ namespace KW_Mocap
                 t.color = Color.white;
                 recordButton.GetComponent<Image>().color = Color.red;
                 motionRecoder.StartRecording();
+                videoCapture.StartRecording();
                 isRecording = true;
             }
         }
