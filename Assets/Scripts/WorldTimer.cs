@@ -13,7 +13,7 @@ namespace KW_Mocap
 
         public static int frameCount { get; private set; } = 0;
 
-        private static int _frameRate = 40;
+        private static int _frameRate = 30;
         public static int frameRate
         {
             get => _frameRate;

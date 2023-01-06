@@ -82,6 +82,7 @@ namespace KW_Mocap
             try
             {
                 motionRecoder.Save(fileName);
+                videoCapture.Save(fileName);
                 CloseInputPanel();
             }
             catch(DuplicateFileNameException e)

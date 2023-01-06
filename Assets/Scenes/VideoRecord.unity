@@ -1653,8 +1653,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3020fe787678f5d4bac127ff39c92fc1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Vmat:
-  - {fileID: 2100000, guid: d34054a457d763c4a8fa1266654f6c77, type: 2}
+  material: {fileID: 2100000, guid: d34054a457d763c4a8fa1266654f6c77, type: 2}
 --- !u!64 &1129238835
 MeshCollider:
   m_ObjectHideFlags: 0

@@ -13,7 +13,7 @@ namespace KW_Mocap
         /// 記録できるデータ点数の最大値。
         /// 30FPSだと5分ちょっと相当。
         /// </summary>
-        const int MaxDataCount = 10000;
+        const int MaxDataCount = 100000;
         public int recordDataCount { get; private set; } = 0;
         MotionData[] motionData = new MotionData[MaxDataCount];
         bool isRecording = false;
@@ -32,6 +32,7 @@ namespace KW_Mocap
 
         void Record()
         {
+            Debug.Log($"Frame {recordDataCount} is Recorded");
             HandData left = new HandData(leftHand.localPosition, leftHand.localRotation);
             HandData right = new HandData(rightHand.localPosition, rightHand.localRotation);
             motionData[recordDataCount] = new MotionData(left, right);
@@ -95,8 +96,10 @@ namespace KW_Mocap
                     for (int i = 0; i < recordDataCount; i++)
                     {
                         //データをシリアル化してFileStreamに書き込み
+                        if (motionData[i] == null) { Debug.Log($"motionData[{i}] == null"); continue; }
                         motionData[i].SetBytes(buf);
                         fs.Write(buf, 0, bufSize);
+                        Debug.Log($"frame {i} : saved");
                     }
                 }
                 Debug.Log($"Saved as SavedMotionData/{fileName}.bin");
