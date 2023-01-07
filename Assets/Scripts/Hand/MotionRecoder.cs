@@ -78,9 +78,13 @@ namespace KW_Mocap
 
             int bufSize = HandData.MinimumBufferSize * 2;
             byte[] buf = new byte[bufSize];
+            string targetFilePath = $"SavedMotionData/{fileName}.bin";
             try
             {
-                using (FileStream fs = new FileStream($"SavedMotionData/{fileName}.bin", FileMode.CreateNew, FileAccess.Write))
+                if (File.Exists(targetFilePath))
+                    throw new DuplicateFileNameException("This file name is already exists.");
+
+                using (FileStream fs = new FileStream(targetFilePath, FileMode.CreateNew, FileAccess.Write))
                 {
                     /* HandsオブジェクトのVirtual Deskに対する相対位置を書き込み */
                     this.transform.localPosition.SetBytesFromVector3(buf, 0);
@@ -106,7 +110,7 @@ namespace KW_Mocap
             }
             catch (IOException e)
             {
-                throw new DuplicateFileNameException("This file name is already exists.", e);
+                Debug.LogError(e);
             }
         }
     }
