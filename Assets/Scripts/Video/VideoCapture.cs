@@ -9,7 +9,10 @@ namespace KW_Mocap
 	[RequireComponent(typeof(MeshRenderer))]
 	public class VideoCapture : MonoBehaviour
 	{
-		[SerializeField] Material material;
+		[Range(1.0f,30f)]
+		public float displayScale = 21.0f;
+		private float aspectRatio = 1.33f;
+        [SerializeField] Material material;
 		WebCamTexture texture;
 		CaptureFromWebCamTexture capture;
 		bool isFileWritingCompleted = true;
@@ -23,6 +26,11 @@ namespace KW_Mocap
 			PrepareCapture();
 		}
 
+        void Update()
+        {
+            this.transform.localScale = new Vector3(displayScale * aspectRatio, displayScale, 1.0f);
+        }
+
         /// <summary>
         /// 指定の番号のデバイスからの映像をmaterialに割り当てる。
         /// WebCamTextureクラスのオブジェクトは作成した直後は正しいTextureの情報をアクセスできないので
@@ -34,9 +42,15 @@ namespace KW_Mocap
         public IEnumerator SetWebCamTexture(int index)
         {
 			WebCamDevice camera = WebCamTexture.devices[index];
-			//texture = new WebCamTexture(camera.name, 16*120, 9*120, 60);
-            texture = new WebCamTexture(camera.name);   //これだと元々の解像度になるらしい
-			texture.Play();
+
+            /* 解像度を指定すると、デバイスが対応している最も近いものを使う
+			 * iMacのWebCameraだと
+			 * 16:9になってるのも4:3になってるものもどっちも作れる
+			 * iPadとかiPhone、Androidは要検証 */
+            texture = new WebCamTexture(camera.name, 960, 720, 30); //4:3
+            //texture = new WebCamTexture(camera.name, 1280, 720, 30); //16:9
+			//texture = new WebCamTexture(camera.name);   //これだと元々の解像度になるらしい？？
+            texture.Play();
 			while (texture.width < 100)
 			{
 				Debug.Log("Waiting for camera. Width is still under 100.");
@@ -46,6 +60,7 @@ namespace KW_Mocap
             Debug.Log($"requestedWidth: {texture.requestedWidth} / requestedHeight: {texture.requestedHeight}/ fps: {texture.requestedFPS}");
             material.mainTexture = texture;
 			GetComponent<MeshRenderer>().material = material;
+			aspectRatio = (float)texture.width / (float)texture.height;
 		}
 
 		/// <summary>
