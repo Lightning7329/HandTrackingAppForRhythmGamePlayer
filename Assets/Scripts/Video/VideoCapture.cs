@@ -6,33 +6,52 @@ using RenderHeads.Media.AVProMovieCapture;
 
 namespace KW_Mocap
 {
+	[RequireComponent(typeof(MeshRenderer))]
 	public class VideoCapture : MonoBehaviour
 	{
-		public Material material;
+		[SerializeField] Material material;
 		WebCamTexture texture;
 		CaptureFromWebCamTexture capture;
 		bool isFileWritingCompleted = true;
 
-		void Start()
+		IEnumerator Start()
 		{
-			if (WebCamTexture.devices.Length < 1) return;
+			if (WebCamTexture.devices.Length < 1) yield break;
 
-			check();
-			SetWebCamTexture(0);
-
+			DisplayAllWebCams();
+			yield return SetWebCamTexture(0);
 			PrepareCapture();
 		}
 
-		public void SetWebCamTexture(int index)
+        /// <summary>
+        /// 指定の番号のデバイスからの映像をmaterialに割り当てる。
+        /// WebCamTextureクラスのオブジェクトは作成した直後は正しいTextureの情報をアクセスできないので
+        /// Playメソッドを呼んだ後、正しい情報がアクセスできるまで待機する。
+        /// https://qiita.com/akiojin/items/a97fe7fea7a123330486
+        /// </summary>
+        /// <param name="index">デバイス番号</param>
+        /// <returns></returns>
+        public IEnumerator SetWebCamTexture(int index)
         {
 			WebCamDevice camera = WebCamTexture.devices[index];
-			texture = new WebCamTexture(camera.name, 1920, 1440);
-			material.mainTexture = texture;
+			//texture = new WebCamTexture(camera.name, 16*120, 9*120, 60);
+            texture = new WebCamTexture(camera.name);   //これだと元々の解像度になるらしい
 			texture.Play();
+			while (texture.width < 100)
+			{
+				Debug.Log("Waiting for camera. Width is still under 100.");
+				yield return null;
+			}
+			Debug.Log($"width: {texture.width} / height: {texture.height}");
+            Debug.Log($"requestedWidth: {texture.requestedWidth} / requestedHeight: {texture.requestedHeight}/ fps: {texture.requestedFPS}");
+            material.mainTexture = texture;
 			GetComponent<MeshRenderer>().material = material;
 		}
 
-		public void check()
+		/// <summary>
+		/// アクセスできるWebCamTextureを列挙してコンソールに表示する
+		/// </summary>
+		public void DisplayAllWebCams()
         {
 			for (int i = 0;i < WebCamTexture.devices.Length; i++)
             {
@@ -40,59 +59,87 @@ namespace KW_Mocap
             }
         }
 
-		private void PrepareCapture()
+        /// <summary>
+        /// AVProMovieCapture.CaptureFromWebCamTextureコンポーネントの設定
+        /// </summary>
+        private void PrepareCapture()
         {
-			GameObject go = new GameObject();
-			go.name = "AVProMovieCapture";
+			/* コンポーネント作成 */
+			GameObject go = new GameObject("AVProMovieCapture");
 			capture = go.AddComponent<CaptureFromWebCamTexture>();
 			capture.FrameRate = 30f;
 			capture.StopMode = StopMode.None;
 
-
-			/* 映像入力 */
+			/* Texture */
 #if AVPRO_MOVIECAPTURE_WEBCAMTEXTURE_SUPPORT
 			capture.WebCamTexture = texture;
 #endif
-			/* 音声入力 */
+			/* Audio */
 			capture.AudioCaptureSource = AudioCaptureSource.Microphone;
 			capture.ForceAudioInputDeviceIndex = 0;
 
-			/* 出力先 */
+			/* Output */
+			capture.OutputTarget = OutputTarget.VideoFile;
 			capture.OutputFolder = CaptureBase.OutputPath.RelativeToProject;
 #if UNITY_EDITOR_WIN
 			capture.OutputFolderPath = @"Assets\Resources\Videos";
 #elif UNITY_EDITOR_OSX
-			capture.OutputFolderPath = @"Assets/Resources/Videos";
+			capture.OutputFolderPath = "Assets/Resources/Videos";
 #endif
 			capture.FilenamePrefix = "pending_file";
 			capture.AppendFilenameTimestamp = true;
+			capture.AllowManualFileExtension = false;
 			capture.CompletedFileWritingAction += OnCompleteFinalFileWriting;
 		}
 
+		/// <summary>
+		/// 録画を開始する
+		/// </summary>
 		public void StartRecording()
         {
 			Debug.Log("VideoCapture: StartRecording");
-			capture.CancelCapture();
+			if (capture.IsCapturing())
+				capture.CancelCapture();
 			capture.StartCapture();
 		}
 
+		/// <summary>
+		/// 録画を停止する
+		/// </summary>
 		public void StopRecording()
         {
+			if (!capture.IsCapturing()) return;
 			Debug.Log("VideoCapture: StopRecording(Paused)");
 			capture.PauseCapture();
         }
 
-		public void Save(string fileName)
+        /// <summary>
+        /// 動画を保存する。
+        /// StopCaptureメソッドを呼ぶと自動的に "pending_file" + タイムスタンプ のファイル名で動画が保存される。
+		/// その後、保存したいファイル名にリネームする。リネームは動画の書き出しが終了するのを待ってから行われる。
+        /// </summary>
+        /// <param name="fileName">拡張子なしのファイル名</param>
+        /// <returns></returns>
+        public IEnumerator Save(string fileName)
         {
 			capture.StopCapture();
 			isFileWritingCompleted = false;
-			StartCoroutine(Rename(fileName));
+			yield return Rename(fileName);
 		}
 
-		private IEnumerator Rename(string fileName)
+        /// <summary>
+        /// CaptureFromWebCamTextureによって直前に保存された動画をリネームする
+        /// </summary>
+        /// <param name="fileName">リネーム後のファイル名</param>
+        /// <returns></returns>
+        private IEnumerator Rename(string fileName)
         {
 			/* 動画の書き出しが完了するまで待機 */
-			while (!isFileWritingCompleted) yield return null;
+			while (!isFileWritingCompleted)
+			{
+				Debug.Log("Waiting for FinalFileWriting");
+				yield return null;
+			}
 
 			string lastFilePath = capture.LastFilePath;
 			string dir = System.IO.Path.GetDirectoryName(lastFilePath);
@@ -100,13 +147,17 @@ namespace KW_Mocap
 #if UNITY_EDITOR_WIN
 			string dest = $@"{dir}\{fileName}{ext}";
 #elif UNITY_EDITOR_OSX
-			string dist = $"{dir}/{fileName}.{ext}";
+			string dest = $"{dir}/{fileName}.{ext}";
 #endif
 			System.IO.File.Move(lastFilePath, dest);
 			Debug.Log("File.Move executed");
 		}
 
-		private void OnCompleteFinalFileWriting(FileWritingHandler handler)
+        /// <summary>
+        /// CaptureFromWebCamTextureの動画書き出しが完了したらフラグをtrueにしてもらうコールバック。
+        /// </summary>
+        /// <param name="handler"></param>
+        private void OnCompleteFinalFileWriting(FileWritingHandler handler)
 		{
 			isFileWritingCompleted = true;
 		}
@@ -119,10 +170,7 @@ namespace KW_Mocap
 				Destroy(texture);
 			}
 			capture.CompletedFileWritingAction -= OnCompleteFinalFileWriting;
-
+			Debug.Log("VideoCapture has been destroyed.");
 		}
     }
 }
-//------------------------------------------------------------------------------
-// EOF
-//------------------------------------------------------------------------------
