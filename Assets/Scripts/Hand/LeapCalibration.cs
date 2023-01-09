@@ -13,7 +13,7 @@ namespace KW_Mocap
 
         public Vector3 adjustPos = Vector3.zero;
 
-        Vector3 midPos = new Vector3(-2.31645107f, -32.073246f, 5.7862258f);
+        Vector3 midPos = new Vector3(0.0f, -33.883246f, -8.88f);
         Button calibrationButton;
 
         public enum AverageMethod {Lerp, Slerp}
