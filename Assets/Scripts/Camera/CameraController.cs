@@ -132,13 +132,13 @@ namespace KW_Mocap
         }
 
         /// <summary>
-        /// 回転中心を通る上向きの軸からカメラまでの距離
+        /// HorizontalRotateAroundの回転角の補正係数
         /// </summary>
-        /// <returns></returns>
-        private float GetDistanceFromYAxis()
+        /// <returns>回転中心を通る上向きのベクトルと回転中心からカメラへと向かう方向ベクトルとのなす角のサイン</returns>
+        private float GetRotationCorrectionFactor()
         {
-            var projectionVector = Vector3.Project(transform.position - rotCenter, Vector3.up);
-            return Vector3.Distance(rotCenter + projectionVector, transform.position);
+            float angle = Vector3.Angle(Vector3.up, transform.position - rotationCenter);
+            return Mathf.Sin(Mathf.Deg2Rad * angle);
         }
 
         /// <summary>
@@ -148,7 +148,7 @@ namespace KW_Mocap
         /// <param name="amount">正だと左回り。負だと右回り。</param>
         private void HorizontalRotateAround(float amount)
         {
-            float yAngle = GetDistanceFromYAxis() * amount * rotateSpeed.Horizontal * Time.deltaTime;
+            float yAngle = GetRotationCorrectionFactor() * amount * rotateSpeed.Horizontal * Time.deltaTime;
             transform.RotateAround(rotationCenter, Vector3.up, yAngle);
         }
 
@@ -315,7 +315,7 @@ namespace KW_Mocap
         private float horizontal;
         public float Horizontal
         {
-            get => horizontal * 0.05f;
+            get => horizontal * 3.0f;
         }
 
         [SerializeField, Range(0.0f, 100.0f)]
