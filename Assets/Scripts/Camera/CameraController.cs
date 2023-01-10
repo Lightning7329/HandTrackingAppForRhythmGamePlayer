@@ -301,11 +301,11 @@ namespace KW_Mocap
         /// <summary>
         /// カメラが動ける位置のy座標の上限
         /// </summary>
-        public static readonly float ceiling = 30.0f;
+        public static readonly float ceiling = 60.0f;
         /// <summary>
         /// カメラが動ける位置のy座標の下限
         /// </summary>
-        public static readonly float floor = -30.0f;
+        public static readonly float floor = 3.0f;
     }
 
     [Serializable]
