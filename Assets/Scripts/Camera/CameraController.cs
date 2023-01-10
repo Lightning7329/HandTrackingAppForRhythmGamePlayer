@@ -159,10 +159,10 @@ namespace KW_Mocap
         /// <param name="amount">正だと上回り。負だと下回り。</param>
         private void VerticalRotateAround(float amount)
         {
-            /* カメラが上から回り込まないように俯角を制限 */
-            float depression = Vector3.Angle(transform.up, Vector3.up);
-            bool canGoDown = amount < 0 && depression > 5.0f;   // 下に回り込みたい && まだそんなに上向きじゃない -> まだ下行ける
-            bool canGoUp = amount > 0 && depression < 85.0f;    // 上に回り込みたい && まだそんなに下向きじゃない -> まだ上行ける
+            /* カメラが上や下から回り込まないように俯角を制限 */
+            float depression = Vector3.Angle(Vector3.up, transform.up);
+            bool canGoDown = amount < 0 && depression > 5.0f;   // 下に回り込もうとしている && まだそんなに横向きではない -> まだ下に行ける
+            bool canGoUp = amount > 0 && depression < 85.0f;    // 上に回り込もうとしている && まだそんなに下向きではない -> まだ上に行ける
             if (canGoDown || canGoUp)
             {
                 float xAngle = amount * rotateSpeed.Vertical * Time.deltaTime;
@@ -172,6 +172,7 @@ namespace KW_Mocap
 
         /// <summary>
         /// カメラのローカル上方向がなるべくワールド上方向を向くようにカメラを回転する。
+        /// 現在は不要になった。
         /// </summary>
         private void ForceLocalYAxisUp()
         {
@@ -186,12 +187,12 @@ namespace KW_Mocap
         private void KeyControl()
         {
             /* 移動 */
+            if (Input.GetKey(KeyCode.E)) Zoom(1.0f);
+            if (Input.GetKey(KeyCode.C)) Zoom(-1.0f);
             if (Input.GetKey(KeyCode.D)) HorizontalMove(1.0f);
             if (Input.GetKey(KeyCode.A)) HorizontalMove(-1.0f);
             if (Input.GetKey(KeyCode.W)) VerticalMove(1.0f);
             if (Input.GetKey(KeyCode.S)) VerticalMove(-1.0f);
-            if (Input.GetKey(KeyCode.E)) Zoom(1.0f);
-            if (Input.GetKey(KeyCode.C)) Zoom(-1.0f);
 
             /* 回転 */
             if (Input.GetKey(KeyCode.LeftArrow)) HorizontalRotateAround(1.0f);
@@ -232,8 +233,8 @@ namespace KW_Mocap
             /* ホイールクリックで移動 */
             if (Input.GetMouseButton(2))
             {
-                HorizontalMove(-diff.x / 2);
-                VerticalMove(-diff.y / 2);
+                HorizontalMove(-diff.x * 0.5f);
+                VerticalMove(-diff.y * 0.5f);
             }
 
             preMousePos = mousePos;
