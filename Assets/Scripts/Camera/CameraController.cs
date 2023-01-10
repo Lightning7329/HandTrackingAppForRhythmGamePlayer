@@ -25,20 +25,20 @@ namespace KW_Mocap
         Button camera1, camera2;
 
         [SerializeField]
-        private Vector3 rotCenter = Vector3.zero;
-
-        [SerializeField, Range(0.0f, 100.0f)]
-        private float moveSpead = 50.0f;
-        private float MoveSpeed
-        {
-            get => moveSpead * 0.5f;
-        }
+        private Vector3 rotationCenter = Vector3.zero;
 
         [SerializeField, Range(0.0f, 100.0f)]
         private float zoomSpeed = 50.0f;
         private float ZoomSpeed
         {
             get => zoomSpeed * 10.0f;
+        }
+
+        [SerializeField, Range(0.0f, 100.0f)]
+        private float moveSpead = 50.0f;
+        private float MoveSpeed
+        {
+            get => moveSpead * 0.5f;
         }
 
         [SerializeField]
@@ -51,7 +51,7 @@ namespace KW_Mocap
         /// <summary>
         /// 上向き補正の手法
         /// </summary>
-        public enum LocalYAxisStabilization
+        public enum LocalZAxisStabilization
         {
             None,
             ForceLocalYAxisUp,
@@ -69,7 +69,7 @@ namespace KW_Mocap
             SetLastSceneTransform();
             UISetting.SetButton(ref camera1, "Camera1", OnBtn_Camera1);
             UISetting.SetButton(ref camera2, "Camera2", OnBtn_Camera2);
-            rotCenter = GameObject.FindWithTag("Display").GetComponent<Transform>().position;
+            rotationCenter = GameObject.FindWithTag("Display").GetComponent<Transform>().position;
         }
 
         #region CameraMotion
@@ -81,17 +81,17 @@ namespace KW_Mocap
             KeyControl();
 
             /* 上向き補正 */
-            switch (forceLocalYAxisUp)
+            switch (localZAxisStabilization)
             {
-                case LocalYAxisStabilization.ForceLocalYAxisUp:
+                case LocalZAxisStabilization.ForceLocalYAxisUp:
                     ForceLocalYAxisUp();
                     break;
-                case LocalYAxisStabilization.transformLookAt:
-                    transform.LookAt(rotCenter);
+                case LocalZAxisStabilization.transformLookAt:
+                    transform.LookAt(rotationCenter);
                     /* ↓でも同じ */
                     //transform.rotation = Quaternion.LookRotation(rotCenter - transform.position);
                     break;
-                case LocalYAxisStabilization.None:
+                case LocalZAxisStabilization.None:
                     break;
             }
         }
@@ -119,7 +119,7 @@ namespace KW_Mocap
         /// <summary>
         /// カメラのズームイン/アウト
         /// </summary>
-        /// /// <param name="amount">正だと前進。負だと後退。</param>
+        /// <param name="amount">正だと前進。負だと後退。</param>
         private void Zoom(float amount)
         {
             bool goingUp = !(transform.forward.y > 0 ^ amount > 0);
@@ -152,19 +152,19 @@ namespace KW_Mocap
 
         /// <summary>
         /// カメラのディスプレイを中心とした垂直方向の回転。
-        /// 点rotCenterを通る方向ベクトルtranform.rightを軸とするyAngle度の回転。
+        /// 点rotCenterを通る方向ベクトルtranform.rightを軸とするxAngle度の回転。
         /// </summary>
         /// <param name="amount">正だと上回り。負だと下回り。</param>
         private void VerticalRotateAround(float amount)
         {
             /* カメラが上から回り込まないように俯角を制限 */
             float depression = Vector3.Angle(transform.up, Vector3.up);
-            bool canGoDown = amount < 0 && depression > 5.0f;   // 下に回り込みたい && まだそんなに横向きじゃない -> まだ下行ける
+            bool canGoDown = amount < 0 && depression > 5.0f;   // 下に回り込みたい && まだそんなに上向きじゃない -> まだ下行ける
             bool canGoUp = amount > 0 && depression < 85.0f;    // 上に回り込みたい && まだそんなに下向きじゃない -> まだ上行ける
             if (canGoDown || canGoUp)
             {
                 float xAngle = amount * rotateSpeed.Vertical * Time.deltaTime;
-                transform.RotateAround(rotCenter, transform.right, xAngle);
+                transform.RotateAround(rotationCenter, transform.right, xAngle);
             }
         }
 
