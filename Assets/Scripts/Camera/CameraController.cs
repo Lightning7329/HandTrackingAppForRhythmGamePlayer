@@ -44,8 +44,7 @@ namespace KW_Mocap
         [SerializeField]
         private RotateSpeed rotateSpeed = new RotateSpeed(50.0f, 50.0f);
 
-        [SerializeField]
-        private LocalYAxisStabilization forceLocalYAxisUp = LocalYAxisStabilization.ForceLocalYAxisUp;
+        private LocalZAxisStabilization localZAxisStabilization = LocalZAxisStabilization.None;
         #endregion
 
         /// <summary>
@@ -92,6 +91,9 @@ namespace KW_Mocap
                     //transform.rotation = Quaternion.LookRotation(rotCenter - transform.position);
                     break;
                 case LocalZAxisStabilization.None:
+                    /* HorizontalRotateAroundのRotateAroundメソッドの第2引数に渡すベクトルを
+                     * transform.upからVector3.upに修正したら上向き補正をする必要がなくなったので
+                     * 何もしなくても勝手に水平が保てる */
                     break;
             }
         }
@@ -141,13 +143,13 @@ namespace KW_Mocap
 
         /// <summary>
         /// カメラのディスプレイを中心とした水平方向の回転。
-        /// 点rotCenterを通る方向ベクトルtranform.rightを軸とするyAngle度の回転。
+        /// 点rotCenterを通る方向ベクトルVector3.upを軸とするyAngle度の回転。
         /// </summary>
         /// <param name="amount">正だと左回り。負だと右回り。</param>
         private void HorizontalRotateAround(float amount)
         {
             float yAngle = GetDistanceFromYAxis() * amount * rotateSpeed.Horizontal * Time.deltaTime;
-            transform.RotateAround(rotCenter, transform.up, yAngle);
+            transform.RotateAround(rotationCenter, Vector3.up, yAngle);
         }
 
         /// <summary>
