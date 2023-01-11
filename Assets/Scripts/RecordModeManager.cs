@@ -10,6 +10,7 @@ namespace KW_Mocap
     {
         bool isRecording = false;
         MotionRecoder motionRecoder = null;
+        VideoCapture videoCapture = null;
         CameraController cameraController = null;
         Button recordButton, openInputPanelButton, saveButton, cancelButton, sceneChangeButton;
         GameObject FileNameInputPanel;
@@ -21,6 +22,7 @@ namespace KW_Mocap
         {
             WorldTimer.Run();
             motionRecoder = GameObject.Find("Hands").GetComponent<MotionRecoder>();
+            videoCapture = GameObject.FindWithTag("Display").GetComponent<VideoCapture>();
             cameraController = Camera.main.GetComponent<CameraController>();
             UISetting.SetButton(ref recordButton, "RecordButton", OnBtn_Record);
             UISetting.SetButton(ref openInputPanelButton, "OpenInputPanelButton", OnBtn_OpenInputPanel);
@@ -29,7 +31,7 @@ namespace KW_Mocap
 
             /* FileName Input Panelの設定 */
             FileNameInputPanel = GameObject.Find("FileName Input Panel");
-            UISetting.SetButton(ref saveButton, "Save", OnBtn_Save);
+            UISetting.SetButton(ref saveButton, "Save", () => StartCoroutine(OnBtn_Save()));
             UISetting.SetButton(ref cancelButton, "Cancel", OnBtn_Cancel);
             fileNameInputField = FileNameInputPanel.GetComponentInChildren<InputField>();
             caution = FileNameInputPanel.transform.Find("Caution").GetComponent<Text>();
@@ -51,6 +53,7 @@ namespace KW_Mocap
                 t.color = Color.black;
                 recordButton.GetComponent<Image>().color = Color.white;
                 motionRecoder.StopRecording();
+                videoCapture.StopRecording();
                 isRecording = false;
             }
             else
@@ -59,6 +62,7 @@ namespace KW_Mocap
                 t.color = Color.white;
                 recordButton.GetComponent<Image>().color = Color.red;
                 motionRecoder.StartRecording();
+                videoCapture.StartRecording();
                 isRecording = true;
             }
         }
@@ -72,19 +76,29 @@ namespace KW_Mocap
             fileNameInputField.ActivateInputField();
         }
 
-        void OnBtn_Save()
+        IEnumerator OnBtn_Save()
         {
             string fileName = fileNameInputField.text;
+            if(fileName == "")
+            {
+                caution.text = "Input File Name.";
+                caution.gameObject.SetActive(true);
+                yield break;
+            }
+
             try
             {
-                motionRecoder.Save(fileName);
-                CloseInputPanel();
+                motionRecoder.Save(fileName);   //ファイル名に問題があればこの行で例外スロー
             }
             catch(DuplicateFileNameException e)
             {
                 caution.text = e.ToString();
                 caution.gameObject.SetActive(true);
             }
+
+            /* 動画の保存処理の終了を待ってからFileName Input Panelを閉じる */
+            yield return videoCapture.Save(fileName);
+            CloseInputPanel();
         }
 
         void OnBtn_Cancel()
