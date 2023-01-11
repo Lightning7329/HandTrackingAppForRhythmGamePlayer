@@ -10,74 +10,99 @@ namespace KW_Mocap
 	public class VideoCapture : MonoBehaviour
 	{
 		[Range(1.0f,30f)]
-		public float displayScale = 21.0f;
-		private float aspectRatio = 1.33f;
-        [SerializeField] Material material;
-		WebCamTexture texture;
-		CaptureFromWebCamTexture capture;
+		public float displayScale = 28.0f;
+		public Vector2Int targetResolution = new Vector2Int(1920, 1440);
+		private Vector2Int capturedResolution = new Vector2Int(16, 16);
+        Material material = null;
+		WebCamTexture texture = null;
+
+		CaptureFromWebCamTexture capture = null;
 		bool isFileWritingCompleted = true;
 
 		IEnumerator Start()
 		{
+			material = GetComponent<MeshRenderer>().material;
+
 			if (WebCamTexture.devices.Length < 1) yield break;
 
 			DisplayAllWebCams();
 			yield return SetWebCamTexture(0);
+			ChangeResolution();
 			PrepareCapture();
 		}
 
-        void Update()
+        private void Update()
         {
-            this.transform.localScale = new Vector3(displayScale * aspectRatio, displayScale, 1.0f);
-        }
-
-        /// <summary>
-        /// 指定の番号のデバイスからの映像をmaterialに割り当てる。
-        /// WebCamTextureクラスのオブジェクトは作成した直後は正しいTextureの情報をアクセスできないので
-        /// Playメソッドを呼んだ後、正しい情報がアクセスできるまで待機する。
-        /// https://qiita.com/akiojin/items/a97fe7fea7a123330486
-        /// </summary>
-        /// <param name="index">デバイス番号</param>
-        /// <returns></returns>
-        public IEnumerator SetWebCamTexture(int index)
-        {
-			WebCamDevice camera = WebCamTexture.devices[index];
-
-            /* 解像度を指定すると、デバイスが対応している最も近いものを使う
-			 * iMacのWebCameraだと
-			 * 16:9になってるのも4:3になってるものもどっちも作れる
-			 * iPadとかiPhone、Androidは要検証 */
-            texture = new WebCamTexture(camera.name, 960, 720, 30); //4:3
-            //texture = new WebCamTexture(camera.name, 1280, 720, 30); //16:9
-			//texture = new WebCamTexture(camera.name);   //これだと元々の解像度になるらしい？？
-            texture.Play();
-			while (texture.width < 100)
-			{
-				Debug.Log("Waiting for camera. Width is still under 100.");
-				yield return null;
-			}
-			Debug.Log($"width: {texture.width} / height: {texture.height}");
-            Debug.Log($"requestedWidth: {texture.requestedWidth} / requestedHeight: {texture.requestedHeight}/ fps: {texture.requestedFPS}");
-            material.mainTexture = texture;
-			GetComponent<MeshRenderer>().material = material;
-			aspectRatio = (float)texture.width / (float)texture.height;
+			/* ディスプレイのアスペクト比をheightを固定して変更 */
+			float targetAspectRatio = (float)targetResolution.x / targetResolution.y;
+			this.transform.localScale = new Vector3(displayScale, displayScale / targetAspectRatio, 1.0f);
 		}
 
 		/// <summary>
 		/// アクセスできるWebCamTextureを列挙してコンソールに表示する
 		/// </summary>
 		public void DisplayAllWebCams()
-        {
-			for (int i = 0;i < WebCamTexture.devices.Length; i++)
-            {
+		{
+			for (int i = 0; i < WebCamTexture.devices.Length; i++)
+			{
 				Debug.Log($"WebCamDevice[{i}]::name = {WebCamTexture.devices[i].name}");
-            }
-        }
+			}
+		}
 
-        /// <summary>
-        /// AVProMovieCapture.CaptureFromWebCamTextureコンポーネントの設定
-        /// </summary>
-        private void PrepareCapture()
+		/// <summary>
+		/// 指定の番号のデバイスからの映像をmaterialに割り当てる。
+		/// WebCamTextureクラスのオブジェクトは作成した直後は正しいTextureの情報をアクセスできないので
+		/// Playメソッドを呼んだ後、正しい情報がアクセスできるまで待機する。
+		/// https://qiita.com/akiojin/items/a97fe7fea7a123330486
+		/// </summary>
+		/// <param name="index">デバイス番号</param>
+		/// <returns></returns>
+		public IEnumerator SetWebCamTexture(int index)
+        {
+			WebCamDevice camera = WebCamTexture.devices[index];
+
+            /* 解像度を指定すると、デバイスが対応している最も近いものを使う */
+            //texture = new WebCamTexture(camera.name, 1920, 1440); //4:3
+            //texture = new WebCamTexture(camera.name, 1280, 720, 30); //16:9
+			texture = new WebCamTexture(camera.name);   //これだと元々の解像度になる
+            texture.Play();
+			while (texture.width < 100)
+			{
+				Debug.Log("Waiting for camera. Width is still under 100.");
+				yield return null;
+			}
+			capturedResolution = new Vector2Int(texture.width, texture.height);
+            material.mainTexture = texture;
+			Debug.Log($"width: {texture.width} / height: {texture.height}");
+            Debug.Log($"requestedWidth: {texture.requestedWidth} / requestedHeight: {texture.requestedHeight}/ fps: {texture.requestedFPS}");
+		}
+
+		[ContextMenu("Change Resolution")]
+		public void ChangeResolution() => ChangeResolution(targetResolution.x, targetResolution.y);
+
+		public void ChangeResolution(int width, int height) => ChangeAspectRatio((float)width / height);
+
+		/// <summary>
+		/// キャプチャした映像を指定したアスペクト比で切り取ってディスプレイに表示する
+		/// </summary>
+		/// <param name="targetAspectRatio">目標のアスペクト比</param>
+		public void ChangeAspectRatio(float targetAspectRatio)
+		{
+			if (material == null) return;
+
+			/* ディスプレイのマテリアルのTilingとOffsetを調整 */
+			float capturedAspectRatio = (float)capturedResolution.x / capturedResolution.y;
+			float xScale = targetAspectRatio / capturedAspectRatio;
+			material.mainTextureScale = new Vector2(xScale, 1.0f);
+
+			float xOffset = 0.5f * (capturedAspectRatio - targetAspectRatio) / capturedAspectRatio;
+			material.mainTextureOffset = new Vector2(xOffset, 0.0f);
+		}
+
+		/// <summary>
+		/// AVProMovieCapture.CaptureFromWebCamTextureコンポーネントの設定
+		/// </summary>
+		private void PrepareCapture()
         {
 			/* コンポーネント作成 */
 			GameObject go = new GameObject("AVProMovieCapture");

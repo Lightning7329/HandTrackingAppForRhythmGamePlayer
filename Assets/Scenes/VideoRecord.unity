@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44608718, g: 0.49585086, b: 0.5745036, a: 1}
+  m_IndirectSpecularColor: {r: 0.44608766, g: 0.49585128, b: 0.5745041, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -985,7 +985,7 @@ MonoBehaviour:
   hands: {fileID: 1417507090}
   averageMode: 1
   scaleForLeapMotion: 100
-  adjustPos: {x: 0, y: 1.81, z: -8.88}
+  adjustPos: {x: 0, y: 1.81, z: -12}
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -1653,8 +1653,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3020fe787678f5d4bac127ff39c92fc1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  displayScale: 21
-  material: {fileID: 2100000, guid: d34054a457d763c4a8fa1266654f6c77, type: 2}
+  displayScale: 28
+  targetResolution: {x: 1920, y: 1440}
 --- !u!64 &1129238835
 MeshCollider:
   m_ObjectHideFlags: 0
