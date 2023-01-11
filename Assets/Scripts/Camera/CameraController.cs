@@ -43,19 +43,7 @@ namespace KW_Mocap
 
         [SerializeField]
         private RotateSpeed rotateSpeed = new RotateSpeed(50.0f, 50.0f);
-
-        private LocalZAxisStabilization localZAxisStabilization = LocalZAxisStabilization.None;
         #endregion
-
-        /// <summary>
-        /// 上向き補正の手法
-        /// </summary>
-        public enum LocalZAxisStabilization
-        {
-            None,
-            ForceLocalYAxisUp,
-            transformLookAt
-        }
 
         /// <summary>
         /// ファイル名入力画面などでは有効になってほしくないので、他のクラスに無効にしてもらうためのメソッド。
@@ -66,12 +54,12 @@ namespace KW_Mocap
         void Start()
         {
             SetLastSceneTransform();
-            UISetting.SetButton(ref camera1, "Camera1", () => SetCameraPosAndRot(1));
-            UISetting.SetButton(ref camera2, "Camera2", () => SetCameraPosAndRot(2));
-            UISetting.SetButton(ref saveCamera1, "SaveCamera1", () => SaveCameraPosAndRot(1, transform.localPosition, transform.localRotation));
-            UISetting.SetButton(ref saveCamera2, "SaveCamera2", () => SaveCameraPosAndRot(2, transform.localPosition, transform.localRotation));
-            UISetting.SetButton(ref resetCamera1, "ResetCamera1", () => { ResetCameraPosAndRot(1); SetCameraPosAndRot(1); });
-            UISetting.SetButton(ref resetCamera2, "ResetCamera2", () => { ResetCameraPosAndRot(2); SetCameraPosAndRot(2); });
+            UISetting.SetButton(ref camera1, "Camera1", () => SetTransform(1));
+            UISetting.SetButton(ref camera2, "Camera2", () => SetTransform(2));
+            UISetting.SetButton(ref saveCamera1, "SaveCamera1", () => SaveTransform(1, transform.localPosition, transform.localRotation));
+            UISetting.SetButton(ref saveCamera2, "SaveCamera2", () => SaveTransform(2, transform.localPosition, transform.localRotation));
+            UISetting.SetButton(ref resetCamera1, "ResetCamera1", () => { ResetSavedTransform(1); SetTransform(1); });
+            UISetting.SetButton(ref resetCamera2, "ResetCamera2", () => { ResetSavedTransform(2); SetTransform(2); });
             rotationCenter = GameObject.FindWithTag("Display").GetComponent<Transform>().position;
         }
 
@@ -82,24 +70,6 @@ namespace KW_Mocap
 
             MouseControl();
             KeyControl();
-
-            /* 上向き補正 */
-            switch (localZAxisStabilization)
-            {
-                case LocalZAxisStabilization.ForceLocalYAxisUp:
-                    ForceLocalYAxisUp();
-                    break;
-                case LocalZAxisStabilization.transformLookAt:
-                    transform.LookAt(rotationCenter);
-                    /* ↓でも同じ */
-                    //transform.rotation = Quaternion.LookRotation(rotCenter - transform.position);
-                    break;
-                case LocalZAxisStabilization.None:
-                    /* HorizontalRotateAroundのRotateAroundメソッドの第2引数に渡すベクトルを
-                     * transform.upからVector3.upに修正したら上向き補正をする必要がなくなったので
-                     * 何もしなくても勝手に水平が保てる */
-                    break;
-            }
         }
 
         /// <summary>
@@ -175,17 +145,6 @@ namespace KW_Mocap
         }
 
         /// <summary>
-        /// カメラのローカル上方向がなるべくワールド上方向を向くようにカメラを回転する。
-        /// 現在は不要になった。
-        /// </summary>
-        private void ForceLocalYAxisUp()
-        {
-            Vector3 projectionVector = Vector3.ProjectOnPlane(vector: Vector3.up, planeNormal: transform.forward);
-            float angle = Vector3.SignedAngle(from: transform.up, to: projectionVector, axis: transform.forward);
-            transform.Rotate(transform.forward, angle, Space.World);
-        }
-
-        /// <summary>
         /// キー入力によるカメラ操作。
         /// </summary>
         private void KeyControl()
@@ -245,15 +204,16 @@ namespace KW_Mocap
         }
         #endregion
 
+        #region transformPreset
         /// <summary>
         /// PlayerPrefsに保存してある位置と回転にカメラを移動する
         /// </summary>
         /// <param name="number">ボタン番号</param>
-        void SetCameraPosAndRot(int number)
+        void SetTransform(int number)
         {
             if (    !PlayerPrefs.HasKey($"Camera{number}_localPosition")
                 ||  !PlayerPrefs.HasKey($"Camera{number}_localRotation"))
-                ResetCameraPosAndRot(number);
+                ResetSavedTransform(number);
 
             string localPosition = PlayerPrefs.GetString($"Camera{number}_localPosition");
             string localRotation = PlayerPrefs.GetString($"Camera{number}_localRotation");
@@ -265,7 +225,7 @@ namespace KW_Mocap
         /// 指定のカメラボタンに対応するの位置と回転を保存する。
         /// </summary>
         /// <param name="number">ボタン番号</param>
-        private void SaveCameraPosAndRot(int number, Vector3 localPosition, Quaternion localRotation)
+        void SaveTransform(int number, Vector3 localPosition, Quaternion localRotation)
         {
             if (!(number == 1 || number == 2)) return;
 
@@ -279,15 +239,15 @@ namespace KW_Mocap
         /// PlayerPrefsに保存した値を初期値となるCameraControllerPreferencesで定義された値に戻す。
         /// </summary>
         /// <param name="number">ボタン番号</param>
-        private void ResetCameraPosAndRot(int number)
+        void ResetSavedTransform(int number)
         {
             switch (number)
             {
                 case 1:
-                    SaveCameraPosAndRot(1, CameraControllerPreferences.pos1, CameraControllerPreferences.rot1);
+                    SaveTransform(1, CameraControllerPreferences.pos1, CameraControllerPreferences.rot1);
                     break;
                 case 2:
-                    SaveCameraPosAndRot(2, CameraControllerPreferences.pos2, CameraControllerPreferences.rot2);
+                    SaveTransform(2, CameraControllerPreferences.pos2, CameraControllerPreferences.rot2);
                     break;
                 default:
                     break;
@@ -311,6 +271,7 @@ namespace KW_Mocap
             transform.localPosition = lastPosition;
             transform.localRotation = lastRotation;
         }
+        #endregion
     }
 
     public static class CameraControllerPreferences
