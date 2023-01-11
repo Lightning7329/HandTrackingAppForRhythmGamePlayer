@@ -13,13 +13,13 @@ namespace KW_Mocap
 		public float displayScale = 30.0f;
 		public Vector2Int targetResolution = new Vector2Int(1920, 1440);
 		private Vector2Int capturedResolution = new Vector2Int(16, 16);
-        	Material material = null;
+        Material material = null;
 		WebCamTexture texture = null;
 
 		CaptureFromWebCamTexture capture = null;
 		bool isFileWritingCompleted = true;
 
-		IEnumerator Start()
+        private IEnumerator Start()
 		{
 			material = GetComponent<MeshRenderer>().material;
 
