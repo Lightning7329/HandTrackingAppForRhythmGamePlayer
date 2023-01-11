@@ -9,8 +9,8 @@ namespace KW_Mocap
 	[RequireComponent(typeof(MeshRenderer))]
 	public class VideoCapture : MonoBehaviour
 	{
-		[Range(1.0f,30f)]
-		public float displayScale = 28.0f;
+		[Range(10f,50f)]
+		public float displayScale = 30.0f;
 		public Vector2Int targetResolution = new Vector2Int(1920, 1440);
 		private Vector2Int capturedResolution = new Vector2Int(16, 16);
         Material material = null;
