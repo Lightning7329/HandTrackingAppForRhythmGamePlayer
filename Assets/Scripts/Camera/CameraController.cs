@@ -22,7 +22,7 @@ namespace KW_Mocap
         #region Field
         private bool isActive = true;
         private Vector3 preMousePos;
-        Button camera1, camera2;
+        Button camera1, camera2, saveCamera1, saveCamera2, resetCamera1, resetCamera2;
 
         [SerializeField]
         private Vector3 rotationCenter = Vector3.zero;
@@ -66,8 +66,12 @@ namespace KW_Mocap
         void Start()
         {
             SetLastSceneTransform();
-            UISetting.SetButton(ref camera1, "Camera1", OnBtn_Camera1);
-            UISetting.SetButton(ref camera2, "Camera2", OnBtn_Camera2);
+            UISetting.SetButton(ref camera1, "Camera1", () => SetCameraPosAndRot(1));
+            UISetting.SetButton(ref camera2, "Camera2", () => SetCameraPosAndRot(2));
+            UISetting.SetButton(ref saveCamera1, "SaveCamera1", () => SaveCameraPosAndRot(1, transform.localPosition, transform.localRotation));
+            UISetting.SetButton(ref saveCamera2, "SaveCamera2", () => SaveCameraPosAndRot(2, transform.localPosition, transform.localRotation));
+            UISetting.SetButton(ref resetCamera1, "ResetCamera1", () => { ResetCameraPosAndRot(1); SetCameraPosAndRot(1); });
+            UISetting.SetButton(ref resetCamera2, "ResetCamera2", () => { ResetCameraPosAndRot(2); SetCameraPosAndRot(2); });
             rotationCenter = GameObject.FindWithTag("Display").GetComponent<Transform>().position;
         }
 
@@ -242,21 +246,52 @@ namespace KW_Mocap
         #endregion
 
         /// <summary>
-        /// Camera1ボタンが押されたときに実行。カメラ位置をデフォルトに戻す。
+        /// PlayerPrefsに保存してある位置と回転にカメラを移動する
         /// </summary>
-        private void OnBtn_Camera1()
+        /// <param name="number">ボタン番号</param>
+        void SetCameraPosAndRot(int number)
         {
-            transform.localPosition = CameraControllerPreferences.pos1;
-            transform.localRotation = CameraControllerPreferences.rot1;
+            if (    !PlayerPrefs.HasKey($"Camera{number}_localPosition")
+                ||  !PlayerPrefs.HasKey($"Camera{number}_localRotation"))
+                ResetCameraPosAndRot(number);
+
+            string localPosition = PlayerPrefs.GetString($"Camera{number}_localPosition");
+            string localRotation = PlayerPrefs.GetString($"Camera{number}_localRotation");
+            transform.localPosition = JsonUtility.FromJson<Vector3>(localPosition);
+            transform.localRotation = JsonUtility.FromJson<Quaternion>(localRotation);
         }
 
         /// <summary>
-        /// Camera2ボタンが押されたときに実行。カメラ位置を俯瞰視点にする。
+        /// 指定のカメラボタンに対応するの位置と回転を保存する。
         /// </summary>
-        private void OnBtn_Camera2()
+        /// <param name="number">ボタン番号</param>
+        private void SaveCameraPosAndRot(int number, Vector3 localPosition, Quaternion localRotation)
         {
-            transform.localPosition = CameraControllerPreferences.pos2;
-            transform.localRotation = CameraControllerPreferences.rot2;
+            if (!(number == 1 || number == 2)) return;
+
+            string pos = JsonUtility.ToJson(localPosition);
+            string rot = JsonUtility.ToJson(localRotation);
+            PlayerPrefs.SetString($"Camera{number}_localPosition", pos);
+            PlayerPrefs.SetString($"Camera{number}_localRotation", rot);
+        }
+
+        /// <summary>
+        /// PlayerPrefsに保存した値を初期値となるCameraControllerPreferencesで定義された値に戻す。
+        /// </summary>
+        /// <param name="number">ボタン番号</param>
+        private void ResetCameraPosAndRot(int number)
+        {
+            switch (number)
+            {
+                case 1:
+                    SaveCameraPosAndRot(1, CameraControllerPreferences.pos1, CameraControllerPreferences.rot1);
+                    break;
+                case 2:
+                    SaveCameraPosAndRot(2, CameraControllerPreferences.pos2, CameraControllerPreferences.rot2);
+                    break;
+                default:
+                    break;
+            }
         }
 
         /// <summary>
