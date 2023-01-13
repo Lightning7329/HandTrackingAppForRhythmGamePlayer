@@ -7,7 +7,7 @@ using Leap.Unity;
 
 namespace KW_Mocap
 {
-    public class MotionRecoder : MonoBehaviour
+    public class MotionRecorder : MonoBehaviour
     {
         /// <summary>
         /// 記録できるデータ点数の最大値。

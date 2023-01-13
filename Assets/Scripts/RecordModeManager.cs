@@ -9,7 +9,7 @@ namespace KW_Mocap
     public class RecordModeManager : MonoBehaviour
     {
         bool isRecording = false;
-        MotionRecoder motionRecoder = null;
+        MotionRecorder motionRecorder = null;
         VideoCapture videoCapture = null;
         CameraController cameraController = null;
         Button recordButton, openInputPanelButton, saveButton, cancelButton, sceneChangeButton;
@@ -21,7 +21,7 @@ namespace KW_Mocap
         void Start()
         {
             WorldTimer.Run();
-            motionRecoder = GameObject.Find("Hands").GetComponent<MotionRecoder>();
+            motionRecorder = GameObject.Find("Hands").GetComponent<MotionRecorder>();
             videoCapture = GameObject.FindWithTag("Display").GetComponent<VideoCapture>();
             cameraController = Camera.main.GetComponent<CameraController>();
             UISetting.SetButton(ref recordButton, "RecordButton", OnBtn_Record);
@@ -41,7 +41,7 @@ namespace KW_Mocap
 
         void Update()
         {
-            dataCount.text = "Data Count: " + motionRecoder.recordDataCount.ToString();
+            dataCount.text = "Data Count: " + motionRecorder.recordDataCount.ToString();
         }
 
         void OnBtn_Record()
@@ -52,7 +52,7 @@ namespace KW_Mocap
                 t.text = "Rec";
                 t.color = Color.black;
                 recordButton.GetComponent<Image>().color = Color.white;
-                motionRecoder.StopRecording();
+                motionRecorder.StopRecording();
                 videoCapture.StopRecording();
                 isRecording = false;
             }
@@ -61,7 +61,7 @@ namespace KW_Mocap
                 t.text = "Stop";
                 t.color = Color.white;
                 recordButton.GetComponent<Image>().color = Color.red;
-                motionRecoder.StartRecording();
+                motionRecorder.StartRecording();
                 videoCapture.StartRecording();
                 isRecording = true;
             }
@@ -88,7 +88,7 @@ namespace KW_Mocap
 
             try
             {
-                motionRecoder.Save(fileName);   //ファイル名に問題があればこの行で例外スロー
+                motionRecorder.Save(fileName);   //ファイル名に問題があればこの行で例外スロー
             }
             catch(DuplicateFileNameException e)
             {
