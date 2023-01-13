@@ -121,12 +121,8 @@ namespace KW_Mocap
 			/* Output */
 			capture.OutputTarget = OutputTarget.VideoFile;
 			capture.OutputFolder = CaptureBase.OutputPath.RelativeToProject;
-#if UNITY_EDITOR_WIN
-			capture.OutputFolderPath = @"Assets\Resources\Videos";
-#elif UNITY_EDITOR_OSX
-			capture.OutputFolderPath = "Assets/Resources/Videos";
-#endif
-			capture.FilenamePrefix = "pending_file";
+            capture.OutputFolderPath = "CapturedPendingVideos";
+            capture.FilenamePrefix = "pending_file";
 			capture.AppendFilenameTimestamp = true;
 			capture.AllowManualFileExtension = false;
 			capture.CompletedFileWritingAction += OnCompleteFinalFileWriting;
