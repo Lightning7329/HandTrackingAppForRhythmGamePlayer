@@ -18,11 +18,14 @@ namespace KW_Mocap
         MotionData[] motionData = new MotionData[MaxDataCount];
         bool isRecording = false;
         Transform leftHand, rightHand;
+        Transform[,] leftJoints, rightJoints;
 
         void Start()
         {
             leftHand = transform.GetChild(0);
+            leftJoints = leftHand.GetComponent<HandSetting>().joints;
             rightHand = transform.GetChild(1);
+            rightJoints = rightHand.GetComponent<HandSetting>().joints;
         }
 
         void Update()
@@ -34,6 +37,8 @@ namespace KW_Mocap
         {
             HandData left = new HandData(leftHand.localPosition, leftHand.localRotation);
             HandData right = new HandData(rightHand.localPosition, rightHand.localRotation);
+            //HandData left = new HandData(leftHand.localPosition, leftHand.localRotation, leftJoints);
+            //HandData right = new HandData(rightHand.localPosition, rightHand.localRotation, rightJoints);
             motionData[recordDataCount] = new MotionData(left, right);
         }
 

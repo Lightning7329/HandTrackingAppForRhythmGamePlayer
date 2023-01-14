@@ -42,8 +42,12 @@ namespace KW_Mocap
     {
         /// <summary>
         /// byte配列を作成するために渡す配列bufの大きさの最小値
+        /// localPosition -> 4*3=12byte
+        /// localRotation -> 4*4=16byte
+        /// joints[5,4].localRotation -> 4*4*20=320byte
+        /// 合計 12+16+320=348byte
         /// </summary>
-        public const int MinimumBufferSize = 188;
+        public const int MinimumBufferSize = 348;
 
         /// <summary>
         /// 手のモーションデータのうち左か右かでバッファ読み取り時のオフセットが変わる
@@ -63,7 +67,7 @@ namespace KW_Mocap
         /// <summary>
         /// 指の関節の回転のクォータニオンの配列。Tranform.Rotationに入れる。
         /// </summary>
-        public Quaternion[] jointRot = new Quaternion[10];
+        public Quaternion[,] jointRot = new Quaternion[5,4];
 
         /// <summary>
         /// 手のひらの位置と回転のみから片手分のモーションデータを作成するコンストラクタ。
@@ -75,10 +79,9 @@ namespace KW_Mocap
         {
             this.palmPos = palmPos;
             this.palmRot = palmRot;
-            for (int i = 0; i < jointRot.Length; i++)
-            {
-                this.jointRot[i] = Quaternion.identity;
-            }
+            for (int i = 0; i < jointRot.GetLength(0); i++)
+                for (int j = 0; j < jointRot.GetLength(1); j++)
+                    this.jointRot[i, j] = Quaternion.identity;
         }
 
         /// <summary>
@@ -86,15 +89,34 @@ namespace KW_Mocap
         /// </summary>
         /// <param name="palmPos"></param>
         /// <param name="palmRot"></param>
-        /// <param name="joints"></param>
-        public HandData(Vector3 palmPos, Quaternion palmRot, Quaternion[] joints)
+        /// <param name="jointsRot"></param>
+        public HandData(Vector3 palmPos, Quaternion palmRot, Quaternion[,] jointsRot)
         {
             this.palmPos = palmPos;
             this.palmRot = palmRot;
-            for (int i = 0; i < jointRot.Length; i++)
-            {
-                this.jointRot[i] = joints[i];
-            }
+            this.palmRot = palmRot;
+            for (int i = 0; i < jointRot.GetLength(0); i++)
+                for (int j = 0; j < jointRot.GetLength(1); j++)
+                    this.jointRot[i, j] = jointsRot[i, j];
+        }
+
+        /// <summary>
+        /// 手のひらの位置と回転、各関節のtransformから片手分のモーションデータを作成するコンストラクタ。
+        /// </summary>
+        /// <param name="palmPos"></param>
+        /// <param name="palmRot"></param>
+        /// <param name="joints"></param>
+        public HandData(Vector3 palmPos, Quaternion palmRot, Transform[,] joints)
+        {
+            this.palmPos = palmPos;
+            this.palmRot = palmRot;
+            this.palmRot = palmRot;
+            for (int i = 0; i < jointRot.GetLength(0); i++)
+                for (int j = 0; j < jointRot.GetLength(1); j++)
+                    this.jointRot[i, j] =
+                        joints[i, j] == null ?
+                        Quaternion.identity :
+                        joints[i, j].localRotation;
         }
 
         /// <summary>
@@ -110,10 +132,9 @@ namespace KW_Mocap
             (palmPos, next) = ExtendedBitConverter.GetVector3FromBytes(buf, next);
             (palmRot, next) = ExtendedBitConverter.GetQuaternionFromBytes(buf, next);
             // 関節の回転
-            for (int i = 0; i < jointRot.Length; i++)
-            {
-                (jointRot[i], next) = ExtendedBitConverter.GetQuaternionFromBytes(buf, next);
-            }
+            for (int i = 0; i < jointRot.GetLength(0); i++)
+                for (int j = 0; j < jointRot.GetLength(1); j++)
+                    (jointRot[i, j], next) = ExtendedBitConverter.GetQuaternionFromBytes(buf, next);
         }
 
         /// <summary>
@@ -124,17 +145,16 @@ namespace KW_Mocap
         public void SetBytes(byte[] buf, Offset offset)
         {
             int next = (int)offset;
-            // 手のひらの位置と回転
+            /* 手のひらの位置と回転
+             * ここで配列bufのbuf[0 + offset]からbuf[27 + offset]まで使用 */
             next = palmPos.SetBytesFromVector3(buf, next);
             next = palmRot.SetBytesFromQuaternion(buf, next);
-            // ここまでで配列bufのbuf[0 + offset]からbuf[27 + offset]まで使用
-            
-            // 関節の回転
-            // ここで配列bufのbuf[28 + offset]からbuf[187 + offset]まで使用（40+16*9+3=187）
-            for (int i = 0; i < jointRot.Length; i++)
-            {
-                next = jointRot[i].SetBytesFromQuaternion(buf, next);
-            }
+
+            /* 関節の回転
+             * ここで配列bufのbuf[28 + offset]からbuf[347 + offset]まで使用 */
+            for (int i = 0; i < jointRot.GetLength(0); i++)
+                for (int j = 0; j < jointRot.GetLength(1); j++)
+                    next = jointRot[i, j].SetBytesFromQuaternion(buf, next);
         }
     }
 
