@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Video;
 using UnityEngine.EventSystems;
+using UnityEngine.Events;
 
 namespace KW_Mocap
 {
@@ -25,8 +26,8 @@ namespace KW_Mocap
 
             /* Event TriggerコンポーネントをアタッチしてPointerDown, PointerUpを追加 */
             eventTrigger = this.gameObject.AddComponent<EventTrigger>();
-            UISetting.AddEventTrigger(eventTrigger, EventTriggerType.PointerDown, PointerDown);
-            UISetting.AddEventTrigger(eventTrigger, EventTriggerType.PointerUp, PointerUp);
+            eventTrigger.AddEventTrigger(EventTriggerType.PointerDown, PointerDown);
+            eventTrigger.AddEventTrigger(EventTriggerType.PointerUp, PointerUp);
 
             /* Sliderの取得 */
             timeSlider = GetComponent<Slider>();

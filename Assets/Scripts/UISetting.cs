@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace KW_Mocap
 {
-    public class UISetting
+    public static class UISetting
     {
         public static void SetButton(ref Button button, string name, UnityAction call)
         {
@@ -46,7 +46,7 @@ namespace KW_Mocap
             button.GetComponent<Image>().color = color;
         }
 
-        public static void AddEventTrigger(EventTrigger eventTrigger, EventTriggerType triggerType, UnityAction<BaseEventData> call)
+        public static void AddEventTrigger(this EventTrigger eventTrigger, EventTriggerType triggerType, UnityAction<BaseEventData> call)
         {
             EventTrigger.Entry entry = new EventTrigger.Entry();
             entry.eventID = triggerType;
