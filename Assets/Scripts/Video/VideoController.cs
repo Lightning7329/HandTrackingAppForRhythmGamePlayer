@@ -18,10 +18,6 @@ namespace KW_Mocap
         /// </summary>
         public double Length { get => video.length; }
         /// <summary>
-        /// Number of frames in the current video.
-        /// </summary>
-        public ulong FrameCount { get => video.frameCount; }
-        /// <summary>
         /// The clock time that the VideoPlayer follows to schedule its samples, in seconds. 
         /// </summary>
         public double ClockTime { get => video.clockTime; }
@@ -32,14 +28,6 @@ namespace KW_Mocap
         {
             get => video.time;
             set => video.time = value;
-        }
-        /// <summary>
-        /// The frame index of the currently available frame in Video.
-        /// </summary>
-        public long Frame
-        {
-            get => video.frame;
-            set => video.frame = value;
         }
 
         void Start()

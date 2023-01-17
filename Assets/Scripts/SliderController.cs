@@ -81,9 +81,12 @@ namespace KW_Mocap
         /// <param name="second">進める秒数。負だと戻る。</param>
         public void Skip(double second)
         {
-            double targetSliderValue = timeSlider.value + second / video.Length;
-            video.Time = targetSliderValue * video.Length;
-            if (!video.isPlaying) video.PlayAndPause();
+            video.Time += second;
+            if (!video.isPlaying)
+            {
+                video.PlayAndPause();
+                motion.Play();
+            }
         }
 
         /// <summary>
