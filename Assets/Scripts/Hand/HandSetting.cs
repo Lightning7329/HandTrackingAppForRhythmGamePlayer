@@ -16,13 +16,17 @@ namespace KW_Mocap {
         /// </summary>
         [SerializeField] private char[] fingerBoneIndex = { '1', '2', '3' };
 		/// <summary>
-		/// 正常時とエラー時のマテリアルを集めたクラス。
+		/// 正常時のマテリアル群。
 		/// </summary>
-		[SerializeField] private HandMaterial materials;
-		/// <summary>
-		/// ハンドモデルの関節を表す2次元配列。1次元目が指、2次元目が関節。
-		/// </summary>
-		public GameObject[,] joints = new GameObject[5,3];	//指の本数 * 関節の数
+		[SerializeField] private HandMaterial normalMaterials;
+        /// <summary>
+        /// エラー時のマテリアル群。
+        /// </summary>
+        [SerializeField] private HandMaterial errorMaterials;
+        /// <summary>
+        /// ハンドモデルの関節を表す2次元配列。1次元目が指、2次元目が関節。
+        /// </summary>
+        public GameObject[,] joints = new GameObject[5,3];	//指の本数 * 関節の数
 
 		private void Start()
 		{
@@ -49,25 +53,35 @@ namespace KW_Mocap {
         }
 
 		/// <summary>
-		/// 再帰的に手を構成するオブジェクトのMaterialを変更する。
+		/// 手を構成するオブジェクトのMaterialを変更する。
 		/// </summary>
 		/// <param name="Go">変更したい一番上の階層のGame Object</param>
 		/// <param name="flg">trueのとき通常のMaterial、falseのときエラー用のMaterial</param>
 		public void SetMaterial(GameObject Go, bool flg)
 		{
+            HandMaterial materials = flg ? normalMaterials: errorMaterials;
+            SetMaterial(Go, materials);
+        }
+        /// <summary>
+        /// 再帰的に手を構成するオブジェクトのMaterialを変更する。
+        /// </summary>
+        /// <param name="Go">変更したい一番上の階層のGame Object</param>
+        /// <param name="materials">HandMaterialオブジェクト</param>
+        public void SetMaterial(GameObject Go, HandMaterial materials)
+        {
 			switch (Go.name)
 			{
 				case "P":
-					Go.GetComponent<MeshRenderer>().material = flg ? materials.Palm : materials.Error;
+					Go.GetComponent<MeshRenderer>().material = materials.Palm;
 					break;
 				case "F":
-					Go.GetComponent<MeshRenderer>().material = flg ? materials.Finger : materials.Error;
+					Go.GetComponent<MeshRenderer>().material = materials.Finger;
 					break;
 				case "J":
-					Go.GetComponent<MeshRenderer>().material = flg ? materials.Joint : materials.Error;
+					Go.GetComponent<MeshRenderer>().material = materials.Joint;
 					break;
 				case "Top":
-					Go.GetComponent<MeshRenderer>().material = flg ? materials.Top : materials.Error;
+					Go.GetComponent<MeshRenderer>().material = materials.Top;
 					break;
 				default:
 					break;
@@ -79,7 +93,7 @@ namespace KW_Mocap {
 			for (int i = 0; i < n; i++)
 			{
 				GameObject Gc = Go.transform.GetChild(i).gameObject;
-				SetMaterial(Gc, flg);
+				SetMaterial(Gc, materials);
 			}
 		}
 
@@ -125,7 +139,6 @@ namespace KW_Mocap {
         public Material Finger;
         public Material Joint;
         public Material Top;
-        public Material Error;
     }
 
 	public static class FixedPose
