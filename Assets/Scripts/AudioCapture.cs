@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace KW_Mocap
 {
+    [RequireComponent(typeof(AudioSource))]
     public class AudioCapture : MonoBehaviour
     {
         [SerializeField] private string m_DeviceName;

@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static KW_Mocap.HandData;
 
 namespace KW_Mocap
 {

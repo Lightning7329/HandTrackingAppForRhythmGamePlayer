@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Video;
 using UnityEngine.EventSystems;
+using UnityEngine.Events;
 
 namespace KW_Mocap
 {
@@ -20,16 +21,18 @@ namespace KW_Mocap
 
         void Start()
         {
-            //準備ができるまでUpdate()が呼ばれないようにするため無効化する
+            /* 準備ができるまでUpdate()が呼ばれないようにするため無効化する */
             enabled = false;
 
-            //Event Triggerコンポーネントの追加
+            /* Event TriggerコンポーネントをアタッチしてPointerDown, PointerUpを追加 */
             eventTrigger = this.gameObject.AddComponent<EventTrigger>();
+            eventTrigger.AddEventTrigger(EventTriggerType.PointerDown, PointerDown);
+            eventTrigger.AddEventTrigger(EventTriggerType.PointerUp, PointerUp);
 
-            //Sliderの取得
+            /* Sliderの取得 */
             timeSlider = GetComponent<Slider>();
 
-            //VideoPlayerの取得、設定
+            /* VideoPlayerの取得、設定 */
             video = GameObject.FindWithTag("Display").GetComponent<VideoController>();
             video.SetPrepareCompleted(OnCompletePrepare);
 
@@ -44,17 +47,13 @@ namespace KW_Mocap
         {
             Debug.Log("再生準備完了");
 
-            //[イベントトリガー] PointerDown, PointerUp の追加
-            UISetting.AddEventTrigger(eventTrigger, EventTriggerType.PointerDown, PointerDown);
-            UISetting.AddEventTrigger(eventTrigger, EventTriggerType.PointerUp, PointerUp);
-
-            //時刻の表示を初期化
+            /* 時刻の表示を初期化 */
             maxTime = transform.Find("MaxTime").GetComponent<Text>();
             maxTime.text = SecondsToMMSS(video.Length);
             currentTime = transform.Find("CurrentTime").GetComponent<Text>();
             currentTime.text = SecondsToMMSS(video.ClockTime);
 
-            //GameObjectを有効することでUpdate()が呼ばれるようになる
+            /* GameObjectを有効することでUpdate()が呼ばれるようになる */
             enabled = true;
         }
 
@@ -82,9 +81,12 @@ namespace KW_Mocap
         /// <param name="second">進める秒数。負だと戻る。</param>
         public void Skip(double second)
         {
-            double targetSliderValue = timeSlider.value + second / video.Length;
-            video.Frame = (long)(targetSliderValue * video.FrameCount);
-            if (!video.isPlaying) video.PlayAndPause();
+            video.Time += second;
+            if (!video.isPlaying)
+            {
+                video.PlayAndPause();
+                motion.Play();
+            }
         }
 
         /// <summary>
@@ -122,12 +124,13 @@ namespace KW_Mocap
             var wait = new WaitForSeconds(coroutineWaitTime);
             while (isTouching)
             {
-                video.Frame = (long)(timeSlider.value * video.FrameCount);
+                video.Time = timeSlider.value * video.Length;
                 video.PlayAndPause();
+                motion.Play();
                 yield return wait;
             }
 
-            // スライダー操作前に再生中だった場合は再生する。
+            /* スライダー操作前に再生中だった場合は再生する */
             if (wasPlaying)
             {
                 video.StartPlaying();
