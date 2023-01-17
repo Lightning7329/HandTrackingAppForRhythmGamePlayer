@@ -1494,9 +1494,41 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2883887362371423877, guid: f9148b59fab33c24a897ddc1bf72b941, type: 3}
+      propertyPath: errorMaterials.Top
+      value: 
+      objectReference: {fileID: 2100000, guid: e12b24aa97f461c4abfee7bdf201f1b6, type: 2}
+    - target: {fileID: 2883887362371423877, guid: f9148b59fab33c24a897ddc1bf72b941, type: 3}
+      propertyPath: errorMaterials.Palm
+      value: 
+      objectReference: {fileID: 2100000, guid: e12b24aa97f461c4abfee7bdf201f1b6, type: 2}
+    - target: {fileID: 2883887362371423877, guid: f9148b59fab33c24a897ddc1bf72b941, type: 3}
+      propertyPath: normalMaterials.Top
+      value: 
+      objectReference: {fileID: 2100000, guid: 808f8f67dee4d4c4f9f619a87687ae86, type: 2}
+    - target: {fileID: 2883887362371423877, guid: f9148b59fab33c24a897ddc1bf72b941, type: 3}
+      propertyPath: errorMaterials.Joint
+      value: 
+      objectReference: {fileID: 2100000, guid: e12b24aa97f461c4abfee7bdf201f1b6, type: 2}
+    - target: {fileID: 2883887362371423877, guid: f9148b59fab33c24a897ddc1bf72b941, type: 3}
+      propertyPath: normalMaterials.Palm
+      value: 
+      objectReference: {fileID: 2100000, guid: bb3324742fc04479a8af92143005a46c, type: 2}
+    - target: {fileID: 2883887362371423877, guid: f9148b59fab33c24a897ddc1bf72b941, type: 3}
+      propertyPath: errorMaterials.Finger
+      value: 
+      objectReference: {fileID: 2100000, guid: e12b24aa97f461c4abfee7bdf201f1b6, type: 2}
+    - target: {fileID: 2883887362371423877, guid: f9148b59fab33c24a897ddc1bf72b941, type: 3}
+      propertyPath: normalMaterials.Joint
+      value: 
+      objectReference: {fileID: 2100000, guid: 808f8f67dee4d4c4f9f619a87687ae86, type: 2}
+    - target: {fileID: 2883887362371423877, guid: f9148b59fab33c24a897ddc1bf72b941, type: 3}
       propertyPath: fingerNames.Array.size
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 2883887362371423877, guid: f9148b59fab33c24a897ddc1bf72b941, type: 3}
+      propertyPath: normalMaterials.Finger
+      value: 
+      objectReference: {fileID: 2100000, guid: bb3324742fc04479a8af92143005a46c, type: 2}
     - target: {fileID: 2883887362371423877, guid: f9148b59fab33c24a897ddc1bf72b941, type: 3}
       propertyPath: fingerNames.Array.data[0]
       value: Thumb
@@ -1925,9 +1957,41 @@ PrefabInstance:
       value: Hand-L
       objectReference: {fileID: 0}
     - target: {fileID: 1565083570598333588, guid: 7f0823eef42154078947c92a84b440db, type: 3}
+      propertyPath: errorMaterials.Top
+      value: 
+      objectReference: {fileID: 2100000, guid: e12b24aa97f461c4abfee7bdf201f1b6, type: 2}
+    - target: {fileID: 1565083570598333588, guid: 7f0823eef42154078947c92a84b440db, type: 3}
+      propertyPath: errorMaterials.Palm
+      value: 
+      objectReference: {fileID: 2100000, guid: e12b24aa97f461c4abfee7bdf201f1b6, type: 2}
+    - target: {fileID: 1565083570598333588, guid: 7f0823eef42154078947c92a84b440db, type: 3}
+      propertyPath: normalMaterials.Top
+      value: 
+      objectReference: {fileID: 2100000, guid: 808f8f67dee4d4c4f9f619a87687ae86, type: 2}
+    - target: {fileID: 1565083570598333588, guid: 7f0823eef42154078947c92a84b440db, type: 3}
+      propertyPath: errorMaterials.Joint
+      value: 
+      objectReference: {fileID: 2100000, guid: e12b24aa97f461c4abfee7bdf201f1b6, type: 2}
+    - target: {fileID: 1565083570598333588, guid: 7f0823eef42154078947c92a84b440db, type: 3}
+      propertyPath: normalMaterials.Palm
+      value: 
+      objectReference: {fileID: 2100000, guid: bb3324742fc04479a8af92143005a46c, type: 2}
+    - target: {fileID: 1565083570598333588, guid: 7f0823eef42154078947c92a84b440db, type: 3}
+      propertyPath: errorMaterials.Finger
+      value: 
+      objectReference: {fileID: 2100000, guid: e12b24aa97f461c4abfee7bdf201f1b6, type: 2}
+    - target: {fileID: 1565083570598333588, guid: 7f0823eef42154078947c92a84b440db, type: 3}
+      propertyPath: normalMaterials.Joint
+      value: 
+      objectReference: {fileID: 2100000, guid: 808f8f67dee4d4c4f9f619a87687ae86, type: 2}
+    - target: {fileID: 1565083570598333588, guid: 7f0823eef42154078947c92a84b440db, type: 3}
       propertyPath: fingerNames.Array.size
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 1565083570598333588, guid: 7f0823eef42154078947c92a84b440db, type: 3}
+      propertyPath: normalMaterials.Finger
+      value: 
+      objectReference: {fileID: 2100000, guid: bb3324742fc04479a8af92143005a46c, type: 2}
     - target: {fileID: 1565083570598333588, guid: 7f0823eef42154078947c92a84b440db, type: 3}
       propertyPath: fingerNames.Array.data[0]
       value: Thumb
