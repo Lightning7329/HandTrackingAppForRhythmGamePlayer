@@ -106,15 +106,18 @@ namespace KW_Mocap {
         [ContextMenu("SetCalibrationPose")]
         public void SetCalibrationPose()
         {
+            /* 親指はFixedPoseクラスで設定したやつ */
             for (int j = 1; j < joints.GetLength(1); j++)
             {
-                joints[0, j].transform.localRotation = FixedPose.cal_Thumb[j-1];
+                joints[0, j].localRotation = FixedPose.cal_Thumb[j-1];
             }
+
+            /* その他の指はQuaternion.identity */
             for (int i = 1; i < joints.GetLength(0); i++)
             {
                 for (int j = 1; j < joints.GetLength(1); j++)
                 {
-                    joints[i, j].transform.localRotation = Quaternion.identity;
+                    joints[i, j].localRotation = Quaternion.identity;
                 }
             }
         }
@@ -126,7 +129,7 @@ namespace KW_Mocap {
             {
                 for (int j = 1; j < joints.GetLength(1); j++)
                 {
-                    joints[i, j].transform.localRotation = FixedPose.nor_Joints[i, j-1];
+                    joints[i, j].localRotation = FixedPose.nor_Joints[i, j-1];
                 }
             }
         }

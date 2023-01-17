@@ -109,7 +109,6 @@ namespace KW_Mocap
         {
             this.palmPos = palmPos;
             this.palmRot = palmRot;
-            this.palmRot = palmRot;
             for (int i = 0; i < jointRot.GetLength(0); i++)
                 for (int j = 0; j < jointRot.GetLength(1); j++)
                     this.jointRot[i, j] =
