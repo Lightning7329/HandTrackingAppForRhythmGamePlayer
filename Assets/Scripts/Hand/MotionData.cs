@@ -66,7 +66,7 @@ namespace KW_Mocap
         /// <summary>
         /// 指の関節の回転のクォータニオンの配列。Tranform.Rotationに入れる。
         /// </summary>
-        public Quaternion[,] jointRot = new Quaternion[5,4];
+        public Quaternion[,] jointRot = new Quaternion[5, 4];
 
         /// <summary>
         /// 手のひらの位置と回転のみから片手分のモーションデータを作成するコンストラクタ。
@@ -92,7 +92,6 @@ namespace KW_Mocap
         public HandData(Vector3 palmPos, Quaternion palmRot, Quaternion[,] jointsRot)
         {
             this.palmPos = palmPos;
-            this.palmRot = palmRot;
             this.palmRot = palmRot;
             for (int i = 0; i < jointRot.GetLength(0); i++)
                 for (int j = 0; j < jointRot.GetLength(1); j++)

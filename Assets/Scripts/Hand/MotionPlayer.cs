@@ -10,7 +10,7 @@ namespace KW_Mocap
     {
         MotionData[] motionData = null;
         [SerializeField] GameObject left, right;
-        Transform[,] leftJoints, rightJoints;
+        HandSetting leftHandSetting, rightHandSetting;
         private bool isPlaying = false;
         public bool isLoaded { get; private set; } = false;
         public int frameCount { get; private set; } = 0;
@@ -35,10 +35,10 @@ namespace KW_Mocap
 
         void Start()
         {
-            left.GetComponent<HandSetting>().SetMaterial(left, true);
-            leftJoints = left.GetComponent<HandSetting>().joints;
-            right.GetComponent<HandSetting>().SetMaterial(right, true);
-            rightJoints = right.GetComponent<HandSetting>().joints;
+            leftHandSetting = left.GetComponent<HandSetting>();
+            leftHandSetting.SetMaterial(left, true);
+            rightHandSetting = right.GetComponent<HandSetting>();
+            rightHandSetting.SetMaterial(right, true);
         }
 
         void Update()
@@ -56,11 +56,13 @@ namespace KW_Mocap
         public void Play(int n)
         {
             if (n < 0 || frameCount <= n) return;
-            // TODO: leftJoint[0,0]~leftKJoint[4,2]のモーションデータも再生する。rightも然り。
+            
             left.transform.localPosition = motionData[n].left.palmPos;
             left.transform.localRotation = motionData[n].left.palmRot;
+            leftHandSetting.SetJointsRotation(motionData[n].left.jointRot);
             right.transform.localPosition = motionData[n].right.palmPos;
             right.transform.localRotation = motionData[n].right.palmRot;
+            rightHandSetting.SetJointsRotation(motionData[n].right.jointRot);
         }
 
         public void StartPlaying()

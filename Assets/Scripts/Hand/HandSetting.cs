@@ -123,6 +123,17 @@ namespace KW_Mocap
         [ContextMenu("SetErrorMaterial")]
         public void SetErrorMaterial() => SetMaterial(this.gameObject, false);
 
+        /// <summary>
+        /// Quaternionの配列から全関節の回転をセットする。
+        /// </summary>
+        /// <param name="rotations"></param>
+        public void SetJointsRotation(Quaternion[,] rotations)
+        {
+            for (int i = 0; i < joints.GetLength(0); i++)
+                for (int j = 0; j < joints.GetLength(1); j++)
+                    joints[i, j].localRotation = rotations[i, j];
+        }
+
         [ContextMenu("SetCalibrationPose")]
         public void SetCalibrationPose()
         {
