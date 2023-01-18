@@ -36,9 +36,9 @@ namespace KW_Mocap
         void Start()
         {
             leftHandSetting = left.GetComponent<HandSetting>();
-            leftHandSetting.SetMaterial(left, true);
+            leftHandSetting.SetMaterial(true);
             rightHandSetting = right.GetComponent<HandSetting>();
-            rightHandSetting.SetMaterial(right, true);
+            rightHandSetting.SetMaterial(true);
         }
 
         void Update()

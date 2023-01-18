@@ -58,7 +58,7 @@ namespace KW_Mocap
         /// ハンドモデルの表示/非表示
         /// </summary>
         /// <param name="flg"></param>
-        public void Active(bool flg) => _SetVisible(this.gameObject, flg);
+        public void SetVisible(bool flg) => _SetVisible(this.gameObject, flg);
         private void _SetVisible(GameObject Go, bool flg)
         {
             if (Go.GetComponent<MeshRenderer>()) Go.GetComponent<MeshRenderer>().enabled = flg;
@@ -77,10 +77,10 @@ namespace KW_Mocap
         /// </summary>
         /// <param name="Go">変更したい一番上の階層のGame Object</param>
         /// <param name="flg">trueのとき通常のMaterial、falseのときエラー用のMaterial</param>
-        public void SetMaterial(GameObject Go, bool flg)
+        public void SetMaterial(bool flg)
         {
             HandMaterial materials = flg ? normalMaterials : errorMaterials;
-            SetMaterial(Go, materials);
+            SetMaterial(this.gameObject, materials);
         }
         /// <summary>
         /// 再帰的に手を構成するオブジェクトのMaterialを変更する。
@@ -118,10 +118,10 @@ namespace KW_Mocap
         }
 
         [ContextMenu("SetNormalMaterial")]
-        public void SetNormalMaterial() => SetMaterial(this.gameObject, true);
+        public void SetNormalMaterial() => SetMaterial(true);
 
         [ContextMenu("SetErrorMaterial")]
-        public void SetErrorMaterial() => SetMaterial(this.gameObject, false);
+        public void SetErrorMaterial() => SetMaterial(false);
 
         /// <summary>
         /// Quaternionの配列から全関節の回転をセットする。

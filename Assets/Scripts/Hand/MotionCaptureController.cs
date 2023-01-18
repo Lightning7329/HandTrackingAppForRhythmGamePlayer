@@ -137,7 +137,7 @@ namespace KW_Mocap
             statusPanel.FpsVolt(Imu.fps, Imu.vbt);
             runMode = flg ? RunMode.Ready : RunMode.Standby;
             Im_rdy.color = (leapHandModel.isDetected) ? Color.cyan : Color.green;
-            handSetting.Active(flg);
+            handSetting.SetVisible(flg);
         }
 
         public void Ready() { OnBtn_Ready(true); }

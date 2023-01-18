@@ -39,7 +39,7 @@ namespace KW_Mocap
         {
             isDetected = true;
             Debug.Log(LR.ToString() + " Begin");
-            GetComponent<HandSetting>().SetMaterial(this.gameObject, true);
+            GetComponent<HandSetting>().SetMaterial(true);
         }
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace KW_Mocap
         {
             isDetected = false;
             Debug.Log(LR.ToString() + " Finish");
-            GetComponent<HandSetting>().SetMaterial(this.gameObject, false);
+            GetComponent<HandSetting>().SetMaterial(false);
         }
 
         public override Hand GetLeapHand() { return (lmHand); }
