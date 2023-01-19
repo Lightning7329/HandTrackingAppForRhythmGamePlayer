@@ -13,11 +13,11 @@ namespace KW_Mocap
 
         public static int frameCount { get; private set; } = 0;
 
-        private static int _frameRate = 40;
-        public static int frameRate
+        private static float _frameRate = 40.0f;
+        public static float frameRate
         {
             get => _frameRate;
-            set => _frameRate = value > 0 ? value : 30;
+            set => _frameRate = value > 0.0f ? value : 30.0f;
         }
         private static int period;
 

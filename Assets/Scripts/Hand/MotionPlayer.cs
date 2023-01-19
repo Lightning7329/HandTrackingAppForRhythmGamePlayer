@@ -14,7 +14,7 @@ namespace KW_Mocap
         private bool isPlaying = false;
         public bool isLoaded { get; private set; } = false;
         public int frameCount { get; private set; } = 0;
-        public int frameRate { get => WorldTimer.frameRate; }
+        public float frameRate { get; private set; } = 30.0f;
         [HideInInspector] public int playbackOffset = 0;
         private string currentMotionDataFilePath = null;
 
@@ -110,7 +110,11 @@ namespace KW_Mocap
                     fs.Read(buf, 0, 4);
                     this.playbackOffset = BitConverter.ToInt32(buf, 0);
 
-                    /* 読み込むデータ点数 */
+                    /* フレームレート */
+                    fs.Read(buf, 0, 4);
+                    this.frameRate = BitConverter.ToSingle(buf, 0);
+
+                    /* フレーム数 */
                     fs.Read(buf, 0, 4);
                     frameCount = BitConverter.ToInt32(buf, 0);
                     motionData = new MotionData[frameCount];
