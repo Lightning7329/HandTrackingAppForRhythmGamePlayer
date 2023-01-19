@@ -7,13 +7,12 @@ using RenderHeads.Media.AVProMovieCapture;
 namespace KW_Mocap
 {
 	[RequireComponent(typeof(MeshRenderer))]
-	public class VideoCapture : MonoBehaviour
-	{
+	public class VideoCapture : DisplaySetting
+    {
 		[Range(10f,50f)]
 		public float displayScale = 30.0f;
 		public Vector2Int targetResolution = new Vector2Int(1920, 1440);
 		private Vector2Int capturedResolution = new Vector2Int(16, 16);
-        Material material = null;
 		WebCamTexture texture = null;
 
 		CaptureFromWebCamTexture capture = null;
@@ -21,7 +20,7 @@ namespace KW_Mocap
 
         private IEnumerator Start()
 		{
-			material = GetComponent<MeshRenderer>().material;
+			displayMaterial = GetComponent<MeshRenderer>().material;
 
 			if (WebCamTexture.devices.Length < 1) yield break;
 
@@ -35,7 +34,7 @@ namespace KW_Mocap
         {
 			/* ディスプレイのアスペクト比をheightを固定して変更 */
 			float targetAspectRatio = (float)targetResolution.x / targetResolution.y;
-			this.transform.localScale = new Vector3(displayScale, displayScale / targetAspectRatio, 1.0f);
+			this.DisplaySize = new Vector2(displayScale, displayScale / targetAspectRatio);
 		}
 
 		/// <summary>
@@ -72,7 +71,7 @@ namespace KW_Mocap
 				yield return null;
 			}
 			capturedResolution = new Vector2Int(texture.width, texture.height);
-            material.mainTexture = texture;
+            displayMaterial.mainTexture = texture;
 			Debug.Log($"width: {texture.width} / height: {texture.height}");
             Debug.Log($"requestedWidth: {texture.requestedWidth} / requestedHeight: {texture.requestedHeight}/ fps: {texture.requestedFPS}");
 		}
@@ -80,23 +79,30 @@ namespace KW_Mocap
 		[ContextMenu("Change Resolution")]
 		public void ChangeResolution() => ChangeResolution(targetResolution.x, targetResolution.y);
 
-		public void ChangeResolution(int width, int height) => ChangeAspectRatio((float)width / height);
+		public void ChangeResolution(int width, int height)
+		{
+            float marginedAspectRatio = (float)capturedResolution.x / capturedResolution.y;
+			float targetAspectRatio = (float)width / height;
+			FitVideoAspect(marginedAspectRatio, targetAspectRatio);
+			//ChangeAspectRatio((float)width / height);
+		}
 
 		/// <summary>
+		/// 親クラスのFitVideoAspectで実装したので、不要。テストでOK出ればこのメソッドは削除する予定。
 		/// キャプチャした映像を指定したアスペクト比で切り取ってディスプレイに表示する
 		/// </summary>
 		/// <param name="targetAspectRatio">目標のアスペクト比</param>
 		public void ChangeAspectRatio(float targetAspectRatio)
 		{
-			if (material == null) return;
+			if (displayMaterial == null) return;
 
 			/* ディスプレイのマテリアルのTilingとOffsetを調整 */
 			float capturedAspectRatio = (float)capturedResolution.x / capturedResolution.y;
 			float xScale = targetAspectRatio / capturedAspectRatio;
-			material.mainTextureScale = new Vector2(xScale, 1.0f);
+			displayMaterial.mainTextureScale = new Vector2(xScale, 1.0f);
 
 			float xOffset = 0.5f * (capturedAspectRatio - targetAspectRatio) / capturedAspectRatio;
-			material.mainTextureOffset = new Vector2(xOffset, 0.0f);
+			displayMaterial.mainTextureOffset = new Vector2(xOffset, 0.0f);
 		}
 
 		/// <summary>

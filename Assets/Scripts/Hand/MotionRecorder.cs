@@ -90,6 +90,10 @@ namespace KW_Mocap
                     this.transform.localPosition.SetBytesFromVector3(buf, 0);
                     fs.Write(buf, 0, 12);
 
+                    /* Displayのサイズ */
+                    GameObject.FindWithTag("Display").GetComponent<VideoCapture>().DisplaySize.SetBytesFromVector2(buf, 0);
+                    fs.Write(buf, 0, 8);
+
                     /* モーションデータのデータオフセット。とりあえず0に設定。 */
                     fs.Write(new byte[] { 0, 0, 0, 0 }, 0, 4);
 

@@ -99,7 +99,12 @@ namespace KW_Mocap
                     fs.Read(buf, 0, 12);
                     if (fileName == "Echo over you_Hard40FPS")
                         this.transform.localPosition = new Vector3(100f, 2.8599999f, 102.510002f);
-                    else this.transform.localPosition = ExtendedBitConverter.GetVector3FromBytes(buf, 0).position;
+                    else this.transform.localPosition = ExtendedBitConverter.GetVector3FromBytes(buf, 0).vector3;
+
+                    /* Displayのサイズ */
+                    fs.Read(buf, 0, 8);
+                    var video = GameObject.FindWithTag("Display").GetComponent<VideoController>();
+                    video.DisplaySize = ExtendedBitConverter.GetVector2FromBytes(buf, 0).vector2;
 
                     /* モーションデータのデータオフセット */
                     fs.Read(buf, 0, 4);
