@@ -204,7 +204,7 @@ namespace KW_Mocap
         /// <param name="buf"></param>
         /// <param name="offset">読み取り開始位置</param>
         /// <returns>読み取ったVector3と次の読み取り位置のタプル</returns>
-        public static (Vector3 position, int next) GetVector3FromBytes(byte[] buf, int offset)
+        public static (Vector3 vector3, int next) GetVector3FromBytes(byte[] buf, int offset)
         {
             Vector3 position = Vector3.zero;
             for (int i = 0; i < 3; i++)

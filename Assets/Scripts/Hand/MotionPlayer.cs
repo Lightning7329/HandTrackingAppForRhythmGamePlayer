@@ -14,7 +14,7 @@ namespace KW_Mocap
         private bool isPlaying = false;
         public bool isLoaded { get; private set; } = false;
         public int frameCount { get; private set; } = 0;
-        public int frameRate { get => WorldTimer.frameRate; }
+        public float frameRate { get; private set; } = 30.0f;
         [HideInInspector] public int playbackOffset = 0;
         private string currentMotionDataFilePath = null;
 
@@ -101,13 +101,21 @@ namespace KW_Mocap
                     fs.Read(buf, 0, 12);
                     if (fileName == "Echo over you_Hard40FPS")
                         this.transform.localPosition = new Vector3(100f, 2.8599999f, 102.510002f);
-                    else this.transform.localPosition = ExtendedBitConverter.GetVector3FromBytes(buf, 0).position;
+                    else this.transform.localPosition = ExtendedBitConverter.GetVector3FromBytes(buf, 0).vector3;
+
+                    /* Displayのサイズ */
+                    fs.Read(buf, 0, 12);
+                    GameObject.FindWithTag("Display").transform.localScale = ExtendedBitConverter.GetVector3FromBytes(buf, 0).vector3;
 
                     /* モーションデータのデータオフセット */
                     fs.Read(buf, 0, 4);
                     this.playbackOffset = BitConverter.ToInt32(buf, 0);
 
-                    /* 読み込むデータ点数 */
+                    /* フレームレート */
+                    fs.Read(buf, 0, 4);
+                    this.frameRate = BitConverter.ToSingle(buf, 0);
+
+                    /* フレーム数 */
                     fs.Read(buf, 0, 4);
                     frameCount = BitConverter.ToInt32(buf, 0);
                     motionData = new MotionData[frameCount];

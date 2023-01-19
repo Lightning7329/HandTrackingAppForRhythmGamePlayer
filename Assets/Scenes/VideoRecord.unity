@@ -902,10 +902,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   left: {fileID: 2048777865}
   right: {fileID: 8234911754632013711}
-  midPoint: {fileID: 0}
   hands: {fileID: 1417507090}
   averageMode: 1
-  scaleForLeapMotion: 100
   adjustPos: {x: 0, y: 1.81, z: -12}
 --- !u!1 &705507993
 GameObject:
@@ -2517,9 +2515,41 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1565083570598333588, guid: 7f0823eef42154078947c92a84b440db, type: 3}
+      propertyPath: errorMaterials.Top
+      value: 
+      objectReference: {fileID: 2100000, guid: e12b24aa97f461c4abfee7bdf201f1b6, type: 2}
+    - target: {fileID: 1565083570598333588, guid: 7f0823eef42154078947c92a84b440db, type: 3}
+      propertyPath: errorMaterials.Palm
+      value: 
+      objectReference: {fileID: 2100000, guid: e12b24aa97f461c4abfee7bdf201f1b6, type: 2}
+    - target: {fileID: 1565083570598333588, guid: 7f0823eef42154078947c92a84b440db, type: 3}
+      propertyPath: normalMaterials.Top
+      value: 
+      objectReference: {fileID: 2100000, guid: 808f8f67dee4d4c4f9f619a87687ae86, type: 2}
+    - target: {fileID: 1565083570598333588, guid: 7f0823eef42154078947c92a84b440db, type: 3}
+      propertyPath: errorMaterials.Joint
+      value: 
+      objectReference: {fileID: 2100000, guid: e12b24aa97f461c4abfee7bdf201f1b6, type: 2}
+    - target: {fileID: 1565083570598333588, guid: 7f0823eef42154078947c92a84b440db, type: 3}
+      propertyPath: normalMaterials.Palm
+      value: 
+      objectReference: {fileID: 2100000, guid: bb3324742fc04479a8af92143005a46c, type: 2}
+    - target: {fileID: 1565083570598333588, guid: 7f0823eef42154078947c92a84b440db, type: 3}
+      propertyPath: errorMaterials.Finger
+      value: 
+      objectReference: {fileID: 2100000, guid: e12b24aa97f461c4abfee7bdf201f1b6, type: 2}
+    - target: {fileID: 1565083570598333588, guid: 7f0823eef42154078947c92a84b440db, type: 3}
+      propertyPath: normalMaterials.Joint
+      value: 
+      objectReference: {fileID: 2100000, guid: 808f8f67dee4d4c4f9f619a87687ae86, type: 2}
+    - target: {fileID: 1565083570598333588, guid: 7f0823eef42154078947c92a84b440db, type: 3}
       propertyPath: fingerNames.Array.size
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 1565083570598333588, guid: 7f0823eef42154078947c92a84b440db, type: 3}
+      propertyPath: normalMaterials.Finger
+      value: 
+      objectReference: {fileID: 2100000, guid: bb3324742fc04479a8af92143005a46c, type: 2}
     - target: {fileID: 1565083570598333588, guid: 7f0823eef42154078947c92a84b440db, type: 3}
       propertyPath: fingerNames.Array.data[0]
       value: Thumb
@@ -2606,6 +2636,7 @@ MonoBehaviour:
   _leapProvider: {fileID: 568567837}
   LR: 0
   scl: 79.5
+  isDetected: 0
 --- !u!1 &2072072121
 GameObject:
   m_ObjectHideFlags: 0
@@ -3110,9 +3141,41 @@ PrefabInstance:
       value: -9.4
       objectReference: {fileID: 0}
     - target: {fileID: 2883887362371423877, guid: f9148b59fab33c24a897ddc1bf72b941, type: 3}
+      propertyPath: errorMaterials.Top
+      value: 
+      objectReference: {fileID: 2100000, guid: e12b24aa97f461c4abfee7bdf201f1b6, type: 2}
+    - target: {fileID: 2883887362371423877, guid: f9148b59fab33c24a897ddc1bf72b941, type: 3}
+      propertyPath: errorMaterials.Palm
+      value: 
+      objectReference: {fileID: 2100000, guid: e12b24aa97f461c4abfee7bdf201f1b6, type: 2}
+    - target: {fileID: 2883887362371423877, guid: f9148b59fab33c24a897ddc1bf72b941, type: 3}
+      propertyPath: normalMaterials.Top
+      value: 
+      objectReference: {fileID: 2100000, guid: 808f8f67dee4d4c4f9f619a87687ae86, type: 2}
+    - target: {fileID: 2883887362371423877, guid: f9148b59fab33c24a897ddc1bf72b941, type: 3}
+      propertyPath: errorMaterials.Joint
+      value: 
+      objectReference: {fileID: 2100000, guid: e12b24aa97f461c4abfee7bdf201f1b6, type: 2}
+    - target: {fileID: 2883887362371423877, guid: f9148b59fab33c24a897ddc1bf72b941, type: 3}
+      propertyPath: normalMaterials.Palm
+      value: 
+      objectReference: {fileID: 2100000, guid: bb3324742fc04479a8af92143005a46c, type: 2}
+    - target: {fileID: 2883887362371423877, guid: f9148b59fab33c24a897ddc1bf72b941, type: 3}
+      propertyPath: errorMaterials.Finger
+      value: 
+      objectReference: {fileID: 2100000, guid: e12b24aa97f461c4abfee7bdf201f1b6, type: 2}
+    - target: {fileID: 2883887362371423877, guid: f9148b59fab33c24a897ddc1bf72b941, type: 3}
+      propertyPath: normalMaterials.Joint
+      value: 
+      objectReference: {fileID: 2100000, guid: 808f8f67dee4d4c4f9f619a87687ae86, type: 2}
+    - target: {fileID: 2883887362371423877, guid: f9148b59fab33c24a897ddc1bf72b941, type: 3}
       propertyPath: fingerNames.Array.size
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 2883887362371423877, guid: f9148b59fab33c24a897ddc1bf72b941, type: 3}
+      propertyPath: normalMaterials.Finger
+      value: 
+      objectReference: {fileID: 2100000, guid: bb3324742fc04479a8af92143005a46c, type: 2}
     - target: {fileID: 2883887362371423877, guid: f9148b59fab33c24a897ddc1bf72b941, type: 3}
       propertyPath: fingerNames.Array.data[0]
       value: Thumb
@@ -3261,6 +3324,7 @@ MonoBehaviour:
   _leapProvider: {fileID: 568567837}
   LR: 1
   scl: 80
+  isDetected: 0
 --- !u!1 &8890665529666899122
 GameObject:
   m_ObjectHideFlags: 0
