@@ -14,7 +14,6 @@ namespace KW_Mocap
         public Vector3 adjustPos = Vector3.zero;
 
         Vector3 midPos = new Vector3(0.0f, -33.883246f, -8.88f);
-        Button calibrationButton;
 
         public enum AverageMethod {Lerp, Slerp}
         delegate Quaternion AverageQuaternion(Quaternion q1, Quaternion q2);
@@ -24,12 +23,6 @@ namespace KW_Mocap
                 { AverageMethod.Lerp,  (q1, q2) => Quaternion.Lerp(q1, q2, 0.5f) },
                 { AverageMethod.Slerp, (q1, q2) => Quaternion.Slerp(q1, q2, 0.5f) }
             };
-
-
-        void Start()
-        {
-            
-        }
 
         void Update()
         {

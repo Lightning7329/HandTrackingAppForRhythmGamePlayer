@@ -35,7 +35,7 @@ namespace KW_Mocap
 		private void changeMaterial_OnBegin()
 		{
 			Debug.Log(LR.ToString() + " Begin");
-			GetComponent<HandSetting>().SetMaterial(this.gameObject, true);
+			GetComponent<HandSetting>().SetMaterial(true);
 		}
 
 		/// <summary>
@@ -44,7 +44,7 @@ namespace KW_Mocap
 		private void changeMaterial_OnFinish()
 		{
 			Debug.Log(LR.ToString() + " Finish");
-			GetComponent<HandSetting>().SetMaterial(this.gameObject, false);
+			GetComponent<HandSetting>().SetMaterial(false);
 		}
 
 		public override Hand GetLeapHand() { return (lmHand); }
