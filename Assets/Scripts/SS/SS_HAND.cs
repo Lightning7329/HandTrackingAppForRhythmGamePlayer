@@ -105,7 +105,8 @@ public class SS_HAND : MonoBehaviour
 	//..............................................................
 	public void SetOff()
 	{
-		if (false)
+#pragma warning disable CS0162	//Unreachable code detected
+        if (false)
 		{
 			Vector3 Vc = Leap.B[2, 0].Direction;
 			Vc.y = 0f;
@@ -133,9 +134,10 @@ public class SS_HAND : MonoBehaviour
 				Qoff[i] = Quaternion.Euler(offAng[i]);
 			}
 		}
-	}
-	//..............................................................
-	public void Active(bool flg) { _SetVisible(this.gameObject, flg); }
+#pragma warning restore CS0162
+    }
+    //..............................................................
+    public void Active(bool flg) { _SetVisible(this.gameObject, flg); }
 	//..............................................................
 	public void Calibrate(long sf, long df, IMUPAR[,] P)
 	{
