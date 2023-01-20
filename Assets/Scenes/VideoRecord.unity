@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44608766, g: 0.49585128, b: 0.5745041, a: 1}
+  m_IndirectSpecularColor: {r: 0.44608718, g: 0.49585086, b: 0.5745036, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -313,7 +313,7 @@ RectTransform:
   m_Children:
   - {fileID: 829840004}
   m_Father: {fileID: 1649370227}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
@@ -964,7 +964,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3014622975970389024, guid: 466736bacac8d5846adc0bb11490f14a, type: 3}
       propertyPath: m_RootOrder
-      value: 10
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 3014622975970389024, guid: 466736bacac8d5846adc0bb11490f14a, type: 3}
       propertyPath: m_AnchorMax.x
@@ -2278,7 +2278,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3014622975970389024, guid: 466736bacac8d5846adc0bb11490f14a, type: 3}
       propertyPath: m_RootOrder
-      value: 9
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 3014622975970389024, guid: 466736bacac8d5846adc0bb11490f14a, type: 3}
       propertyPath: m_AnchorMax.x
@@ -3111,8 +3111,8 @@ RectTransform:
   - {fileID: 1852577224}
   - {fileID: 422931377}
   - {fileID: 548934854}
-  - {fileID: 1872171992}
   - {fileID: 173507043}
+  - {fileID: 1872171992}
   - {fileID: 582888170}
   - {fileID: 1223802307}
   - {fileID: 428234319}
@@ -3225,7 +3225,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6520104707833514146, guid: d8a27d959f75abe4db3c8890e0ddf83b, type: 3}
       propertyPath: m_RootOrder
-      value: 4
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 6520104707833514146, guid: d8a27d959f75abe4db3c8890e0ddf83b, type: 3}
       propertyPath: m_AnchorMax.x
