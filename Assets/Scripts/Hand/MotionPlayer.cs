@@ -59,10 +59,10 @@ namespace KW_Mocap
             
             left.transform.localPosition = motionData[n].left.palmPos;
             left.transform.localRotation = motionData[n].left.palmRot;
-            leftHandSetting.SetJointsRotation(motionData[n].left.jointRot);
+            //leftHandSetting.SetJointsRotation(motionData[n].left.jointRot);
             right.transform.localPosition = motionData[n].right.palmPos;
             right.transform.localRotation = motionData[n].right.palmRot;
-            rightHandSetting.SetJointsRotation(motionData[n].right.jointRot);
+            //rightHandSetting.SetJointsRotation(motionData[n].right.jointRot);
         }
 
         public void StartPlaying()
