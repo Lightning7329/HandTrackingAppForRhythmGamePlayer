@@ -7,7 +7,7 @@ using UnityEngine.Video;
 namespace KW_Mocap
 {
     [RequireComponent(typeof(VideoPlayer))]
-    public class VideoController : MonoBehaviour
+    public class VideoController : DisplaySetting
     {
         private VideoPlayer video;
         private RenderTexture renderTexture;
@@ -33,6 +33,7 @@ namespace KW_Mocap
         void Start()
         {
             video = GetComponent<VideoPlayer>();
+            displayMaterial = GetComponent<MeshRenderer>().material;
         }
 
         /// <summary>
@@ -113,7 +114,7 @@ namespace KW_Mocap
 
             /* VideoPlayerコンポーネントに割り当てて再生準備をする */
             CreateAndSetRenderTexture((int)videoClip.width, (int)videoClip.height);
-            SetDisplaySize((int)videoClip.width, (int)videoClip.height);
+            FitVideoAspect((int)videoClip.width, (int)videoClip.height);
             video.clip = videoClip;
             video.frame = startFrame;
             PlayAndPause();
@@ -128,22 +129,19 @@ namespace KW_Mocap
         /// <param name="height">video clipの縦のピクセル数</param>
         private void CreateAndSetRenderTexture(int width, int height)
         {
+            if (displayMaterial == null) return;
+
             renderTexture = new RenderTexture(width, height, 24);
             renderTexture.Create();
-            var mat = this.GetComponent<MeshRenderer>().material;
-            mat.mainTexture = renderTexture;
+            displayMaterial.mainTexture = renderTexture;
             video.targetTexture = renderTexture;
         }
 
-        /// <summary>
-        /// Displayのサイズを引数のピクセル数から変更する
-        /// </summary>
-        /// <param name="width">video clipの横のピクセル数</param>
-        /// <param name="height">video clipの縦のピクセル数</param>
-        private void SetDisplaySize(int width, int height)
+        public void FitVideoAspect(int width, int height)
         {
-            float displayScale = 7.0f / 480.0f;
-            this.transform.localScale = new Vector3(width * displayScale, height * displayScale, 1);
+            float marginedAspectRatio = (float)width / height;
+            float targetAspectRatio = this.transform.localScale.x / this.transform.localScale.y;
+            FitVideoAspect(marginedAspectRatio, targetAspectRatio);
         }
 
         /// <summary>

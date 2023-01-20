@@ -104,8 +104,9 @@ namespace KW_Mocap
                     else this.transform.localPosition = ExtendedBitConverter.GetVector3FromBytes(buf, 0).vector3;
 
                     /* Displayのサイズ */
-                    fs.Read(buf, 0, 12);
-                    GameObject.FindWithTag("Display").transform.localScale = ExtendedBitConverter.GetVector3FromBytes(buf, 0).vector3;
+                    fs.Read(buf, 0, 8);
+                    var video = GameObject.FindWithTag("Display").GetComponent<VideoController>();
+                    video.DisplaySize = ExtendedBitConverter.GetVector2FromBytes(buf, 0).vector2;
 
                     /* モーションデータのデータオフセット */
                     fs.Read(buf, 0, 4);

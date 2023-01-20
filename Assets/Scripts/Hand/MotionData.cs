@@ -171,6 +171,20 @@ namespace KW_Mocap
         }
 
         /// <summary>
+        /// Vector2型の構造体変数をシリアライズして引数で受け取ったbyte配列に格納する。
+        /// </summary>
+        /// <param name="vector2"></param>
+        /// <param name="buf">バッファ用byte配列</param>
+        /// <param name="offset">bufに入れ始めるindex</param>
+        /// <returns></returns>
+        public static int SetBytesFromVector2(this Vector2 vector2, byte[] buf, int offset)
+        {
+            for (int i = 0; i < 2; i++)
+                SetByteBuf(BitConverter.GetBytes(vector2[i]), buf, 4 * i + offset, 4);
+            return 8 + offset;
+        }
+
+        /// <summary>
         /// Vector3型の構造体変数をシリアライズして引数で受け取ったbyte配列に格納する。
         /// </summary>
         /// <param name="position"></param>
@@ -196,6 +210,20 @@ namespace KW_Mocap
             for (int i = 0; i < 4; i++)
                 SetByteBuf(BitConverter.GetBytes(rotation[i]), buf, 4 * i + offset, 4);
             return 16 + offset;
+        }
+
+        /// <summary>
+        /// byte配列のoffsetの位置から8バイト読み取ってVector2型構造体を作成して返す。
+        /// </summary>
+        /// <param name="buf"></param>
+        /// <param name="offset">読み取り開始位置</param>
+        /// <returns></returns>
+        public static (Vector2 vector2, int next) GetVector2FromBytes(byte[] buf, int offset)
+        {
+            Vector2 vector2 = Vector2.zero;
+            for (int i = 0; i < 2; i++)
+                vector2[i] = BitConverter.ToSingle(buf, 4 * i + offset);
+            return (vector2, 8 + offset);
         }
 
         /// <summary>
