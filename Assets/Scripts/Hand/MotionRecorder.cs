@@ -14,6 +14,7 @@ namespace KW_Mocap
         /// 30FPSだと5分ちょっと相当。
         /// </summary>
         const int MaxDataCount = 100000;
+        public bool useGrove = false;
         public int recordDataCount { get; private set; } = 0;
         MotionData[] motionData = new MotionData[MaxDataCount];
         bool isRecording = false;
@@ -35,12 +36,19 @@ namespace KW_Mocap
 
         void Record()
         {
-            Debug.Log($"Frame {recordDataCount} is Recorded");
-            HandData left = new HandData(leftHand.localPosition, leftHand.localRotation);
-            HandData right = new HandData(rightHand.localPosition, rightHand.localRotation);
-            //HandData left = new HandData(leftHand.localPosition, leftHand.localRotation, leftJoints);
-            //HandData right = new HandData(rightHand.localPosition, rightHand.localRotation, rightJoints);
+            HandData left, right;
+            if (useGrove)
+            {
+                left = new HandData(leftHand.localPosition, leftHand.localRotation, leftJoints);
+                right = new HandData(rightHand.localPosition, rightHand.localRotation, rightJoints);
+            }
+            else
+            {
+                left = new HandData(leftHand.localPosition, leftHand.localRotation);
+                right = new HandData(rightHand.localPosition, rightHand.localRotation);
+            }
             motionData[recordDataCount] = new MotionData(left, right);
+            //Debug.Log($"Frame {recordDataCount} is Recorded");
         }
 
         public void StartRecording()
@@ -69,11 +77,6 @@ namespace KW_Mocap
 
         /// <summary>
         /// 記録したモーションデータをシリアライズしてバイナリファイルに書き出す。
-        /// [ファイルの構成]
-        ///  0-11byte   this.transform.localPosition,
-        /// 12-15byte   モーションデータ再生時のオフセット用（MotionPlayer::SavePlaybackOffsetで再設定可能）,
-        /// 16-19byte   モーションデータ点数,
-        /// 20以降       モーションデータ（1フレームあたりHandData.MinimumBufferSize * 2 = 376byte）
         /// </summary>
         /// <param name="fileName"></param>
         /// <exception cref="DuplicateFileNameException"></exception>
