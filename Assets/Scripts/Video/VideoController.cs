@@ -121,6 +121,26 @@ namespace KW_Mocap
         }
 
         /// <summary>
+        /// 動画ファイルを削除する
+        /// 残念なことにResourcesフォルダの中のファイルは実行中あるいはビルド後は触れないらしく現在はこのメソッドは使えない。
+        /// https://teratail.com/questions/334661
+        /// </summary>
+        /// <param name="name"></param>
+        public void DeleteVideoFile(string name)
+        {
+            if (video.clip != null && video.clip.name == name)
+            {
+                Resources.UnloadAsset(video.clip);
+                renderTexture.Release();
+                Debug.Log("VideoClip Unloaded " + video.clip.name);
+                video.clip = null;
+            }
+            string path = VideoPreferences.VideoFileDirectory + name + ".mp3";
+            System.IO.File.Delete(path);
+            System.IO.File.Delete(path + ".meta");
+        }
+
+        /// <summary>
         /// video clipのピクセル数から新しいRender Textureを作成し、
         /// DisplayのGameObjectのMaterialのMain Textureとしてそれを貼り付ける。
         /// さらにVideoPlayerのtargetTextureにも設定する。

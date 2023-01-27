@@ -170,6 +170,8 @@ namespace KW_Mocap
         {
             fileButtons[selectingFileIndex].gameObject.SetActive(false);
             files[selectingFileIndex].Delete();
+            /*string fileName = Path.GetFileNameWithoutExtension(files[selectingFileIndex].Name);
+            GameObject.FindWithTag("Display").GetComponent<VideoController>().DeleteVideoFile(fileName);*/
             selectingFileIndex = -1;
             if (--fileCount == 0) noFiles.gameObject.SetActive(true);
             selectButton.interactable = false;
