@@ -24,4 +24,13 @@ namespace KW_Mocap
             displayMaterial.mainTextureOffset = new Vector2(xOffset, 0.0f);
         }
     }
+
+    public static class VideoPreferences
+    {
+#if UNITY_EDITOR_WIN
+        public static readonly string VideoFileDirectory = Application.streamingAssetsPath + $@"\..\Resources\Videos\";
+#elif UNITY_EDITOR_OSX
+	    public static readonly string VideoFileDirectory = Application.streamingAssetsPath + $"/../Resources/Videos/";
+#endif
+    }
 }

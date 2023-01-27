@@ -184,13 +184,8 @@ namespace KW_Mocap
 			}
 
 			string lastFilePath = capture.LastFilePath;
-			string dir = System.IO.Path.GetDirectoryName(lastFilePath);
 			string ext = System.IO.Path.GetExtension(lastFilePath);
-#if UNITY_EDITOR_WIN
-			string dest = $@"{dir}\{fileName}{ext}";
-#elif UNITY_EDITOR_OSX
-			string dest = $"{dir}/{fileName}.{ext}";
-#endif
+			string dest = VideoPreferences.VideoFileDirectory + fileName + ext;
 			System.IO.File.Move(lastFilePath, dest);
 			Debug.Log("File.Move executed");
 		}
