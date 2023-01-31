@@ -16,7 +16,7 @@ namespace KW_Mocap
 		WebCamTexture texture = null;
 
 		CaptureFromWebCamTexture capture = null;
-		bool isFileWritingCompleted = true;
+		FileWritingHandler fileWritingHandler = null;
 
         private IEnumerator Start()
 		{
@@ -131,7 +131,7 @@ namespace KW_Mocap
             capture.FilenamePrefix = "pending_file";
 			capture.AppendFilenameTimestamp = true;
 			capture.AllowManualFileExtension = false;
-			capture.CompletedFileWritingAction += OnCompleteFinalFileWriting;
+			capture.BeginFinalFileWritingAction += OnBeginFinalFileWriting;
 		}
 
 		/// <summary>
@@ -141,7 +141,10 @@ namespace KW_Mocap
         {
 			Debug.Log("VideoCapture: StartRecording");
 			if (capture.IsCapturing())
+			{
 				capture.CancelCapture();
+				DeleteLastPendingVideo();
+			}
 			capture.StartCapture();
 		}
 
@@ -165,7 +168,6 @@ namespace KW_Mocap
         public IEnumerator Save(string fileName)
         {
 			capture.StopCapture();
-			isFileWritingCompleted = false;
 			yield return Rename(fileName);
 		}
 
@@ -177,26 +179,33 @@ namespace KW_Mocap
         private IEnumerator Rename(string fileName)
         {
 			/* 動画の書き出しが完了するまで待機 */
-			while (!isFileWritingCompleted)
+			while (!fileWritingHandler.IsFileReady())
 			{
 				Debug.Log("Waiting for FinalFileWriting");
 				yield return null;
 			}
 
-			string lastFilePath = capture.LastFilePath;
+			string lastFilePath = fileWritingHandler.Path;
 			string ext = System.IO.Path.GetExtension(lastFilePath);
 			string dest = VideoPreferences.VideoFileDirectory + fileName + ext;
 			System.IO.File.Move(lastFilePath, dest);
 			Debug.Log("File.Move executed");
+			fileWritingHandler = null;
 		}
 
         /// <summary>
-        /// CaptureFromWebCamTextureの動画書き出しが完了したらフラグをtrueにしてもらうコールバック。
+        /// CaptureFromWebCamTextureの動画書き出しを知るためのハンドラをもらうために書き出しが始まったら呼ばれるコールバック。
         /// </summary>
         /// <param name="handler"></param>
-        private void OnCompleteFinalFileWriting(FileWritingHandler handler)
+		private void OnBeginFinalFileWriting(FileWritingHandler handler)
 		{
-			isFileWritingCompleted = true;
+			fileWritingHandler = handler;
+		}
+
+		private void DeleteLastPendingVideo()
+        {
+			if (System.IO.File.Exists(capture.LastFilePath))
+				System.IO.File.Delete(capture.LastFilePath);
 		}
 
 		private void OnDestroy()
@@ -206,7 +215,9 @@ namespace KW_Mocap
 				texture.Stop();
 				Destroy(texture);
 			}
-			capture.CompletedFileWritingAction -= OnCompleteFinalFileWriting;
+			DeleteLastPendingVideo();
+			capture.BeginFinalFileWritingAction -= OnBeginFinalFileWriting;
+			if (fileWritingHandler != null) fileWritingHandler.Dispose();
 			Debug.Log("VideoCapture has been destroyed.");
 		}
     }
