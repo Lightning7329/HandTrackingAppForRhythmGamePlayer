@@ -822,6 +822,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hand: {fileID: 8234911754632013711}
+  LR: 1
   cal_sec: 3
   max_sec: 1800
   _runMode: -1
@@ -2490,7 +2491,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d65b4002f69a48138706247d5a93e3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  useGrove: 0
+  useLeftGrove: 1
+  useRightGrove: 1
 --- !u!1 &1424695333
 GameObject:
   m_ObjectHideFlags: 0
@@ -2858,6 +2860,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hand: {fileID: 2048777865}
+  LR: 0
   cal_sec: 3
   max_sec: 1800
   _runMode: -1
