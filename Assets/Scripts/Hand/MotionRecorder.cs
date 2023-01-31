@@ -98,7 +98,7 @@ namespace KW_Mocap
                     fs.Write(buf, 0, 8);
 
                     /* モーションデータのデータオフセット。とりあえず0に設定。 */
-                    fs.Write(new byte[] { 0, 0, 0, 0 }, 0, 4);
+                    fs.Write(BitConverter.GetBytes(0), 0, 4);
 
                     /* フレームレート */
                     byte[] byte_FrameRate = BitConverter.GetBytes(WorldTimer.frameRate);

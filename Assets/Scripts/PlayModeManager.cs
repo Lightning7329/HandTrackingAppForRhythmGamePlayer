@@ -43,8 +43,8 @@ namespace KW_Mocap
             UISetting.SetButton(ref playButton, "PlayButton", OnBtn_Play, "Play");
             UISetting.SetButton(ref forwardButton, "ForwardButton", OnBtn_Forward, $"{neutralSkipSeconds}s");
             UISetting.SetButton(ref backwardButton, "BackwardButton", OnBtn_Backward, $"{neutralSkipSeconds}s");
-            UISetting.SetButton(ref rotateClockwiseButton, "RotateClockwiseButton", () => videoController.RotateDisplay(true));
-            UISetting.SetButton(ref rotateAnticlockwiseButton, "RotateAnticlockwiseButton", () => videoController.RotateDisplay(false));
+            //UISetting.SetButton(ref rotateClockwiseButton, "RotateClockwiseButton", () => videoController.RotateDisplay(true));
+            //UISetting.SetButton(ref rotateAnticlockwiseButton, "RotateAnticlockwiseButton", () => videoController.RotateDisplay(false));
             UISetting.SetButton(ref sceneChangeButton, "SceneChangeButton", OnBtn_SceneChange, "RecordMode");
             fileSelector = obj_fileSelector.GetComponent<FileSelector>();
 
