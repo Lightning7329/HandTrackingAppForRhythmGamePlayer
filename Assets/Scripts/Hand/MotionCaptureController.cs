@@ -8,11 +8,11 @@ namespace KW_Mocap
     public class MotionCaptureController : MonoBehaviour
     {
         [SerializeField] GameObject hand;
+        [SerializeField] private IMUHandModel.Chirality LR = IMUHandModel.Chirality.Left;
         public int cal_sec = 3;
         public int max_sec = 1800;	// = 30 minutes
         [SerializeField] private RunMode _runMode = RunMode.NotConnected;
         [SerializeField] private CalibrationLevel _calibrationLevel = CalibrationLevel.DoingNothing;
-
         private SS_DAT data = new SS_DAT();
         private SS_IMU Imu = new SS_IMU();
         private SS_STAT statusPanel = new SS_STAT();
@@ -109,7 +109,7 @@ namespace KW_Mocap
                     long max_data = max_sec * (long)Imu.fps;
                     long max_key = max_sec / 30 + 2;
                     data.Init(max_data, Imu.now_sens, max_key, Imu.stat, Imu.fps);
-                    imuHandModel = new IMUHandModel(hand.name, Imu.now_sens, Imu.stat, handSetting.joints);
+                    imuHandModel = new IMUHandModel(hand.name, Imu.now_sens, Imu.stat, LR, handSetting.joints);
                     statusPanel.Stat(Imu.stat);
                     statusPanel.FpsVolt(Imu.fps, Imu.vbt);
                     statusPanel.Frame(string.Format("{0:.00}", max_sec));

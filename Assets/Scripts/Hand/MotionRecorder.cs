@@ -14,7 +14,8 @@ namespace KW_Mocap
         /// 30FPSだと5分ちょっと相当。
         /// </summary>
         const int MaxDataCount = 100000;
-        public bool useGrove = false;
+        public bool useLeftGrove = false;
+        public bool useRightGrove = false;
         public int recordDataCount { get; private set; } = 0;
         MotionData[] motionData = new MotionData[MaxDataCount];
         bool isRecording = false;
@@ -36,17 +37,12 @@ namespace KW_Mocap
 
         void Record()
         {
-            HandData left, right;
-            if (useGrove)
-            {
-                left = new HandData(leftHand.localPosition, leftHand.localRotation, leftJoints);
-                right = new HandData(rightHand.localPosition, rightHand.localRotation, rightJoints);
-            }
-            else
-            {
-                left = new HandData(leftHand.localPosition, leftHand.localRotation);
-                right = new HandData(rightHand.localPosition, rightHand.localRotation);
-            }
+            HandData left = useLeftGrove ?
+                new HandData(leftHand.localPosition, leftHand.localRotation, leftJoints) :
+                new HandData(leftHand.localPosition, leftHand.localRotation);
+            HandData right = useRightGrove ?
+                new HandData(rightHand.localPosition, rightHand.localRotation, rightJoints) :
+                new HandData(rightHand.localPosition, rightHand.localRotation);
             motionData[recordDataCount] = new MotionData(left, right);
             //Debug.Log($"Frame {recordDataCount} is Recorded");
         }

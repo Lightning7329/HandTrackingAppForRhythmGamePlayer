@@ -8,21 +8,36 @@ public class IMUHandModel
 {
     private const int n_fing = 5;
     private const int n_bone = 4;
+    private readonly Chirality LR;
 
     /// <summary>
-    /// sensor to hand(LeapMotionが定義した関節番号)
-    /// 関節番号0から3までの関節に何番のセンサーを割り当てるかをスペース区切りで記述する。
-    /// センサーが存在しない場合は 'x' と入れる。 
+    /// 左右の関節番号マップ
     /// </summary>
-    private string[] sensorTable =
+    private readonly Dictionary<Chirality, string[]> LR2sensorTable
+        = new Dictionary<Chirality, string[]>
         {
-            "x 2 1 0",
-            "x 5 4 3",
-            "9 8 7 6",
-            "x 12 11 10",
-            "x 15 14 13"
+            { Chirality.Left, new string[]{
+                    "x 2 1 0",
+                    "x 5 4 3",
+                    "9 8 7 6",
+                    "x 12 11 10",
+                    "x 15 14 13"
+                }
+            },
+            { Chirality.Right, new string[]{
+                    "x 15 14 13",
+                    "x 12 11 10",
+                    "9 8 7 6",
+                    "x 5 4 3",
+                    "x 2 1 0"
+                }
+            }
         };
-
+    /// <summary>
+    /// reference number to sensorの変換マップ
+    /// SS_IMUクラスのstatフィールドから作成される
+    /// </summary>
+    private readonly int[] r2s;
     /// <summary>
     /// finger to referenceの変換マップ
     /// sensorTableから作成される。
@@ -33,11 +48,14 @@ public class IMUHandModel
 
     private readonly SS_CALIB imuCalibration = new SS_CALIB();
 
-    public IMUHandModel(string name, int sensorCount, ushort sensorStatus, Transform[,] joints)
+    public enum Chirality { Left, Right }
+
+    public IMUHandModel(string name, int sensorCount, ushort sensorStatus, Chirality LR, Transform[,] joints)
     {
-        int[] r2s = CreateReference2SensorMap(sensorCount, sensorStatus);
+        this.LR = LR;
+        r2s = CreateReference2SensorMap(sensorCount, sensorStatus);
         imuCalibration.Init(name, r2s);
-        f2r = CreateFinger2ReferenceMap(sensorTable);
+        f2r = CreateFinger2ReferenceMap(LR2sensorTable[LR]);
         this.Tr = joints;
     }
 
@@ -61,13 +79,30 @@ public class IMUHandModel
         imuCalibration.GetQd(Q, Qs);
         Qd = Layer(Qs);                         //親のオブジェクトからの相対回転に変換
 
-        for (int i = 0; i < n_fing; i++)
+        if (this.LR == Chirality.Left)
         {
-            for (int j = 0; j < n_bone; j++)
+            for (int i = 0; i < n_fing; i++)
             {
-                int n = f2r[i, j];
-                if (n != -1 && n != 9)
-                    Tr[i, j].localRotation = Qd[n];
+                for (int j = 0; j < n_bone; j++)
+                {
+                    int n = f2r[i, j];
+                    /* 第一、第二、第三関節のいずれかである かつ センサーが取り付けられている */
+                    if ((n != -1 && n != 9) && r2s[n] != -1)
+                        Tr[i, j].localRotation = Qd[n];
+                }
+            }
+        }
+        else
+        {
+            for (int i = 0; i < n_fing; i++)
+            {
+                for (int j = 0; j < n_bone; j++)
+                {
+                    int n = f2r[i, j];
+                    /* 第一、第二、第三関節のいずれかである かつ センサーが取り付けられている */
+                    if ((n != -1 && n != 9) && r2s[n] != -1)
+                        Tr[i, j].localRotation = InvertRotationAboutX(Qd[n]);  //X軸固定の反転
+                }
             }
         }
     }
@@ -138,4 +173,14 @@ public class IMUHandModel
         }
         return f2r;
     }
+
+    /// <summary>
+    /// X軸周りの回転はそのままにしてY軸、Z軸周りの回転を反転したクォータニオンを返す。
+    /// transform.localScale.xを-1にしたオブジェクトの回転に対応している。
+    /// 次のWeb上の記事を参考にしている。
+    /// http://momose-d.cocolog-nifty.com/blog/2014/08/post-0735.html
+    /// </summary>
+    /// <param name="q">反転したいクォータニオン</param>
+    /// <returns>反転後のクォータニオン</returns>
+    private Quaternion InvertRotationAboutX(Quaternion q) => new Quaternion(q.x, -q.y, -q.z, q.w);
 }
