@@ -130,7 +130,7 @@ namespace KW_Mocap
         public void SetJointsRotation(Quaternion[,] rotations)
         {
             for (int i = 0; i < joints.GetLength(0); i++)
-                for (int j = 0; j < joints.GetLength(1); j++)
+                for (int j = 1; j < joints.GetLength(1); j++)
                     joints[i, j].localRotation = rotations[i, j];
         }
 
