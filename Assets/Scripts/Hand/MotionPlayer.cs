@@ -10,11 +10,11 @@ namespace KW_Mocap
     {
         MotionData[] motionData = null;
         [SerializeField] GameObject left, right;
-        GameObject[,] leftJoints, rightJoints;
+        HandSetting leftHandSetting, rightHandSetting;
         private bool isPlaying = false;
         public bool isLoaded { get; private set; } = false;
         public int frameCount { get; private set; } = 0;
-        public int frameRate { get => WorldTimer.frameRate; }
+        public float frameRate { get; private set; } = 30.0f;
         [HideInInspector] public int playbackOffset = 0;
         private string currentMotionDataFilePath = null;
 
@@ -35,10 +35,10 @@ namespace KW_Mocap
 
         void Start()
         {
-            left.GetComponent<HandSetting>().SetMaterial(left, true);
-            leftJoints = left.GetComponent<HandSetting>().joints;
-            right.GetComponent<HandSetting>().SetMaterial(right, true);
-            rightJoints = right.GetComponent<HandSetting>().joints;
+            leftHandSetting = left.GetComponent<HandSetting>();
+            leftHandSetting.SetMaterial(true);
+            rightHandSetting = right.GetComponent<HandSetting>();
+            rightHandSetting.SetMaterial(true);
         }
 
         void Update()
@@ -56,11 +56,13 @@ namespace KW_Mocap
         public void Play(int n)
         {
             if (n < 0 || frameCount <= n) return;
-            // TODO: leftJoint[0,0]~leftKJoint[4,2]のモーションデータも再生する。rightも然り。
+            
             left.transform.localPosition = motionData[n].left.palmPos;
             left.transform.localRotation = motionData[n].left.palmRot;
+            leftHandSetting.SetJointsRotation(motionData[n].left.jointRot);
             right.transform.localPosition = motionData[n].right.palmPos;
             right.transform.localRotation = motionData[n].right.palmRot;
+            rightHandSetting.SetJointsRotation(motionData[n].right.jointRot);
         }
 
         public void StartPlaying()
@@ -99,13 +101,22 @@ namespace KW_Mocap
                     fs.Read(buf, 0, 12);
                     if (fileName == "Echo over you_Hard40FPS")
                         this.transform.localPosition = new Vector3(100f, 2.8599999f, 102.510002f);
-                    else this.transform.localPosition = ExtendedBitConverter.GetVector3FromBytes(buf, 0).position;
+                    else this.transform.localPosition = ExtendedBitConverter.GetVector3FromBytes(buf, 0).vector3;
+
+                    /* Displayのサイズ */
+                    fs.Read(buf, 0, 8);
+                    var video = GameObject.FindWithTag("Display").GetComponent<VideoController>();
+                    video.DisplaySize = ExtendedBitConverter.GetVector2FromBytes(buf, 0).vector2;
 
                     /* モーションデータのデータオフセット */
                     fs.Read(buf, 0, 4);
                     this.playbackOffset = BitConverter.ToInt32(buf, 0);
 
-                    /* 読み込むデータ点数 */
+                    /* フレームレート */
+                    fs.Read(buf, 0, 4);
+                    this.frameRate = BitConverter.ToSingle(buf, 0);
+
+                    /* フレーム数 */
                     fs.Read(buf, 0, 4);
                     frameCount = BitConverter.ToInt32(buf, 0);
                     motionData = new MotionData[frameCount];

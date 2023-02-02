@@ -1,26 +1,29 @@
 using System;
 using System.Runtime.Serialization;
 
-[Serializable]
-public class DuplicateFileNameException : Exception
+namespace KW_Mocap
 {
-    public DuplicateFileNameException()
-        : base()
+    [Serializable]
+    public class DuplicateFileNameException : Exception
     {
-    }
+        public DuplicateFileNameException()
+            : base()
+        {
+        }
 
-    public DuplicateFileNameException(string message)
-        : base(message)
-    {
-    }
+        public DuplicateFileNameException(string message)
+            : base(message)
+        {
+        }
 
-    public DuplicateFileNameException(string message, Exception innerException)
-        : base(message, innerException)
-    {
-    }
+        public DuplicateFileNameException(string message, Exception innerException)
+            : base(message, innerException)
+        {
+        }
 
-    protected DuplicateFileNameException(SerializationInfo info, StreamingContext context)
-        : base(info, context)
-    {
+        protected DuplicateFileNameException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+        }
     }
 }

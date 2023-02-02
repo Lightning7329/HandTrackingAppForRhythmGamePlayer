@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Video;
 using UnityEngine.EventSystems;
+using UnityEngine.Events;
 
 namespace KW_Mocap
 {
@@ -25,8 +26,8 @@ namespace KW_Mocap
 
             /* Event TriggerコンポーネントをアタッチしてPointerDown, PointerUpを追加 */
             eventTrigger = this.gameObject.AddComponent<EventTrigger>();
-            UISetting.AddEventTrigger(eventTrigger, EventTriggerType.PointerDown, PointerDown);
-            UISetting.AddEventTrigger(eventTrigger, EventTriggerType.PointerUp, PointerUp);
+            eventTrigger.AddEventTrigger(EventTriggerType.PointerDown, PointerDown);
+            eventTrigger.AddEventTrigger(EventTriggerType.PointerUp, PointerUp);
 
             /* Sliderの取得 */
             timeSlider = GetComponent<Slider>();
@@ -80,9 +81,12 @@ namespace KW_Mocap
         /// <param name="second">進める秒数。負だと戻る。</param>
         public void Skip(double second)
         {
-            double targetSliderValue = timeSlider.value + second / video.Length;
-            video.Time = targetSliderValue * video.Length;
-            if (!video.isPlaying) video.PlayAndPause();
+            video.Time += second;
+            if (!video.isPlaying)
+            {
+                video.PlayAndPause();
+                motion.Play();
+            }
         }
 
         /// <summary>

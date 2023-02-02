@@ -23,10 +23,10 @@ namespace KW_Mocap
         OffsetManager offsetManager = null;
 
         // uGUI側
-        private Text txt_speed, txt_playButton, dataCount;
+        private Text txt_speed, dataCount;
         private Button fileSelectButton, playButton, forwardButton, backwardButton, addSpeedButton, subSpeedButton, sceneChangeButton, rotateClockwiseButton, rotateAnticlockwiseButton;
         private FileSelector fileSelector = null;
-        public GameObject obj_fileSelector;
+        [SerializeField] GameObject obj_fileSelector;
 
         void Start()
         {
@@ -43,15 +43,17 @@ namespace KW_Mocap
             UISetting.SetButton(ref playButton, "PlayButton", OnBtn_Play, "Play");
             UISetting.SetButton(ref forwardButton, "ForwardButton", OnBtn_Forward, $"{neutralSkipSeconds}s");
             UISetting.SetButton(ref backwardButton, "BackwardButton", OnBtn_Backward, $"{neutralSkipSeconds}s");
-            UISetting.SetButton(ref addSpeedButton, "AddSpeedButton", OnBtn_AddSpeed, $"+{speedChange:F2}");
-            UISetting.SetButton(ref subSpeedButton, "SubSpeedButton", OnBtn_SubSpeed, $"-{speedChange:F2}");
-            UISetting.SetButton(ref rotateClockwiseButton, "RotateClockwiseButton", () => videoController.RotateDisplay(true));
-            UISetting.SetButton(ref rotateAnticlockwiseButton, "RotateAnticlockwiseButton", () => videoController.RotateDisplay(false));
+            //UISetting.SetButton(ref rotateClockwiseButton, "RotateClockwiseButton", () => videoController.RotateDisplay(true));
+            //UISetting.SetButton(ref rotateAnticlockwiseButton, "RotateAnticlockwiseButton", () => videoController.RotateDisplay(false));
             UISetting.SetButton(ref sceneChangeButton, "SceneChangeButton", OnBtn_SceneChange, "RecordMode");
             fileSelector = obj_fileSelector.GetComponent<FileSelector>();
-            txt_speed = GameObject.Find("Speed").transform.Find("Text").gameObject.GetComponent<Text>();
+
+            Transform speedPanel = GameObject.Find("Speed Panel").transform;
+            txt_speed = speedPanel.Find("Speed").GetComponent<Text>();
             txt_speed.text = "x1.00";
-            txt_playButton = playButton.GetComponentInChildren<Text>();
+            UISetting.SetButton(ref addSpeedButton, speedPanel, "AddSpeedButton", OnBtn_AddSpeed, $"+{speedChange:F2}");
+            UISetting.SetButton(ref subSpeedButton, speedPanel, "SubSpeedButton", OnBtn_SubSpeed, $"-{speedChange:F2}");
+
             dataCount = GameObject.Find("Play Data Count").GetComponent<Text>();
         }
 
@@ -113,14 +115,14 @@ namespace KW_Mocap
 
             if (isPlaying)
             {
-                txt_playButton.text = "Play";
+                playButton.SetButtonText("Play");
                 videoController.PausePlaying();
                 motionPlayer.PausePlaying();
                 isPlaying = false;
             }
             else
             {
-                txt_playButton.text = "Pause";
+                playButton.SetButtonText("Pause");
                 videoController.StartPlaying();
                 motionPlayer.StartPlaying();
                 isPlaying = true;
@@ -169,8 +171,8 @@ namespace KW_Mocap
             // uGUI側
             skipSeconds = neutralSkipSeconds * currentSpeed;
             string newSkipSeconds = skipSeconds.ToString("F2").TrimEnd('0').TrimEnd('.') + "s";
-            forwardButton.GetComponentInChildren<Text>().text = newSkipSeconds;
-            backwardButton.GetComponentInChildren<Text>().text = newSkipSeconds;
+            forwardButton.SetButtonText(newSkipSeconds);
+            backwardButton.SetButtonText(newSkipSeconds);
             txt_speed.text = $"x{newSpeed:F2}";
         }
 
