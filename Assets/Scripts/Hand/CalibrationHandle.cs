@@ -14,16 +14,10 @@ namespace KW_Mocap {
 
         void Start()
         {
-            //UISetting.SetButton(ref bothButton, this.transform, "Both", OnBtn_Both);
             UISetting.SetButton(ref leapButton, this.transform, "Leap Calibration", () => StartCoroutine(OnBtn_Leap()));
             UISetting.SetButton(ref imuButton, this.transform, "IMU Sensor", () => StartCoroutine(OnBtn_IMU(3)));
             count = GameObject.Find("Calibration Count Down").GetComponent<Text>();
             count.gameObject.SetActive(false);
-        }
-
-        void OnBtn_Both()
-        {
-            Debug.Log("Both Calibrate");
         }
 
         IEnumerator OnBtn_Leap()
