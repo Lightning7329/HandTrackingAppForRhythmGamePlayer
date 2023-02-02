@@ -79,7 +79,6 @@ namespace KW_Mocap {
         private void OnApplicationQuit()
         {
             foreach (var imuCalib in imuCalibs) imuCalib.End();
-            Debug.Log("OnApplicationQuit was called");
         }
     }
 }

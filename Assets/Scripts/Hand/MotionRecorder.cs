@@ -52,7 +52,6 @@ namespace KW_Mocap
             isRecording = true;
             recordDataCount = 0;
             WorldTimer.CountUp += RecordDataCountUp;
-            Debug.Log("Start Recording");
         }
 
         public void StopRecording()
@@ -60,7 +59,6 @@ namespace KW_Mocap
             if (!isRecording) return;
             isRecording = false;
             WorldTimer.CountUp -= RecordDataCountUp;
-            Debug.Log("Stop Recording");
         }
 
         void RecordDataCountUp()
@@ -114,7 +112,6 @@ namespace KW_Mocap
                         if (motionData[i] == null) { Debug.Log($"motionData[{i}] == null"); continue; }
                         motionData[i].SetBytes(buf);
                         fs.Write(buf, 0, bufSize);
-                        Debug.Log($"frame {i} : saved");
                     }
                 }
                 Debug.Log($"Saved as SavedMotionData/{fileName}.bin");

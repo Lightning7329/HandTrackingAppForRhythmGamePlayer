@@ -18,13 +18,9 @@ namespace SS_KinetrackIII
 		public bool flg_ready = false;
 
 		/// <summary>
-		/// ＰＣの方が早い。IMUからデータが来ていたら読むようにしたいから、もう来てるかどうかを入れる。
+		/// IMUからデータが来ていたら読むようにしたいから、もう来てるかどうかを入れる。
 		/// </summary>
 		public bool flg_setdat = false;
-
-		/// <summary>
-		/// 
-		/// </summary>
 		public bool flg_auto = false;
 		public int now_sens;
 		public ushort stat;

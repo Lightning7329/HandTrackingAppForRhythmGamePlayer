@@ -74,11 +74,10 @@ public class IMUHandModel
 
     public void Draw(IMUPAR[] Q)
     {
-        Quaternion[] Qs = new Quaternion[16];   //キャリブレーション済みの絶対回転?
-        Quaternion[] Qd;                        //キャリブレーション済みの絶対回転から計算される相対回転?
+        Quaternion[] Qs = new Quaternion[16];
+        Quaternion[] Qd;
         imuCalibration.GetQd(Q, Qs);
-        Qd = Layer(Qs);                         //親のオブジェクトからの相対回転に変換
-
+        Qd = Layer(Qs);
         if (this.LR == Chirality.Left)
         {
             for (int i = 0; i < n_fing; i++)

@@ -72,7 +72,6 @@ namespace KW_Mocap
             if (isPlaying) return;
 
             isPlaying = true;
-            Debug.Log("Start Playing");
         }
 
         public void PausePlaying()
@@ -80,7 +79,6 @@ namespace KW_Mocap
             if (!isPlaying) return;
 
             isPlaying = false;
-            Debug.Log("Stop Playing");
         }
 
         public void ResetFrameCount()

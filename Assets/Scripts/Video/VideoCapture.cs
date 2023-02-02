@@ -139,7 +139,6 @@ namespace KW_Mocap
 		/// </summary>
 		public void StartRecording()
         {
-			Debug.Log("VideoCapture: StartRecording");
 			if (capture.IsCapturing())
 			{
 				capture.CancelCapture();
@@ -154,7 +153,6 @@ namespace KW_Mocap
 		public void StopRecording()
         {
 			if (!capture.IsCapturing()) return;
-			Debug.Log("VideoCapture: StopRecording(Paused)");
 			capture.PauseCapture();
         }
 
@@ -180,10 +178,7 @@ namespace KW_Mocap
         {
 			/* 動画の書き出しが完了するまで待機 */
 			while (!fileWritingHandler.IsFileReady())
-			{
-				Debug.Log("Waiting for FinalFileWriting");
 				yield return null;
-			}
 
 			string lastFilePath = fileWritingHandler.Path;
 			string ext = System.IO.Path.GetExtension(lastFilePath);
@@ -218,7 +213,6 @@ namespace KW_Mocap
 			DeleteLastPendingVideo();
 			capture.BeginFinalFileWritingAction -= OnBeginFinalFileWriting;
 			if (fileWritingHandler != null) fileWritingHandler.Dispose();
-			Debug.Log("VideoCapture has been destroyed.");
 		}
     }
 }

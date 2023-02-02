@@ -101,8 +101,6 @@ namespace KW_Mocap
             }
             else if (Imu.Connect(I_net.text))
             {
-                /* Imu.Connectメソッドの中でStatメソッドが呼ばれていてその結果が返るから
-                 * このImu.Stat()がfalseを返すことはないのでは？ */
                 if (Imu.Stat())
                 {
                     max_sec = (max_sec < 60) ? 60 : max_sec;
@@ -121,7 +119,6 @@ namespace KW_Mocap
                 else
                 {
                     Imu.Close();
-                    //run_mode = -1;
                     runMode = RunMode.NotConnected;
                     Im_rdy.color = Color.magenta;
                     Debug.Log("Err... " + gameObject.name + " is not ready !!");
@@ -155,10 +152,8 @@ namespace KW_Mocap
             if (runMode == RunMode.NotConnected || 
                 calibrationLevel != CalibrationLevel.DoingNothing)
             {
-                //yield break;
                 return;
             }
-            Debug.Log("Calibration Starts");    //Clear
 
             /* キャリブレーション用のSS_DATクラスのオブジェクトを用意 */
             SS_DAT calibrationData = new SS_DAT();
@@ -170,19 +165,16 @@ namespace KW_Mocap
             runMode = RunMode.Calibrating;
             Im_rdy.color = Color.yellow;
             calibrationLevel = CalibrationLevel.Recording;
-            //yield return Calibration(calibrationData);
             StartCoroutine(Calibration());
             runMode = RunMode.Ready;
-            Debug.Log("Caribration Finished");
         }
 
         private IEnumerator Calibration()
         {
-            Debug.Log("Coroutine Starts");
             long hs = data.GetNowRec();                 //開始フレーム
             long dh = (long)(cal_sec * (int)Imu.fps);   //キャリブレーション用フレーム数
             long he = hs + dh;                          //終了フレーム
-            Debug.Log($"hs:{hs} hd:{dh} he:{he}");      //hs:0 hd:150 he:150
+            Debug.Log($"hs:{hs} hd:{dh} he:{he}");
             /* dataに記録 */
             data.SetRecFlg(true);
             Imu.Rec(true);
@@ -195,7 +187,6 @@ namespace KW_Mocap
             imuHandModel.Calibrate(hs, dh, data.Pim);
             data.SetNowRec(he);
             calibrationLevel = CalibrationLevel.DoingNothing;
-            Debug.Log("Coroutine Finished");
         }
 
         public void End()

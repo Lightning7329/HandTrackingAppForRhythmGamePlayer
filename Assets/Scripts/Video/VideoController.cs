@@ -80,17 +80,6 @@ namespace KW_Mocap
         public void ResetFrameCount() => video.frame = startFrame;
 
         /// <summary>
-        /// 全体時間の秒、フレームレート、フレーム数、ピクセル数をコンソールに表示
-        /// </summary>
-        public void DisplayState()
-        {
-            Debug.Log($"lengh: {video.length}s");
-            Debug.Log("frame rate: " + video.frameRate);
-            Debug.Log("frame count: " + video.frameCount);
-            Debug.Log($"width: {video.width} / height: {video.height}");
-        }
-
-        /// <summary>
         /// Resources/Videosディレクトリ配下の指定されたファイル名のVideoClipをVideoPlayerに割り当てる。
         /// </summary>
         /// <param name="name">拡張子なしの動画ファイル名</param>
@@ -100,7 +89,6 @@ namespace KW_Mocap
             if (video.clip != null) {
                 Resources.UnloadAsset(video.clip);
                 renderTexture.Release();
-                Debug.Log("VideoClip Unloaded " + video.clip.name);
             }
 
             /* 新しくvideo clipをロードする（拡張子はなしでいいらしい）*/
@@ -132,7 +120,6 @@ namespace KW_Mocap
             {
                 Resources.UnloadAsset(video.clip);
                 renderTexture.Release();
-                Debug.Log("VideoClip Unloaded " + video.clip.name);
                 video.clip = null;
             }
             string path = VideoPreferences.VideoFileDirectory + name + ".mp3";
