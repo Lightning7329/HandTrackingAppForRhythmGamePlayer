@@ -68,41 +68,40 @@ namespace KW_Mocap{
         public void Calibrate(long startFrame, long deltaFrame, IMUPAR[,] imuPars)
         {
             imuCalibration.Record(startFrame, deltaFrame, imuPars);
-            Debug.Log("IMUHandModel.Calibrate");
             imuCalibration.Calib(FixedPose.cal_joints);
         }
 
         public void Draw(IMUPAR[] Q)
         {
             Quaternion[] Qs = new Quaternion[16];
-            Quaternion[] Qd;
             imuCalibration.GetQd(Q, Qs);
-            Qd = Layer(Qs);
-            if (this.LR == Chirality.Left)
+            Quaternion[] Qd = Layer(Qs);
+            switch (this.LR)
             {
-                for (int i = 0; i < n_fing; i++)
-                {
-                    for (int j = 0; j < n_bone; j++)
+                case Chirality.Left:
+                    for (int i = 0; i < n_fing; i++)
                     {
-                        int n = f2r[i, j];
-                        /* 第一、第二、第三関節のいずれかである かつ センサーが取り付けられている */
-                        if ((n != -1 && n != 9) && r2s[n] != -1)
-                            Tr[i, j].localRotation = Qd[n];
+                        for (int j = 0; j < n_bone; j++)
+                        {
+                            int n = f2r[i, j];
+                            /* 第一、第二、第三関節のいずれかである かつ センサーが取り付けられている */
+                            if ((n != -1 && n != 9) && r2s[n] != -1)
+                                Tr[i, j].localRotation = Qd[n];
+                        }
                     }
-                }
-            }
-            else
-            {
-                for (int i = 0; i < n_fing; i++)
-                {
-                    for (int j = 0; j < n_bone; j++)
+                    break;
+                case Chirality.Right:
+                    for (int i = 0; i < n_fing; i++)
                     {
-                        int n = f2r[i, j];
-                        /* 第一、第二、第三関節のいずれかである かつ センサーが取り付けられている */
-                        if ((n != -1 && n != 9) && r2s[n] != -1)
-                            Tr[i, j].localRotation = InvertRotationAboutX(Qd[n]);  //X軸固定の反転
+                        for (int j = 0; j < n_bone; j++)
+                        {
+                            int n = f2r[i, j];
+                            /* 第一、第二、第三関節のいずれかである かつ センサーが取り付けられている */
+                            if ((n != -1 && n != 9) && r2s[n] != -1)
+                                Tr[i, j].localRotation = InvertRotationAboutX(Qd[n]);  //X軸固定の反転
+                        }
                     }
-                }
+                    break;
             }
         }
 
@@ -176,8 +175,6 @@ namespace KW_Mocap{
         /// <summary>
         /// X軸周りの回転はそのままにしてY軸、Z軸周りの回転を反転したクォータニオンを返す。
         /// transform.localScale.xを-1にしたオブジェクトの回転に対応している。
-        /// 次のWeb上の記事を参考にしている。
-        /// http://momose-d.cocolog-nifty.com/blog/2014/08/post-0735.html
         /// </summary>
         /// <param name="q">反転したいクォータニオン</param>
         /// <returns>反転後のクォータニオン</returns>
