@@ -155,12 +155,6 @@ namespace KW_Mocap
                 return;
             }
 
-            /* キャリブレーション用のSS_DATクラスのオブジェクトを用意 */
-            SS_DAT calibrationData = new SS_DAT();
-            long max_data = 30 * (long)Imu.fps;     //最大フレーム数
-            long max_key = 3;                       //最大キーフレーム数
-            calibrationData.Init(max_data, Imu.now_sens, max_key, Imu.stat, Imu.fps);
-
             /* キャリブレーション */
             runMode = RunMode.Calibrating;
             Im_rdy.color = Color.yellow;
