@@ -59,10 +59,6 @@ namespace KW_Mocap
 		public IEnumerator SetWebCamTexture(int index)
         {
 			WebCamDevice camera = WebCamTexture.devices[index];
-
-            /* 解像度を指定すると、デバイスが対応している最も近いものを使う */
-            //texture = new WebCamTexture(camera.name, 1920, 1440); //4:3
-            //texture = new WebCamTexture(camera.name, 1280, 720, 30); //16:9
 			texture = new WebCamTexture(camera.name);   //これだと元々の解像度になる
             texture.Play();
 			while (texture.width < 100)
@@ -72,8 +68,6 @@ namespace KW_Mocap
 			}
 			capturedResolution = new Vector2Int(texture.width, texture.height);
             displayMaterial.mainTexture = texture;
-			Debug.Log($"width: {texture.width} / height: {texture.height}");
-            Debug.Log($"requestedWidth: {texture.requestedWidth} / requestedHeight: {texture.requestedHeight}/ fps: {texture.requestedFPS}");
 		}
 
 		[ContextMenu("Change Resolution")]
@@ -84,25 +78,6 @@ namespace KW_Mocap
             float marginedAspectRatio = (float)capturedResolution.x / capturedResolution.y;
 			float targetAspectRatio = (float)width / height;
 			FitVideoAspect(marginedAspectRatio, targetAspectRatio);
-			//ChangeAspectRatio((float)width / height);
-		}
-
-		/// <summary>
-		/// 親クラスのFitVideoAspectで実装したので、不要。テストでOK出ればこのメソッドは削除する予定。
-		/// キャプチャした映像を指定したアスペクト比で切り取ってディスプレイに表示する
-		/// </summary>
-		/// <param name="targetAspectRatio">目標のアスペクト比</param>
-		public void ChangeAspectRatio(float targetAspectRatio)
-		{
-			if (displayMaterial == null) return;
-
-			/* ディスプレイのマテリアルのTilingとOffsetを調整 */
-			float capturedAspectRatio = (float)capturedResolution.x / capturedResolution.y;
-			float xScale = targetAspectRatio / capturedAspectRatio;
-			displayMaterial.mainTextureScale = new Vector2(xScale, 1.0f);
-
-			float xOffset = 0.5f * (capturedAspectRatio - targetAspectRatio) / capturedAspectRatio;
-			displayMaterial.mainTextureOffset = new Vector2(xOffset, 0.0f);
 		}
 
 		/// <summary>
